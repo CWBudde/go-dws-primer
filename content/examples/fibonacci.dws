@@ -1,0 +1,26 @@
+// Fibonacci Sequence
+// Calculate and display the first N Fibonacci numbers
+
+program Fibonacci;
+
+function Fib(n: Integer): Integer;
+begin
+  if n <= 1 then
+    Result := n
+  else
+    Result := Fib(n - 1) + Fib(n - 2);
+end;
+
+var
+  i: Integer;
+  count: Integer;
+
+begin
+  count := 10;
+
+  WriteLn('First ' + IntToStr(count) + ' Fibonacci numbers:');
+  WriteLn('');
+
+  for i := 0 to count - 1 do
+    WriteLn('Fib(' + IntToStr(i) + ') = ' + IntToStr(Fib(i)));
+end.
