@@ -12,6 +12,7 @@ import { initOutputPanels } from './output/output-manager.js';
 import { setupUI } from './ui/layout.js';
 import { initTurtle, installTurtleAPI, exportCanvasPNG, clearTurtle, toggleGrid, setTurtleSpeed } from './turtle/turtle-api.js';
 import { initLessonNavigation, loadLessonFromURL } from './lessons/navigation.js';
+import { shareCode, loadFromURL } from './utils/url-sharing.js';
 
 /**
  * Initialize the application
@@ -90,6 +91,18 @@ async function init() {
     // Setup event listeners
     setupEventListeners();
 
+    // Check for shared code in URL
+    const sharedCode = loadFromURL();
+    if (sharedCode && sharedCode.code) {
+      // Load shared code into editor
+      const monaco = await import('monaco-editor');
+      const editor = monaco.editor.getModels()[0];
+      if (editor) {
+        editor.setValue(sharedCode.code);
+      }
+      console.log('Loaded shared code from URL');
+    }
+
     // Load lesson from URL or default
     await loadLessonFromURL();
 
@@ -151,8 +164,26 @@ function setupEventListeners() {
   // Share button
   const shareBtn = document.getElementById('btn-share');
   if (shareBtn) {
-    shareBtn.addEventListener('click', () => {
-      alert('Code sharing coming soon!');
+    shareBtn.addEventListener('click', async () => {
+      const code = getCode();
+      const currentLesson = getValue('currentLesson');
+
+      const result = await shareCode(code, {
+        lessonId: currentLesson,
+        title: document.querySelector('.lesson-content h2')?.textContent || 'DWScript Code'
+      });
+
+      if (result.success) {
+        updateStatus('✓ ' + result.message);
+        // Show a temporary success message
+        const originalIcon = shareBtn.querySelector('.icon').textContent;
+        shareBtn.querySelector('.icon').textContent = '✓';
+        setTimeout(() => {
+          shareBtn.querySelector('.icon').textContent = originalIcon;
+        }, 2000);
+      } else {
+        updateStatus('✗ Failed to share code');
+      }
     });
   }
 
