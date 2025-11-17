@@ -23,12 +23,18 @@
 - [ ] Set up version control practices
 - [ ] Configure CI/CD for automated builds and deployment
 
-### 1.2 Base Playground Integration
+### 1.2 Base Playground Integration & FFI Setup
 - [ ] Import and adapt go-dws playground code
 - [ ] Integrate Monaco Editor with DWScript language definition
-- [ ] Set up WebAssembly runtime integration
-- [ ] Implement basic code execution pipeline
-- [ ] Add error handling and display
+- [ ] Set up WebAssembly runtime integration (see "FFI Architecture & Integration" section)
+  - [ ] Load `wasm_exec.js` before WASM module
+  - [ ] Initialize Go runtime and WASM module
+  - [ ] Add 100ms delay after `go.run()` for API registration
+  - [ ] Verify `window.DWScript` availability
+- [ ] Create `dwscript-api.js` wrapper for FFI abstraction
+- [ ] Implement basic code execution pipeline using FFI
+- [ ] Add structured error handling (three-tier approach)
+- [ ] Implement real-time streaming output capture
 - [ ] Create responsive layout foundation
 
 ### 1.3 Core Infrastructure
@@ -45,37 +51,67 @@
 
 ## Phase 2: Enhanced Output & Feedback Systems
 
+### 2.0 FFI Integration Refinement
+- [ ] Enhance `dwscript-api.js` wrapper with advanced features
+  - [ ] Implement program caching for repeated execution
+  - [ ] Add execution timeout mechanism
+  - [ ] Create detailed error normalization and mapping
+  - [ ] Implement performance metrics collection
+- [ ] Integrate FFI wrapper with `executor.js`
+  - [ ] Replace mock execution with real WASM calls
+  - [ ] Wire up streaming output callbacks to output panels
+  - [ ] Implement three-tier error handling
+  - [ ] Add execution state management
+- [ ] Test FFI integration thoroughly
+  - [ ] Verify compilation error reporting
+  - [ ] Test runtime error handling
+  - [ ] Validate streaming output timing
+  - [ ] Check resource cleanup and disposal
+
 ### 2.1 Multi-Panel Output System
 - [ ] Design split-pane layout (editor, console, compiler output, graphics)
 - [ ] Implement resizable panels with drag handles
 - [ ] Create tabbed interface for different output types
-- [ ] Add console output capture and display
-- [ ] Implement compiler message parsing and formatting
-- [ ] Create syntax error highlighting in editor
-- [ ] Add runtime error stack traces with line numbers
+- [ ] Connect console panel to FFI streaming output callback
+- [ ] Connect compiler panel to FFI error/warning callbacks
+- [ ] Create syntax error highlighting in editor from FFI line numbers
+- [ ] Add runtime error stack traces with line numbers from FFI
 
 ### 2.2 Turtle Graphics Engine
-- [ ] Design Canvas-based turtle graphics API
-- [ ] Implement core turtle commands:
+- [ ] Design Canvas-based turtle graphics API (see "FFI Architecture" section 7)
+- [ ] Implement `src/turtle/turtle-engine.js` JavaScript graphics engine
+- [ ] Research go-dws external function support for FFI bindings
+- [ ] Create FFI bindings to expose turtle commands to DWScript
+  - [ ] Option A: Use `external` declarations with JavaScript callbacks
+  - [ ] Option B: Extend go-dws with `registerNativeClass` support
+  - [ ] Option C: Inject helper library into every program
+- [ ] Implement core turtle commands in JavaScript:
   - Movement: Forward, Backward, TurnLeft, TurnRight
   - Pen control: PenUp, PenDown, SetPenColor, SetPenWidth
   - Position: Home, SetPosition, GetX, GetY, GetHeading
   - Drawing: Circle, Arc, Dot
   - Canvas: Clear, SetBackground, ShowTurtle, HideTurtle
-- [ ] Add animation support (step-by-step execution)
-- [ ] Implement turtle state visualization
+- [ ] Add animation support (step-by-step execution via output streaming)
+- [ ] Implement turtle state visualization on canvas
 - [ ] Create coordinate grid overlay (optional)
 - [ ] Add export functionality (PNG, SVG)
 - [ ] Implement turtle speed control for animations
+- [ ] Test turtle FFI with sample programs
 
 ### 2.3 Interactive Execution
-- [ ] Background compilation with web workers
 - [ ] Implement "Run" button with execution controls
-- [ ] Add "Step" execution mode for debugging
-- [ ] Create "Stop" functionality for infinite loops
-- [ ] Implement execution time tracking
-- [ ] Add memory usage display
-- [ ] Create execution performance metrics
+- [ ] Implement execution time tracking (from FFI result)
+- [ ] Create execution performance metrics display
+- [ ] Add "Stop" functionality using Web Worker termination (see FFI section 8)
+  - [ ] Create `src/workers/dwscript-worker.js`
+  - [ ] Initialize WASM in Web Worker context
+  - [ ] Implement message passing for code execution
+  - [ ] Add worker termination for cancellation
+- [ ] Investigate "Step" execution mode for debugging
+  - [ ] Research if go-dws supports breakpoints
+  - [ ] Consider implementing via code injection
+- [ ] Add memory usage display (if exposed by WASM)
+- [ ] Implement execution timeout mechanism
 
 **Deliverable**: Rich output environment with visual programming support
 
@@ -432,6 +468,631 @@
 
 ---
 
+## FFI Architecture & Integration with go-dws
+
+### Overview
+
+The Foreign Function Interface (FFI) layer bridges JavaScript frontend code with the Go-compiled WebAssembly DWScript runtime. Understanding this integration is critical for implementing all execution, output, and debugging features.
+
+### 1. go-dws WASM API
+
+#### Global Export: `window.DWScript`
+
+After WASM initialization, go-dws exposes a single constructor:
+
+```javascript
+const dws = new window.DWScript();
+```
+
+Each instance provides an isolated compilation context with independent scope and program cache.
+
+#### API Methods
+
+| Method | Description | Returns | Async |
+|--------|-------------|---------|-------|
+| `init(options)` | Initialize with callbacks | `Promise<void>` | Yes |
+| `compile(source)` | Compile source code | `Program` object | No |
+| `run(program)` | Execute compiled program | `Result` object | No |
+| `eval(source)` | Compile and execute | `Result` object | No |
+| `on(event, callback)` | Register event listeners | `void` | No |
+| `version()` | Get version info | `VersionInfo` | No |
+| `dispose()` | Release resources | `void` | No |
+
+### 2. Interface Contracts
+
+#### Initialization Options
+
+```javascript
+await dws.init({
+  onOutput: (text: string) => void,      // Real-time output callback
+  onError: (error: DWScriptError) => void, // Error callback
+  onInput: () => string,                  // Input request callback (optional)
+  fs?: FileSystemObject                   // Custom filesystem (not implemented)
+});
+```
+
+#### Result Object Structure
+
+```javascript
+{
+  success: boolean,           // Execution success flag
+  output: string,            // Captured program output
+  executionTime: number,     // Execution time in milliseconds
+  error?: {                  // Present if success = false
+    type: string,            // "CompileError" | "RuntimeError" | "ProgramError"
+    message: string,         // Human-readable error message
+    line?: number,           // Line number where error occurred
+    column?: number,         // Column number
+    source?: string,         // Source code context
+    details?: Object         // Additional error context
+  },
+  warnings?: string[]        // Optional compilation warnings
+}
+```
+
+#### Program Object
+
+```javascript
+{
+  id: number,               // Unique program identifier
+  success: boolean          // Compilation success status
+}
+```
+
+### 3. Data Type Mapping
+
+| Go Type | JavaScript Type | Conversion |
+|---------|----------------|------------|
+| `string` | `string` | Direct via `js.ValueOf()` |
+| `int`, `int64`, `float64` | `number` | Direct via `js.ValueOf()` |
+| `bool` | `boolean` | Direct via `js.ValueOf()` |
+| `nil` | `null` | `js.Null()` |
+| `error` | `Error` object | `WrapError()` utility |
+| `struct` | Plain object | Manual property mapping |
+| Go callback | Function | `.Invoke()` method |
+
+### 4. Communication Patterns
+
+#### Real-Time Streaming Output
+
+go-dws calls the `onOutput` callback **immediately** during execution:
+
+```javascript
+await dws.init({
+  onOutput: (text) => {
+    // Called in real-time as PrintLn, Print execute
+    outputElement.textContent += text;
+    outputElement.scrollTop = outputElement.scrollHeight;
+  }
+});
+
+// This will call onOutput 100 times as loop executes
+dws.eval(`
+  for var i := 1 to 100 do
+    PrintLn('Line ' + IntToStr(i));
+`);
+```
+
+**Key Points**:
+- Output is streamed, not buffered
+- Callbacks execute synchronously during program execution
+- Enables progress display for long-running code
+- Critical for interactive user experience
+
+#### Error Handling Strategies
+
+**Three-tier error handling**:
+
+1. **Exceptions** (initialization, invalid arguments)
+```javascript
+try {
+  const dws = new DWScript();
+  await dws.init(options);
+} catch (error) {
+  // Handle initialization failure
+}
+```
+
+2. **Result Objects** (compilation/execution failures)
+```javascript
+const result = dws.eval(code);
+if (!result.success) {
+  // result.error contains structured error info
+  highlightLine(result.error.line);
+  showMessage(result.error.message);
+}
+```
+
+3. **Error Callbacks** (runtime exceptions)
+```javascript
+await dws.init({
+  onError: (error) => {
+    if (error.type === 'RuntimeError') {
+      displayStackTrace(error);
+    }
+  }
+});
+```
+
+#### Separate Compilation and Execution
+
+Optimize repeated execution:
+
+```javascript
+// Compile once
+const program = dws.compile(sourceCode);
+
+if (program.success) {
+  // Execute multiple times with different inputs
+  for (let i = 0; i < 10; i++) {
+    const result = dws.run(program);
+    console.log(result.output);
+  }
+}
+```
+
+### 5. Initialization Sequence
+
+**Critical timing considerations**:
+
+```javascript
+// 1. Load Go WASM runtime (before WASM module)
+<script src="/wasm/wasm_exec.js"></script>
+
+// 2. Initialize Go runtime
+const go = new Go();
+
+// 3. Fetch and instantiate WASM module
+const response = await fetch('/wasm/dwscript.wasm');
+const buffer = await response.arrayBuffer();
+const result = await WebAssembly.instantiate(buffer, go.importObject);
+
+// 4. Run Go program (BLOCKS until exports are registered)
+go.run(result.instance);
+
+// 5. IMPORTANT: Wait for API registration (~100ms)
+//    The go.run() call above is async but doesn't wait for full init
+await new Promise(resolve => setTimeout(resolve, 100));
+
+// 6. Verify global export exists
+if (!window.DWScript) {
+  throw new Error('DWScript API not available after initialization');
+}
+
+// 7. Create instance and initialize
+const dws = new DWScript();
+await dws.init({
+  onOutput: handleOutput,
+  onError: handleError
+});
+
+// 8. Ready to execute code
+const result = dws.eval(code);
+```
+
+### 6. FFI Integration Architecture
+
+#### Proposed Layer Structure
+
+```
+┌─────────────────────────────────────┐
+│   UI Layer (Monaco, Output Panels)  │
+└───────────────┬─────────────────────┘
+                │
+┌───────────────▼─────────────────────┐
+│   Executor (executor.js)            │
+│   - Manages execution lifecycle     │
+│   - Handles UI updates              │
+│   - Coordinates output display      │
+└───────────────┬─────────────────────┘
+                │
+┌───────────────▼─────────────────────┐
+│   DWScript API Wrapper              │
+│   (dwscript-api.js - NEW)           │
+│   - Wraps window.DWScript           │
+│   - Normalizes result format        │
+│   - Provides error mapping          │
+│   - Manages instance lifecycle      │
+└───────────────┬─────────────────────┘
+                │
+┌───────────────▼─────────────────────┐
+│   WASM Loader (wasm-loader.js)      │
+│   - Loads wasm_exec.js              │
+│   - Initializes WebAssembly         │
+│   - Handles timing and readiness    │
+└───────────────┬─────────────────────┘
+                │
+┌───────────────▼─────────────────────┐
+│   go-dws WASM Module                │
+│   (dwscript.wasm)                   │
+│   - Exports window.DWScript         │
+│   - Implements DWScript runtime     │
+│   - Compiles and executes code      │
+└─────────────────────────────────────┘
+```
+
+#### New File: `src/core/dwscript-api.js`
+
+Abstraction layer over raw WASM API:
+
+```javascript
+/**
+ * DWScript WASM API Wrapper
+ * Provides normalized interface to go-dws WebAssembly module
+ */
+export class DWScriptAPI {
+  constructor() {
+    this.instance = null;
+    this.initialized = false;
+    this.programs = new Map(); // Cache compiled programs
+  }
+
+  async init(handlers = {}) {
+    if (!window.DWScript) {
+      throw new Error('DWScript WASM module not loaded');
+    }
+
+    this.instance = new window.DWScript();
+
+    await this.instance.init({
+      onOutput: handlers.onOutput || console.log,
+      onError: handlers.onError || console.error,
+      onInput: handlers.onInput || (() => prompt('Input:'))
+    });
+
+    this.initialized = true;
+    const version = this.instance.version();
+    console.log(`DWScript ${version.version} initialized`);
+
+    return version;
+  }
+
+  /**
+   * Compile source code
+   * @param {string} source - DWScript source code
+   * @param {string} cacheKey - Optional cache key for program
+   * @returns {Object} Normalized result
+   */
+  compile(source, cacheKey = null) {
+    this.assertInitialized();
+
+    try {
+      const program = this.instance.compile(source);
+
+      if (program.success && cacheKey) {
+        this.programs.set(cacheKey, program);
+      }
+
+      return {
+        success: program.success,
+        programId: program.id
+      };
+    } catch (error) {
+      return this.normalizeError(error);
+    }
+  }
+
+  /**
+   * Execute source code (compile + run)
+   * @param {string} source - DWScript source code
+   * @returns {Object} Normalized result
+   */
+  eval(source) {
+    this.assertInitialized();
+
+    try {
+      const result = this.instance.eval(source);
+      return this.normalizeResult(result);
+    } catch (error) {
+      return this.normalizeError(error);
+    }
+  }
+
+  /**
+   * Run a previously compiled program
+   * @param {number|string} programRef - Program ID or cache key
+   * @returns {Object} Normalized result
+   */
+  run(programRef) {
+    this.assertInitialized();
+
+    try {
+      const program = typeof programRef === 'string'
+        ? this.programs.get(programRef)
+        : { id: programRef };
+
+      if (!program) {
+        throw new Error(`Program not found: ${programRef}`);
+      }
+
+      const result = this.instance.run(program);
+      return this.normalizeResult(result);
+    } catch (error) {
+      return this.normalizeError(error);
+    }
+  }
+
+  /**
+   * Normalize result format for consistency
+   */
+  normalizeResult(result) {
+    return {
+      success: result.success,
+      output: result.output || '',
+      errors: result.error ? [this.normalizeErrorObject(result.error)] : [],
+      warnings: result.warnings || [],
+      executionTime: result.executionTime || 0
+    };
+  }
+
+  /**
+   * Normalize error format
+   */
+  normalizeError(error) {
+    return {
+      success: false,
+      output: '',
+      errors: [this.normalizeErrorObject(error)],
+      warnings: [],
+      executionTime: 0
+    };
+  }
+
+  /**
+   * Normalize error object structure
+   */
+  normalizeErrorObject(error) {
+    return {
+      type: error.type || 'UnknownError',
+      message: error.message || String(error),
+      line: error.line || 0,
+      column: error.column || 0,
+      source: error.source || null
+    };
+  }
+
+  assertInitialized() {
+    if (!this.initialized) {
+      throw new Error('DWScript API not initialized. Call init() first.');
+    }
+  }
+
+  dispose() {
+    if (this.instance) {
+      this.instance.dispose();
+      this.instance = null;
+      this.initialized = false;
+      this.programs.clear();
+    }
+  }
+}
+
+// Singleton instance for application-wide use
+export const dwsAPI = new DWScriptAPI();
+```
+
+### 7. Turtle Graphics FFI Extension
+
+#### Challenge: go-dws has NO native turtle graphics
+
+**Solution**: Implement turtle graphics entirely in JavaScript, callable from DWScript via FFI.
+
+#### Architecture
+
+```javascript
+// DWScript code
+var turtle: TTurtle;
+turtle := TTurtle.Create;
+turtle.Forward(100);
+turtle.TurnLeft(90);
+turtle.PenColor := clRed;
+```
+
+Must map to:
+
+```javascript
+// JavaScript implementation
+class TurtleGraphics {
+  forward(distance) { /* Canvas operations */ }
+  turnLeft(degrees) { /* ... */ }
+  setPenColor(color) { /* ... */ }
+}
+```
+
+#### FFI Registration Pattern
+
+Register JavaScript functions as DWScript native functions:
+
+```javascript
+// After WASM init, before code execution
+dws.registerNativeClass('TTurtle', {
+  methods: {
+    'Create': () => new TurtleGraphics(),
+    'Forward': (instance, distance) => instance.forward(distance),
+    'TurnLeft': (instance, degrees) => instance.turnLeft(degrees),
+    // ... more methods
+  },
+  properties: {
+    'PenColor': {
+      get: (instance) => instance.penColor,
+      set: (instance, value) => instance.setPenColor(value)
+    }
+  }
+});
+```
+
+**Note**: The exact API for `registerNativeClass` needs to be verified/implemented in go-dws. This may require:
+- Extending go-dws with FFI registration support
+- OR using a different integration approach (e.g., injecting helper functions)
+- OR implementing turtle graphics in Go and exposing via WASM
+
+#### Alternative: Script-Level Integration
+
+If native class registration is not available, use helper functions:
+
+```javascript
+// JavaScript side
+window.TurtleCommands = {
+  forward: (distance) => turtle.forward(distance),
+  turnLeft: (degrees) => turtle.turnLeft(degrees),
+  // ...
+};
+```
+
+```pascal
+// DWScript side (injected into every program)
+procedure TurtleForward(distance: Float); external 'TurtleCommands.forward';
+procedure TurtleTurnLeft(degrees: Float); external 'TurtleCommands.turnLeft';
+
+// User code
+TurtleForward(100);
+TurtleTurnLeft(90);
+```
+
+### 8. Known Limitations and Workarounds
+
+#### No Execution Cancellation
+
+**Problem**: go-dws WASM API does not expose execution cancellation.
+
+**Workarounds**:
+1. **Web Workers**: Run execution in web worker, terminate worker to stop
+2. **Timeouts**: Implement timeout in Go WASM layer
+3. **Cooperative**: Inject checkpoint functions in long-running code
+
+#### Blocking Execution
+
+**Problem**: Execution blocks main thread, freezing UI.
+
+**Solution**: Use Web Workers:
+
+```javascript
+// worker.js
+importScripts('/wasm/wasm_exec.js');
+
+let dws = null;
+
+self.onmessage = async (e) => {
+  if (e.data.type === 'init') {
+    // Initialize WASM in worker
+    const go = new Go();
+    const result = await WebAssembly.instantiate(e.data.wasmBuffer, go.importObject);
+    go.run(result.instance);
+    dws = new DWScript();
+    await dws.init({
+      onOutput: (text) => self.postMessage({ type: 'output', text })
+    });
+    self.postMessage({ type: 'ready' });
+  } else if (e.data.type === 'eval') {
+    const result = dws.eval(e.data.code);
+    self.postMessage({ type: 'result', result });
+  }
+};
+```
+
+### 9. Build and Deployment Requirements
+
+#### Building go-dws WASM
+
+```bash
+# Clone go-dws
+git clone https://github.com/cwbudde/go-dws.git
+cd go-dws
+
+# Build WASM module (requires Go 1.21+, just)
+just wasm
+
+# Optimize (requires wasm-opt from binaryen)
+just wasm-opt
+
+# Output files
+# - build/wasm/dist/dwscript.wasm (2.5-3 MB, 1-1.5 MB gzipped)
+# - build/wasm/wasm_exec.js (Go WASM runtime)
+```
+
+#### Integration into go-dws-primer
+
+```bash
+# Copy built files
+cp go-dws/build/wasm/dist/dwscript.wasm go-dws-primer/wasm/
+cp go-dws/build/wasm/wasm_exec.js go-dws-primer/wasm/
+
+# Serve with proper MIME types
+# Vite handles this automatically
+npm run dev
+```
+
+#### Serving Requirements
+
+- **HTTP/HTTPS required**: WASM won't load from `file://` protocol
+- **MIME type**: `application/wasm` for `.wasm` files
+- **Compression**: Enable gzip/brotli for 50-60% size reduction
+- **Caching**: Set long cache times (1 year) with versioned filenames
+- **CORS**: Must be same-origin or properly configured
+
+### 10. Integration Checklist
+
+Phase 1 (Foundation):
+- [x] Load `wasm_exec.js` in `public/index.html`
+- [x] Implement basic WASM loading in `wasm-loader.js`
+- [x] Create mock execution fallback
+- [ ] Add 100ms delay after `go.run()` for API registration
+- [ ] Verify `window.DWScript` availability before use
+
+Phase 2 (FFI Integration):
+- [ ] Create `src/core/dwscript-api.js` wrapper class
+- [ ] Implement streaming output capture
+- [ ] Add structured error handling
+- [ ] Integrate with `executor.js`
+- [ ] Add execution timing display
+- [ ] Implement program caching for repeated execution
+
+Phase 3 (Turtle Graphics):
+- [ ] Research go-dws native function registration
+- [ ] Implement `src/turtle/turtle-engine.js`
+- [ ] Create FFI bindings for turtle commands
+- [ ] Test integration with sample turtle programs
+
+Phase 4 (Advanced):
+- [ ] Implement Web Worker execution for non-blocking
+- [ ] Add execution timeout mechanism
+- [ ] Implement worker-based cancellation
+- [ ] Add memory usage monitoring (if exposed by WASM)
+
+### 11. Testing Strategy
+
+#### Unit Tests
+```javascript
+describe('DWScriptAPI', () => {
+  it('should initialize successfully', async () => {
+    const api = new DWScriptAPI();
+    await api.init();
+    expect(api.initialized).toBe(true);
+  });
+
+  it('should execute simple code', () => {
+    const result = api.eval('PrintLn("Hello");');
+    expect(result.success).toBe(true);
+    expect(result.output).toContain('Hello');
+  });
+
+  it('should handle compilation errors', () => {
+    const result = api.eval('invalid syntax');
+    expect(result.success).toBe(false);
+    expect(result.errors.length).toBeGreaterThan(0);
+  });
+});
+```
+
+#### Integration Tests
+- Verify WASM loads correctly
+- Test streaming output callback timing
+- Verify error line numbers match source
+- Test program caching and reuse
+- Verify cleanup/dispose releases resources
+
+---
+
 ## File Structure
 
 ```
@@ -445,9 +1106,10 @@ go-dws-primer/
 ├── src/
 │   ├── core/
 │   │   ├── wasm-loader.js      # WebAssembly initialization
-│   │   ├── executor.js          # Code execution management
-│   │   ├── state-manager.js     # Application state
-│   │   └── event-bus.js         # Event system
+│   │   ├── dwscript-api.js     # DWScript WASM API wrapper (FFI layer)
+│   │   ├── executor.js         # Code execution management
+│   │   ├── state-manager.js    # Application state
+│   │   └── event-bus.js        # Event system
 │   ├── editor/
 │   │   ├── monaco-setup.js      # Monaco Editor configuration
 │   │   ├── dwscript-lang.js     # Language definition
@@ -482,6 +1144,8 @@ go-dws-primer/
 │   │   ├── url-sharing.js       # URL encoding/decoding
 │   │   ├── themes.js            # Theme management
 │   │   └── helpers.js           # Utility functions
+│   ├── workers/
+│   │   └── dwscript-worker.js   # Web Worker for non-blocking execution
 │   └── main.js                  # Application entry point
 ├── content/
 │   ├── lessons/
