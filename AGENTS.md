@@ -4,7 +4,7 @@
 - `src/` holds the application logic: `core/` for WASM + state, `editor/` for Monaco integration, `turtle/` for graphics, `lessons/` for content flow, `ui/` for layout, and `utils/` for shared helpers.
 - `public/` contains static assets and the Vite entry HTML, while `styles/` stores global CSS.
 - Learning materials and sample programs live in `content/`; built WASM artifacts (`dwscript.wasm`, `wasm_exec.js`) belong in `wasm/`.
-- Keep tests either in `tests/` or as colocated `*.test.ts` files for faster iteration.
+- Keep tests in `tests/` or colocated `*.test.ts` files for faster iteration.
 
 ## Build, Test, and Development Commands
 - `npm run dev` — launches the Vite dev server on `localhost:3000` with hot reloading.
@@ -32,5 +32,5 @@
 
 ## WASM & Configuration Tips
 - Build DWScript support by running `just wasm` inside the `go-dws` repo, then copy `dwscript.wasm` and `wasm_exec.js` into `wasm/`.
-- Version control excludes large binaries, so re-run the build whenever Go code changes.
-- When WASM is absent, the app falls back to mock mode; use this for quick UI iterations but not for release testing.
+- Rebuild whenever Go code changes because large binaries stay out of git.
+- Mock mode (no WASM) is fine for UI tweaks but never for release testing.
