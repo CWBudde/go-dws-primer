@@ -32,8 +32,17 @@ export async function initWASM() {
 
     wasmInstance = result.instance;
 
-    // Run the Go program
+    // Run the Go program (this is async but doesn't wait for full initialization)
     go.run(wasmInstance);
+
+    // IMPORTANT: Wait for API registration (~100ms)
+    // The go.run() call above is async but doesn't wait for full init
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Verify global export exists
+    if (!window.DWScript) {
+      throw new Error('DWScript API not available after initialization');
+    }
 
     wasmReady = true;
     console.log('DWScript WASM runtime initialized successfully');
