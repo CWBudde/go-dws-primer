@@ -3,6 +3,8 @@
  * Handles displaying output in console, compiler, and graphics panels
  */
 
+import { parseCompilerMessage, highlightErrorInEditor } from '../core/executor.js';
+
 let currentTab = 'console';
 
 /**
@@ -96,16 +98,41 @@ export function appendCompilerOutput(message, type = 'info') {
   const compiler = document.querySelector('#output-compiler .output-content');
   if (compiler) {
     const line = document.createElement('div');
-    line.textContent = message;
     line.className = `compiler-message compiler-${type}`;
+
+    // Parse message to extract line numbers
+    const parsed = parseCompilerMessage(message);
+
+    if (parsed.line !== null) {
+      // Create clickable error message
+      const lineSpan = document.createElement('span');
+      lineSpan.className = 'error-line-number';
+      lineSpan.textContent = `Line ${parsed.line}${parsed.column ? `:${parsed.column}` : ''}: `;
+      lineSpan.style.cursor = 'pointer';
+      lineSpan.style.textDecoration = 'underline';
+      lineSpan.title = 'Click to jump to line';
+
+      lineSpan.addEventListener('click', () => {
+        highlightErrorInEditor(parsed.line, parsed.column);
+      });
+
+      line.appendChild(lineSpan);
+
+      const msgSpan = document.createElement('span');
+      msgSpan.textContent = parsed.message;
+      line.appendChild(msgSpan);
+    } else {
+      line.textContent = message;
+    }
+
     compiler.appendChild(line);
 
     // Auto-scroll to bottom
     compiler.scrollTop = compiler.scrollHeight;
   }
 
-  // Show compiler tab if there are errors
-  if (type === 'error') {
+  // Show compiler tab if there are errors or warnings
+  if (type === 'error' || type === 'warning') {
     showOutput('compiler');
   }
 }

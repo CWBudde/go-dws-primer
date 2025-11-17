@@ -505,6 +505,74 @@ body {
   background: var(--border-color);
 }
 
+/* Monaco Editor Error Highlighting */
+.error-line-highlight {
+  background: rgba(220, 53, 69, 0.1);
+  border-left: 3px solid var(--error);
+  animation: pulse-error 0.5s ease-in-out;
+}
+
+[data-theme="dark"] .error-line-highlight {
+  background: rgba(220, 53, 69, 0.15);
+}
+
+.error-line-glyph {
+  background: var(--error);
+  width: 3px !important;
+}
+
+@keyframes pulse-error {
+  0%, 100% {
+    background: rgba(220, 53, 69, 0.1);
+  }
+  50% {
+    background: rgba(220, 53, 69, 0.2);
+  }
+}
+
+/* Compiler Output Enhancements */
+.error-line-number {
+  font-weight: 600;
+  color: var(--error);
+}
+
+.error-line-number:hover {
+  color: var(--accent-hover);
+}
+
+/* Turtle Graphics Canvas */
+#turtle-canvas {
+  display: block;
+  width: 100%;
+  height: calc(100% - 50px);
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.graphics-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  height: 50px;
+}
+
+.graphics-controls label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.graphics-controls input[type="range"] {
+  width: 100px;
+  accent-color: var(--accent-primary);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .workspace {
