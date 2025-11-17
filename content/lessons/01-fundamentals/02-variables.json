@@ -1,0 +1,78 @@
+{
+  "id": "variables-and-types",
+  "title": "Variables and Data Types",
+  "category": "fundamentals",
+  "difficulty": "beginner",
+  "order": 2,
+  "description": "Learn how to store and manipulate data using variables",
+  "estimatedTime": 15,
+  "tags": ["variables", "types", "integer", "string", "beginner"],
+  "content": {
+    "introduction": "Variables are containers for storing data. Think of them as labeled boxes where you can put different types of information.\n\nIn this lesson, you'll learn how to create variables, assign values to them, and use them in your programs.\n\n### What You'll Learn\n- Declaring variables\n- Basic data types (Integer, String, Real, Boolean)\n- Assigning values to variables\n- Using variables in output",
+    "concepts": [
+      {
+        "title": "Variable Declaration",
+        "description": "Variables must be declared in the 'var' section before the 'begin' block, specifying their name and type"
+      },
+      {
+        "title": "Data Types",
+        "description": "DWScript has several basic types: Integer (whole numbers), Real (decimals), String (text), Boolean (true/false)"
+      },
+      {
+        "title": "Assignment",
+        "description": "Use the := operator to assign a value to a variable"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Integer Variables",
+        "description": "Store whole numbers using the Integer type",
+        "code": "program IntegerExample;\n\nvar\n  age: Integer;\n  year: Integer;\n\nbegin\n  age := 25;\n  year := 2024;\n  \n  WriteLn('Age: ', age);\n  WriteLn('Year: ', year);\nend.",
+        "expectedOutput": "Age: 25\nYear: 2024"
+      },
+      {
+        "title": "String Variables",
+        "description": "Store text using the String type",
+        "code": "program StringExample;\n\nvar\n  name: String;\n  greeting: String;\n\nbegin\n  name := 'Alice';\n  greeting := 'Hello, ' + name + '!';\n  \n  WriteLn(greeting);\nend.",
+        "expectedOutput": "Hello, Alice!"
+      },
+      {
+        "title": "Multiple Types",
+        "description": "Use different types of variables together",
+        "code": "program MultipleTypes;\n\nvar\n  name: String;\n  age: Integer;\n  height: Real;\n  isStudent: Boolean;\n\nbegin\n  name := 'Bob';\n  age := 20;\n  height := 1.75;\n  isStudent := True;\n  \n  WriteLn('Name: ', name);\n  WriteLn('Age: ', age);\n  WriteLn('Height: ', height, 'm');\n  WriteLn('Student: ', isStudent);\nend.",
+        "expectedOutput": "Name: Bob\nAge: 20\nHeight: 1.75m\nStudent: True"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Personal Profile",
+        "description": "Create a program that stores and displays your personal information using variables: name, age, favorite color, and favorite number.",
+        "starterCode": "program PersonalProfile;\n\nvar\n  // Declare your variables here\n\nbegin\n  // Assign values and display them\n  \nend.",
+        "solution": "program PersonalProfile;\n\nvar\n  name: String;\n  age: Integer;\n  favoriteColor: String;\n  favoriteNumber: Integer;\n\nbegin\n  name := 'Sarah';\n  age := 22;\n  favoriteColor := 'Blue';\n  favoriteNumber := 7;\n  \n  WriteLn('Name: ', name);\n  WriteLn('Age: ', age);\n  WriteLn('Favorite Color: ', favoriteColor);\n  WriteLn('Favorite Number: ', favoriteNumber);\nend.",
+        "hints": [
+          "Declare each variable with its appropriate type in the 'var' section",
+          "Use String for text values",
+          "Use Integer for whole numbers",
+          "Assign values using :=",
+          "Use WriteLn with the variable name (no quotes)"
+        ]
+      },
+      {
+        "title": "Simple Calculator",
+        "description": "Create variables for two numbers and calculate their sum, displaying the result.",
+        "starterCode": "program SimpleCalculator;\n\nvar\n  // Declare your variables here\n\nbegin\n  // Perform calculation and display\n  \nend.",
+        "solution": "program SimpleCalculator;\n\nvar\n  num1, num2: Integer;\n  sum: Integer;\n\nbegin\n  num1 := 15;\n  num2 := 27;\n  sum := num1 + num2;\n  \n  WriteLn(num1, ' + ', num2, ' = ', sum);\nend.",
+        "hints": [
+          "You need at least 3 integer variables",
+          "You can declare multiple variables of the same type on one line",
+          "Use the + operator to add numbers",
+          "Store the result in a variable before displaying it"
+        ]
+      }
+    ],
+    "summary": "Great work! You've learned:\n\n- How to declare variables in the `var` section\n- Basic data types: Integer, String, Real, Boolean\n- Assigning values using `:=`\n- Using variables in output with `WriteLn`\n- Combining variables and text\n\nVariables are fundamental to programming - they allow your programs to store and manipulate data!",
+    "nextSteps": "Next, you'll learn about **operators and expressions** to perform calculations and manipulate your variables in more complex ways."
+  },
+  "prerequisites": ["hello-world"],
+  "relatedLessons": ["hello-world", "operators"]
+}

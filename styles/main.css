@@ -1,3 +1,6 @@
+/* Import Lesson Styles */
+@import './lessons.css';
+
 /* CSS Variables for Theming */
 :root {
   /* Light Theme Colors */
