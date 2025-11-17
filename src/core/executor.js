@@ -5,9 +5,12 @@
 
 import { executeDWScript, isWASMReady } from './wasm-loader.js';
 import { clearOutput, appendConsoleOutput, appendCompilerOutput, showOutput } from '../output/output-manager.js';
+import { clearTurtle } from '../turtle/turtle-api.js';
 
 let isExecuting = false;
 let executionStartTime = 0;
+let executionTimer = null;
+let currentExecutionAbortController = null;
 
 /**
  * Execute the current code
@@ -28,12 +31,22 @@ export async function executeCode(code) {
   try {
     isExecuting = true;
     executionStartTime = performance.now();
+    currentExecutionAbortController = new AbortController();
 
     // Update UI
     updateExecutionUI(true);
     clearOutput();
 
+    // Clear turtle canvas if graphics tab is visible
+    const graphicsTab = document.getElementById('output-graphics');
+    if (graphicsTab) {
+      clearTurtle();
+    }
+
     appendCompilerOutput('Compiling and executing...', 'info');
+
+    // Start execution timer
+    startExecutionTimer();
 
     // Execute the code
     const result = await executeDWScript(code);
@@ -83,6 +96,8 @@ export async function executeCode(code) {
     return { success: false, error: error.message };
   } finally {
     isExecuting = false;
+    currentExecutionAbortController = null;
+    stopExecutionTimer();
     updateExecutionUI(false);
   }
 }
@@ -92,10 +107,17 @@ export async function executeCode(code) {
  */
 export function stopExecution() {
   if (isExecuting) {
-    // TODO: Implement actual execution stopping when WASM supports it
     console.log('Stop requested');
+
+    // Abort execution if possible
+    if (currentExecutionAbortController) {
+      currentExecutionAbortController.abort();
+    }
+
+    appendCompilerOutput('Execution stopped by user', 'warning');
     updateStatus('Execution stopped');
     isExecuting = false;
+    stopExecutionTimer();
     updateExecutionUI(false);
   }
 }
@@ -148,6 +170,79 @@ function updateStatus(message) {
 function updateExecutionTime(timeMs) {
   const timeEl = document.getElementById('execution-time');
   if (timeEl) {
-    timeEl.textContent = `⏱️ ${timeMs.toFixed(2)}ms`;
+    if (timeMs < 1000) {
+      timeEl.textContent = `⏱️ ${timeMs.toFixed(2)}ms`;
+    } else {
+      timeEl.textContent = `⏱️ ${(timeMs / 1000).toFixed(2)}s`;
+    }
   }
+}
+
+/**
+ * Start the execution timer (updates live during execution)
+ */
+function startExecutionTimer() {
+  stopExecutionTimer();
+  executionTimer = setInterval(() => {
+    const elapsed = performance.now() - executionStartTime;
+    updateExecutionTime(elapsed);
+  }, 100);
+}
+
+/**
+ * Stop the execution timer
+ */
+function stopExecutionTimer() {
+  if (executionTimer) {
+    clearInterval(executionTimer);
+    executionTimer = null;
+  }
+}
+
+/**
+ * Parse compiler error/warning messages and extract line numbers
+ * @param {string} message - Error message
+ * @returns {Object} - Parsed error with line, column, and message
+ */
+export function parseCompilerMessage(message) {
+  // Common patterns:
+  // "Line 5: Error message"
+  // "[5:10] Error message"
+  // "file.pas(5,10) Error message"
+
+  const patterns = [
+    /Line\s+(\d+)(?::|\s+Col(?:umn)?\s+(\d+))?:\s*(.+)/i,
+    /\[(\d+)(?::(\d+))?\]\s*(.+)/,
+    /\((\d+)(?:,(\d+))?\)\s*(.+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = message.match(pattern);
+    if (match) {
+      return {
+        line: parseInt(match[1]),
+        column: match[2] ? parseInt(match[2]) : null,
+        message: match[3] || message,
+      };
+    }
+  }
+
+  return {
+    line: null,
+    column: null,
+    message: message,
+  };
+}
+
+/**
+ * Highlight error in editor
+ * @param {number} line - Line number
+ * @param {number} column - Column number (optional)
+ */
+export function highlightErrorInEditor(line, column = null) {
+  // This will be called from output-manager when error messages are clicked
+  const event = new CustomEvent('highlightError', {
+    detail: { line, column }
+  });
+  window.dispatchEvent(event);
 }

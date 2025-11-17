@@ -77,6 +77,12 @@ export function initMonacoEditor(container, options = {}) {
     monaco.editor.setTheme(theme);
   });
 
+  // Listen for error highlighting requests
+  window.addEventListener('highlightError', (e) => {
+    const { line, column } = e.detail;
+    highlightLine(line, column);
+  });
+
   return editor;
 }
 
@@ -171,6 +177,51 @@ export function clearErrorMarkers() {
 }
 
 /**
+ * Highlight and jump to a specific line in the editor
+ * @param {number} line - Line number to highlight
+ * @param {number} column - Column number (optional)
+ */
+export function highlightLine(line, column = 1) {
+  if (!editor) return;
+
+  // Move cursor to the line
+  editor.setPosition({ lineNumber: line, column: column });
+
+  // Reveal the line in the center
+  editor.revealLineInCenter(line);
+
+  // Select the entire line
+  const model = editor.getModel();
+  const lineLength = model.getLineLength(line);
+  editor.setSelection({
+    startLineNumber: line,
+    startColumn: 1,
+    endLineNumber: line,
+    endColumn: lineLength + 1
+  });
+
+  // Focus the editor
+  editor.focus();
+
+  // Add a temporary highlight decoration
+  const decorations = editor.deltaDecorations([], [
+    {
+      range: new monaco.Range(line, 1, line, lineLength + 1),
+      options: {
+        isWholeLine: true,
+        className: 'error-line-highlight',
+        glyphMarginClassName: 'error-line-glyph'
+      }
+    }
+  ]);
+
+  // Remove highlight after 2 seconds
+  setTimeout(() => {
+    editor.deltaDecorations(decorations, []);
+  }, 2000);
+}
+
+/**
  * Setup keyboard shortcuts
  */
 export function setupKeyboardShortcuts() {
@@ -178,6 +229,11 @@ export function setupKeyboardShortcuts() {
 
   // Ctrl+Enter / Cmd+Enter to run code
   editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+    document.getElementById('btn-run')?.click();
+  });
+
+  // F5 to run code
+  editor.addCommand(monaco.KeyCode.F5, () => {
     document.getElementById('btn-run')?.click();
   });
 }

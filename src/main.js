@@ -10,6 +10,8 @@ import { initState, toggleTheme, getValue } from './core/state-manager.js';
 import { executeCode, stopExecution } from './core/executor.js';
 import { initOutputPanels } from './output/output-manager.js';
 import { setupUI } from './ui/layout.js';
+import { initTurtle, installTurtleAPI, exportCanvasPNG, clearTurtle, toggleGrid, setTurtleSpeed } from './turtle/turtle-api.js';
+import { initLessonNavigation, loadLessonFromURL } from './lessons/navigation.js';
 
 /**
  * Initialize the application
@@ -26,6 +28,18 @@ async function init() {
 
     // Initialize output panels
     initOutputPanels();
+
+    // Initialize Turtle Graphics
+    const canvas = document.getElementById('turtle-canvas');
+    if (canvas) {
+      initTurtle(canvas);
+      installTurtleAPI();
+      console.log('Turtle Graphics initialized');
+    }
+
+    // Initialize Lesson System
+    await initLessonNavigation();
+    console.log('Lesson system initialized');
 
     // Initialize Monaco Editor
     const editorContainer = document.getElementById('editor-container');
@@ -75,6 +89,9 @@ async function init() {
 
     // Setup event listeners
     setupEventListeners();
+
+    // Load lesson from URL or default
+    await loadLessonFromURL();
 
     console.log('DWScript Primer initialized successfully');
   } catch (error) {
@@ -157,26 +174,25 @@ function setupEventListeners() {
   const clearCanvas = document.getElementById('btn-clear-canvas');
   if (clearCanvas) {
     clearCanvas.addEventListener('click', () => {
-      const canvas = document.getElementById('turtle-canvas');
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      clearTurtle();
+      updateStatus('Canvas cleared');
     });
   }
 
   const exportCanvas = document.getElementById('btn-export-canvas');
   if (exportCanvas) {
     exportCanvas.addEventListener('click', () => {
-      const canvas = document.getElementById('turtle-canvas');
-      canvas.toBlob(blob => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'turtle-graphics.png';
-        a.click();
-        URL.revokeObjectURL(url);
-      });
+      exportCanvasPNG();
+      updateStatus('Canvas exported');
+    });
+  }
+
+  // Turtle speed control
+  const speedControl = document.getElementById('turtle-speed');
+  if (speedControl) {
+    speedControl.addEventListener('input', (e) => {
+      const speed = parseInt(e.target.value);
+      setTurtleSpeed(speed);
     });
   }
 }

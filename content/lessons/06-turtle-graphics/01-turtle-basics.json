@@ -1,0 +1,77 @@
+{
+  "id": "turtle-basics",
+  "title": "Turtle Graphics Basics",
+  "category": "turtle-graphics",
+  "difficulty": "beginner",
+  "order": 1,
+  "description": "Learn to draw with turtle graphics - create shapes and patterns using code",
+  "estimatedTime": 20,
+  "tags": ["turtle", "graphics", "drawing", "beginner"],
+  "content": {
+    "introduction": "Turtle Graphics is a fun way to learn programming by drawing! Imagine a turtle with a pen that can move around the screen, leaving a trail.\n\nYou control the turtle with simple commands like moving forward, turning, and lifting the pen up or down.\n\n### What You'll Learn\n- Basic turtle movement commands\n- Drawing simple shapes\n- Controlling the pen\n- Using colors",
+    "concepts": [
+      {
+        "title": "Movement",
+        "description": "Use Forward() and Backward() to move the turtle, TurnLeft() and TurnRight() to change direction"
+      },
+      {
+        "title": "Pen Control",
+        "description": "PenUp() lifts the pen (no drawing), PenDown() puts it down (drawing resumes)"
+      },
+      {
+        "title": "Turtle Position",
+        "description": "The turtle starts at the center (0, 0) facing north (up). Angles are in degrees."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Simple Line",
+        "description": "Draw a simple line by moving the turtle forward",
+        "code": "program SimpleLine;\n\nbegin\n  SetPenColor('#0066cc');\n  SetPenWidth(2);\n  \n  Forward(100);\n  \n  WriteLn('Drew a line!');\nend.",
+        "editable": true
+      },
+      {
+        "title": "Square",
+        "description": "Draw a square using a loop and turning 90 degrees",
+        "code": "program DrawSquare;\n\nvar\n  i: Integer;\n\nbegin\n  SetPenColor('#00AA00');\n  SetPenWidth(2);\n  \n  for i := 1 to 4 do\n  begin\n    Forward(100);\n    TurnRight(90);\n  end;\n  \n  WriteLn('Square drawn!');\nend.",
+        "editable": true
+      },
+      {
+        "title": "Triangle",
+        "description": "Draw a triangle by turning 120 degrees",
+        "code": "program DrawTriangle;\n\nvar\n  i: Integer;\n\nbegin\n  SetPenColor('#FF6600');\n  SetPenWidth(3);\n  \n  for i := 1 to 3 do\n  begin\n    Forward(120);\n    TurnRight(120);\n  end;\n  \n  WriteLn('Triangle complete!');\nend.",
+        "editable": true
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Draw a Rectangle",
+        "description": "Draw a rectangle with width 150 and height 80. Remember: a rectangle has two long sides and two short sides!",
+        "starterCode": "program DrawRectangle;\n\nvar\n  i: Integer;\n\nbegin\n  SetPenColor('#9900CC');\n  SetPenWidth(2);\n  \n  // Draw the rectangle here\n  \nend.",
+        "solution": "program DrawRectangle;\n\nvar\n  i: Integer;\n\nbegin\n  SetPenColor('#9900CC');\n  SetPenWidth(2);\n  \n  for i := 1 to 2 do\n  begin\n    Forward(150);  // Long side\n    TurnRight(90);\n    Forward(80);   // Short side\n    TurnRight(90);\n  end;\n  \n  WriteLn('Rectangle drawn!');\nend.",
+        "hints": [
+          "A rectangle has 4 sides: 2 long and 2 short",
+          "Use a loop that runs 2 times",
+          "In each loop, draw one long side and one short side",
+          "Turn 90 degrees after each side"
+        ]
+      },
+      {
+        "title": "Pentagon",
+        "description": "Draw a regular pentagon (5-sided shape). Hint: Each turn should be 360/5 = 72 degrees.",
+        "starterCode": "program DrawPentagon;\n\nvar\n  i: Integer;\n\nbegin\n  SetPenColor('#FF1493');\n  SetPenWidth(2);\n  \n  // Draw the pentagon here\n  \nend.",
+        "solution": "program DrawPentagon;\n\nvar\n  i: Integer;\n\nbegin\n  SetPenColor('#FF1493');\n  SetPenWidth(2);\n  \n  for i := 1 to 5 do\n  begin\n    Forward(80);\n    TurnRight(72);\n  end;\n  \n  WriteLn('Pentagon complete!');\nend.",
+        "hints": [
+          "A pentagon has 5 equal sides",
+          "Loop 5 times",
+          "Each turn is 360 / 5 = 72 degrees",
+          "Try a side length around 80 pixels"
+        ]
+      }
+    ],
+    "summary": "Excellent! You've learned:\n\n- Basic turtle movement with `Forward()` and `Backward()`\n- Turning with `TurnLeft()` and `TurnRight()`\n- Setting pen properties with `SetPenColor()` and `SetPenWidth()`\n- Drawing shapes using loops\n- The relationship between angles and shapes\n\nTurtle graphics makes programming visual and fun!",
+    "nextSteps": "Next, you'll learn about **advanced turtle commands** like circles, arcs, and creating more complex patterns and designs."
+  },
+  "prerequisites": ["hello-world", "variables-and-types"],
+  "relatedLessons": ["turtle-advanced"]
+}

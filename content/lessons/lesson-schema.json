@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dwscript-primer.org/schemas/lesson.json",
+  "title": "DWScript Primer Lesson Schema",
+  "description": "Schema for lesson content in DWScript Primer",
+  "type": "object",
+  "required": ["id", "title", "category", "difficulty", "content"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the lesson",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Lesson title"
+    },
+    "category": {
+      "type": "string",
+      "description": "Lesson category",
+      "enum": [
+        "fundamentals",
+        "control-flow",
+        "functions",
+        "data-structures",
+        "oop",
+        "turtle-graphics",
+        "advanced"
+      ]
+    },
+    "difficulty": {
+      "type": "string",
+      "description": "Difficulty level",
+      "enum": ["beginner", "intermediate", "advanced"]
+    },
+    "order": {
+      "type": "number",
+      "description": "Order within category (for sorting)"
+    },
+    "tags": {
+      "type": "array",
+      "description": "Tags for searching and filtering",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the lesson"
+    },
+    "content": {
+      "type": "object",
+      "description": "Lesson content sections",
+      "required": ["introduction"],
+      "properties": {
+        "introduction": {
+          "type": "string",
+          "description": "Introduction text (Markdown supported)"
+        },
+        "concepts": {
+          "type": "array",
+          "description": "Key concepts covered",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "examples": {
+          "type": "array",
+          "description": "Code examples",
+          "items": {
+            "type": "object",
+            "required": ["code"],
+            "properties": {
+              "title": { "type": "string" },
+              "description": { "type": "string" },
+              "code": { "type": "string" },
+              "expectedOutput": { "type": "string" },
+              "editable": { "type": "boolean", "default": true }
+            }
+          }
+        },
+        "exercises": {
+          "type": "array",
+          "description": "Practice exercises",
+          "items": {
+            "type": "object",
+            "required": ["title", "description"],
+            "properties": {
+              "title": { "type": "string" },
+              "description": { "type": "string" },
+              "starterCode": { "type": "string" },
+              "solution": { "type": "string" },
+              "hints": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "tests": {
+                "type": "array",
+                "description": "Test cases for validation",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "input": { "type": "string" },
+                    "expectedOutput": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": {
+          "type": "string",
+          "description": "Lesson summary"
+        },
+        "nextSteps": {
+          "type": "string",
+          "description": "What to learn next"
+        }
+      }
+    },
+    "prerequisites": {
+      "type": "array",
+      "description": "IDs of prerequisite lessons",
+      "items": {
+        "type": "string"
+      }
+    },
+    "relatedLessons": {
+      "type": "array",
+      "description": "IDs of related lessons",
+      "items": {
+        "type": "string"
+      }
+    },
+    "estimatedTime": {
+      "type": "number",
+      "description": "Estimated time to complete in minutes"
+    }
+  }
+}
