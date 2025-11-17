@@ -1,0 +1,12 @@
+// Hello World Example
+// Your first DWScript program!
+
+program HelloWorld;
+
+begin
+  WriteLn('Hello, World!');
+  WriteLn('Welcome to DWScript Primer!');
+  WriteLn('');
+  WriteLn('DWScript is a powerful Object Pascal scripting language.');
+  WriteLn('Let''s start learning!');
+end.
