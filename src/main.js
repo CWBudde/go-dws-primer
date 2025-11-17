@@ -11,6 +11,7 @@ import { executeCode, stopExecution } from './core/executor.js';
 import { initOutputPanels } from './output/output-manager.js';
 import { setupUI } from './ui/layout.js';
 import { initTurtle, installTurtleAPI, exportCanvasPNG, clearTurtle, toggleGrid, setTurtleSpeed } from './turtle/turtle-api.js';
+import { initLessonNavigation, loadLessonFromURL } from './lessons/navigation.js';
 
 /**
  * Initialize the application
@@ -35,6 +36,10 @@ async function init() {
       installTurtleAPI();
       console.log('Turtle Graphics initialized');
     }
+
+    // Initialize Lesson System
+    await initLessonNavigation();
+    console.log('Lesson system initialized');
 
     // Initialize Monaco Editor
     const editorContainer = document.getElementById('editor-container');
@@ -84,6 +89,9 @@ async function init() {
 
     // Setup event listeners
     setupEventListeners();
+
+    // Load lesson from URL or default
+    await loadLessonFromURL();
 
     console.log('DWScript Primer initialized successfully');
   } catch (error) {

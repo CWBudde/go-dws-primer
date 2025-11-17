@@ -1,0 +1,76 @@
+{
+  "id": "hello-world",
+  "title": "Hello World - Your First Program",
+  "category": "fundamentals",
+  "difficulty": "beginner",
+  "order": 1,
+  "description": "Learn to write your first DWScript program and understand basic output",
+  "estimatedTime": 10,
+  "tags": ["basics", "beginner", "output", "writeln"],
+  "content": {
+    "introduction": "Welcome to DWScript! In this lesson, you'll write your first program and learn about basic output.\n\nEvery programmer starts somewhere, and the traditional first program is \"Hello World!\" - a simple program that displays text on the screen.\n\n### What You'll Learn\n- How to structure a DWScript program\n- Using `WriteLn` to output text\n- Understanding the program structure",
+    "concepts": [
+      {
+        "title": "Program Structure",
+        "description": "Every DWScript program has a clear structure with 'program' declaration, 'begin', and 'end' blocks"
+      },
+      {
+        "title": "WriteLn Command",
+        "description": "WriteLn outputs text to the console followed by a new line"
+      },
+      {
+        "title": "String Literals",
+        "description": "Text in DWScript is enclosed in single quotes ('text') or double quotes (\"text\")"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Basic Hello World",
+        "description": "The simplest DWScript program - outputs a greeting message",
+        "code": "program HelloWorld;\n\nbegin\n  WriteLn('Hello, World!');\nend.",
+        "expectedOutput": "Hello, World!"
+      },
+      {
+        "title": "Multiple Lines",
+        "description": "You can use multiple WriteLn statements to output several lines",
+        "code": "program MultipleLines;\n\nbegin\n  WriteLn('Welcome to DWScript!');\n  WriteLn('This is line 2');\n  WriteLn('This is line 3');\nend.",
+        "expectedOutput": "Welcome to DWScript!\nThis is line 2\nThis is line 3"
+      },
+      {
+        "title": "Using Write vs WriteLn",
+        "description": "Write outputs without a newline, WriteLn adds a newline after the text",
+        "code": "program WriteVsWriteLn;\n\nbegin\n  Write('Hello');\n  Write(' ');\n  Write('World');\n  WriteLn('!');\n  WriteLn('Next line');\nend.",
+        "expectedOutput": "Hello World!\nNext line"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Write Your Own Message",
+        "description": "Create a program that outputs your name and a personal greeting message. Use at least 2 lines of output.",
+        "starterCode": "program MyProgram;\n\nbegin\n  // Write your code here\n  \nend.",
+        "solution": "program MyProgram;\n\nbegin\n  WriteLn('Hello! My name is Alex');\n  WriteLn('Welcome to my first DWScript program!');\nend.",
+        "hints": [
+          "Use WriteLn to output text",
+          "You can use multiple WriteLn statements",
+          "Remember to use quotes around text",
+          "Don't forget the semicolon at the end of each statement"
+        ]
+      },
+      {
+        "title": "Creative Output",
+        "description": "Create a program that outputs a simple text-based picture or pattern using multiple WriteLn statements. Be creative!",
+        "starterCode": "program TextArt;\n\nbegin\n  // Create your text art here\n  \nend.",
+        "solution": "program TextArt;\n\nbegin\n  WriteLn('  *  ');\n  WriteLn(' *** ');\n  WriteLn('*****');\n  WriteLn(' *** ');\n  WriteLn('  *  ');\nend.",
+        "hints": [
+          "Use spaces and special characters like *, #, +, etc.",
+          "Each WriteLn creates a new line",
+          "Try creating a simple shape like a star or tree"
+        ]
+      }
+    ],
+    "summary": "Congratulations! You've learned:\n\n- How to structure a basic DWScript program\n- Using `WriteLn` to display output\n- The difference between `Write` and `WriteLn`\n- How to create multi-line output\n\nThese are the fundamental building blocks you'll use in every program you write!",
+    "nextSteps": "Next, you'll learn about **variables** and how to store and manipulate data in your programs. Variables are essential for creating dynamic, interactive programs."
+  },
+  "prerequisites": [],
+  "relatedLessons": ["variables-and-types"]
+}

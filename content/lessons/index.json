@@ -1,0 +1,7 @@
+{
+  "lessons": [
+    "/content/lessons/01-fundamentals/01-hello-world.json",
+    "/content/lessons/01-fundamentals/02-variables.json",
+    "/content/lessons/06-turtle-graphics/01-turtle-basics.json"
+  ]
+}
