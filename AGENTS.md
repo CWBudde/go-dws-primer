@@ -1,0 +1,36 @@
+# Repository Guidelines
+
+## Project Structure & Module Organization
+- `src/` holds the application logic: `core/` for WASM + state, `editor/` for Monaco integration, `turtle/` for graphics, `lessons/` for content flow, `ui/` for layout, and `utils/` for shared helpers.
+- `public/` contains static assets and the Vite entry HTML, while `styles/` stores global CSS.
+- Learning materials and sample programs live in `content/`; built WASM artifacts (`dwscript.wasm`, `wasm_exec.js`) belong in `wasm/`.
+- Keep tests either in `tests/` or as colocated `*.test.ts` files for faster iteration.
+
+## Build, Test, and Development Commands
+- `npm run dev` — launches the Vite dev server on `localhost:3000` with hot reloading.
+- `npm run build` — produces the optimized `dist/` bundle used for releases.
+- `npm run preview` — serves the production build locally for smoke checks.
+- `npm run test` / `npm run test:e2e` — run Jest unit suites and Playwright journeys respectively.
+- `npm run lint` and `npm run format` — enforce ESLint rules and Prettier formatting prior to opening PRs.
+
+## Coding Style & Naming Conventions
+- Use ES modules, async/await, and two-space indentation as seen in `src/main.js`.
+- Favor descriptive camelCase for variables/functions, PascalCase for exported components, and kebab-case for files.
+- Run `npm run lint` after significant refactors; fix or justify all warnings before pushing.
+
+## Testing Guidelines
+- Prefer Jest for pure logic (state managers, utilities) and Playwright for Monaco + turtle flows.
+- Test files should mirror their source name (`state-manager.test.js`) and mock WASM boundaries where needed.
+- Focus coverage on lesson navigation, executor, and turtle APIs because regressions block learners.
+- Always run the relevant test subset plus `npm run test` before requesting review.
+
+## Commit & Pull Request Guidelines
+- Follow the existing history: imperative, scope-aware summaries (e.g., `Implement Phase 3: Educational Content System`).
+- Group related changes per commit; include references to GitHub issues or PLAN items when applicable.
+- PRs must describe motivation, testing evidence, steps to reproduce/verify, and screenshots for UI-impacting work.
+- Request reviewers familiar with DWScript integration when touching `core/` or `wasm/` files.
+
+## WASM & Configuration Tips
+- Build DWScript support by running `just wasm` inside the `go-dws` repo, then copy `dwscript.wasm` and `wasm_exec.js` into `wasm/`.
+- Version control excludes large binaries, so re-run the build whenever Go code changes.
+- When WASM is absent, the app falls back to mock mode; use this for quick UI iterations but not for release testing.
