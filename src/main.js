@@ -8,7 +8,7 @@ import { initMonacoEditor, getCode, setupKeyboardShortcuts, formatCode } from '.
 import { initWASM, isWASMReady, getWASMError } from './core/wasm-loader.js';
 import { initState, toggleTheme, getValue } from './core/state-manager.js';
 import { executeCode, stopExecution } from './core/executor.js';
-import { initOutputPanels } from './output/output-manager.js';
+import { initOutputPanels, appendConsoleOutput, appendCompilerOutput } from './output/output-manager.js';
 import { setupUI } from './ui/layout.js';
 import { initTurtle, installTurtleAPI, exportCanvasPNG, clearTurtle, toggleGrid, setTurtleSpeed } from './turtle/turtle-api.js';
 import { initLessonNavigation, loadLessonFromURL } from './lessons/navigation.js';
@@ -71,7 +71,23 @@ async function init() {
 
     // Load WASM runtime (async, non-blocking)
     console.log('Loading DWScript WASM runtime...');
-    const wasmSuccess = await initWASM();
+    const wasmSuccess = await initWASM({
+      onOutput: (text) => {
+        // Stream output to console in real-time
+        appendConsoleOutput(text);
+      },
+      onError: (error) => {
+        // Handle runtime errors
+        const errorMsg = error.line > 0
+          ? `Runtime error at line ${error.line}: ${error.message}`
+          : `Runtime error: ${error.message}`;
+        appendCompilerOutput(errorMsg, 'error');
+      },
+      onInput: () => {
+        // Handle input requests
+        return prompt('Input requested:') || '';
+      }
+    });
 
     if (wasmSuccess) {
       console.log('WASM loaded successfully');

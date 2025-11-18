@@ -182,14 +182,32 @@ export function installTurtleAPI() {
 export function toggleGrid() {
   gridVisible = !gridVisible;
   if (turtleEngine && turtleEngine.canvas) {
+    // Store current canvas state
+    const ctx = turtleEngine.ctx;
+    const imageData = ctx.getImageData(0, 0, turtleEngine.canvas.width, turtleEngine.canvas.height);
+
+    // Clear and redraw with or without grid
+    turtleEngine.clear();
+
     if (gridVisible) {
-      const ctx = turtleEngine.ctx;
       drawGrid(ctx, turtleEngine.canvas.width, turtleEngine.canvas.height);
-    } else {
-      turtleEngine.clear();
     }
-    turtleEngine.redraw();
+
+    // Restore previous drawing
+    ctx.putImageData(imageData, 0, 0);
+
+    // Redraw turtle if visible
+    if (turtleEngine.visible) {
+      turtleEngine.drawTurtle();
+    }
   }
+  return gridVisible;
+}
+
+/**
+ * Get grid visibility state
+ */
+export function isGridVisible() {
   return gridVisible;
 }
 
