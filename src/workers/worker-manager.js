@@ -11,8 +11,8 @@ let messageIdCounter = 0;
 
 // Configuration
 const WORKER_CONFIG = {
-  wasmPath: '/wasm/dwscript.wasm',
-  defaultTimeout: 30000 // 30 seconds default timeout
+  wasmPath: "/wasm/dwscript.wasm",
+  defaultTimeout: 30000, // 30 seconds default timeout
 };
 
 /**
@@ -27,32 +27,31 @@ export async function initWorker() {
 
   // Return immediately if already initialized
   if (isWorkerReady && worker) {
-    return Promise.resolve({ status: 'already-ready' });
+    return Promise.resolve({ status: "already-ready" });
   }
 
   workerInitPromise = new Promise((resolve, reject) => {
     try {
       // Create worker
-      worker = new Worker(
-        new URL('./dwscript-worker.js', import.meta.url),
-        { type: 'module' }
-      );
+      worker = new Worker(new URL("./dwscript-worker.js", import.meta.url), {
+        type: "module",
+      });
 
       // Set up message handler
       worker.onmessage = handleWorkerMessage;
 
       // Set up error handler
       worker.onerror = (error) => {
-        console.error('Worker error:', error);
+        console.error("Worker error:", error);
         reject(new Error(`Worker error: ${error.message}`));
       };
 
       // Set up one-time ready handler
       const readyHandler = (event) => {
-        if (event.data.type === 'ready') {
+        if (event.data.type === "ready") {
           isWorkerReady = true;
           resolve(event.data.version);
-        } else if (event.data.type === 'init-error') {
+        } else if (event.data.type === "init-error") {
           reject(new Error(event.data.error.message));
         }
       };
@@ -66,10 +65,9 @@ export async function initWorker() {
 
       // Initialize worker
       worker.postMessage({
-        type: 'init',
-        data: WORKER_CONFIG
+        type: "init",
+        data: WORKER_CONFIG,
       });
-
     } catch (error) {
       reject(error);
     }
@@ -91,14 +89,14 @@ export async function executeInWorker(code, options = {}) {
 
   return new Promise((resolve, reject) => {
     const messageId = messageIdCounter++;
-    let outputBuffer = '';
+    let outputBuffer = "";
 
     // Create handler for this execution
     const handler = {
       onOutput: options.onOutput || null,
       onError: options.onError || null,
       resolve,
-      reject
+      reject,
     };
 
     messageHandlers.set(messageId, handler);
@@ -107,21 +105,21 @@ export async function executeInWorker(code, options = {}) {
     const resultHandler = (event) => {
       const { type, result, output, error } = event.data;
 
-      if (type === 'output' && handler.onOutput) {
+      if (type === "output" && handler.onOutput) {
         handler.onOutput(output);
         outputBuffer += output;
-      } else if (type === 'runtime-error' && handler.onError) {
+      } else if (type === "runtime-error" && handler.onError) {
         handler.onError(error);
-      } else if (type === 'result') {
+      } else if (type === "result") {
         messageHandlers.delete(messageId);
         resolve({
           ...result,
-          output: outputBuffer || result.output
+          output: outputBuffer || result.output,
         });
-      } else if (type === 'timeout') {
+      } else if (type === "timeout") {
         messageHandlers.delete(messageId);
-        reject(new Error('Execution timeout'));
-      } else if (type === 'error') {
+        reject(new Error("Execution timeout"));
+      } else if (type === "error") {
         messageHandlers.delete(messageId);
         reject(new Error(error.message || error));
       }
@@ -138,12 +136,12 @@ export async function executeInWorker(code, options = {}) {
 
     // Send execution request
     worker.postMessage({
-      type: 'execute',
+      type: "execute",
       data: {
         code,
-        timeout: options.timeout || WORKER_CONFIG.defaultTimeout
+        timeout: options.timeout || WORKER_CONFIG.defaultTimeout,
       },
-      messageId
+      messageId,
     });
   });
 }
@@ -164,7 +162,7 @@ export async function compileInWorker(code, cacheKey = null) {
 
     const handler = {
       resolve,
-      reject
+      reject,
     };
 
     messageHandlers.set(messageId, handler);
@@ -173,10 +171,10 @@ export async function compileInWorker(code, cacheKey = null) {
     const resultHandler = (event) => {
       const { type, result, error } = event.data;
 
-      if (type === 'compile-result') {
+      if (type === "compile-result") {
         messageHandlers.delete(messageId);
         resolve(result);
-      } else if (type === 'error') {
+      } else if (type === "error") {
         messageHandlers.delete(messageId);
         reject(new Error(error.message || error));
       }
@@ -193,9 +191,9 @@ export async function compileInWorker(code, cacheKey = null) {
 
     // Send compilation request
     worker.postMessage({
-      type: 'compile',
+      type: "compile",
       data: { code, cacheKey },
-      messageId
+      messageId,
     });
   });
 }
@@ -217,7 +215,7 @@ export async function stopWorkerExecution() {
 
   // Reject all pending handlers
   for (const [id, handler] of messageHandlers.entries()) {
-    handler.reject(new Error('Execution stopped by user'));
+    handler.reject(new Error("Execution stopped by user"));
   }
   messageHandlers.clear();
 
@@ -225,7 +223,7 @@ export async function stopWorkerExecution() {
   try {
     await initWorker();
   } catch (error) {
-    console.error('Failed to reinitialize worker:', error);
+    console.error("Failed to reinitialize worker:", error);
   }
 }
 
@@ -241,27 +239,29 @@ function handleWorkerMessage(event) {
     const handler = messageHandlers.get(messageId);
 
     switch (type) {
-      case 'output':
+      case "output":
         if (handler.onOutput) {
           handler.onOutput(event.data.output);
         }
         break;
 
-      case 'runtime-error':
+      case "runtime-error":
         if (handler.onError) {
           handler.onError(event.data.error);
         }
         break;
 
-      case 'result':
-      case 'compile-result':
+      case "result":
+      case "compile-result":
         handler.resolve(event.data.result);
         messageHandlers.delete(messageId);
         break;
 
-      case 'error':
-      case 'timeout':
-        handler.reject(new Error(event.data.error?.message || event.data.message));
+      case "error":
+      case "timeout":
+        handler.reject(
+          new Error(event.data.error?.message || event.data.message),
+        );
         messageHandlers.delete(messageId);
         break;
     }
@@ -269,12 +269,12 @@ function handleWorkerMessage(event) {
 
   // Handle global messages
   switch (type) {
-    case 'ready':
-      console.log('Worker ready:', event.data.version);
+    case "ready":
+      console.log("Worker ready:", event.data.version);
       break;
 
-    case 'worker-error':
-      console.error('Worker internal error:', event.data.error);
+    case "worker-error":
+      console.error("Worker internal error:", event.data.error);
       break;
   }
 }
@@ -292,7 +292,7 @@ export function isWorkerInitialized() {
  */
 export function disposeWorker() {
   if (worker) {
-    worker.postMessage({ type: 'dispose' });
+    worker.postMessage({ type: "dispose" });
     worker.terminate();
     worker = null;
     isWorkerReady = false;

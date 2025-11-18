@@ -3,9 +3,17 @@
  * Handles the lesson sidebar navigation
  */
 
-import { getCategories, searchLessons, getLessonById } from './lesson-loader.js';
-import { displayLesson } from './lesson-ui.js';
-import { markLessonVisited, isLessonCompleted, getProgress } from './progress.js';
+import {
+  getCategories,
+  searchLessons,
+  getLessonById,
+} from "./lesson-loader.js";
+import { displayLesson } from "./lesson-ui.js";
+import {
+  markLessonVisited,
+  isLessonCompleted,
+  getProgress,
+} from "./progress.js";
 
 let currentCategories = null;
 
@@ -18,7 +26,7 @@ export async function initLessonNavigation() {
     renderLessonList(currentCategories);
     setupNavigationListeners();
   } catch (error) {
-    console.error('Failed to initialize lesson navigation:', error);
+    console.error("Failed to initialize lesson navigation:", error);
   }
 }
 
@@ -27,16 +35,16 @@ export async function initLessonNavigation() {
  * @param {Object} categories - Categories object
  */
 function renderLessonList(categories) {
-  const listContainer = document.getElementById('lesson-list');
+  const listContainer = document.getElementById("lesson-list");
   if (!listContainer) {
-    console.error('Lesson list container not found');
+    console.error("Lesson list container not found");
     return;
   }
 
-  let html = '';
+  let html = "";
 
   // Render each category
-  Object.values(categories).forEach(category => {
+  Object.values(categories).forEach((category) => {
     html += `
       <div class="lesson-category" data-category="${category.name}">
         <div class="category-header">
@@ -47,7 +55,7 @@ function renderLessonList(categories) {
           <span class="category-count">${category.count}</span>
         </div>
         <ul class="lesson-list">
-          ${category.lessons.map(lesson => renderLessonItem(lesson)).join('')}
+          ${category.lessons.map((lesson) => renderLessonItem(lesson)).join("")}
         </ul>
       </div>
     `;
@@ -66,10 +74,10 @@ function renderLessonList(categories) {
  */
 function renderLessonItem(lesson) {
   const completed = isLessonCompleted(lesson.id);
-  const icon = completed ? '✓' : '○';
+  const icon = completed ? "✓" : "○";
 
   return `
-    <li class="lesson-item ${completed ? 'completed' : ''}" data-lesson-id="${lesson.id}">
+    <li class="lesson-item ${completed ? "completed" : ""}" data-lesson-id="${lesson.id}">
       <a href="#lesson/${lesson.id}" class="lesson-link">
         <span class="lesson-icon">${icon}</span>
         <span class="lesson-title">${lesson.title}</span>
@@ -83,42 +91,44 @@ function renderLessonItem(lesson) {
  * Setup navigation event listeners
  */
 function setupNavigationListeners() {
-  const listContainer = document.getElementById('lesson-list');
+  const listContainer = document.getElementById("lesson-list");
   if (!listContainer) return;
 
   // Category toggle
-  listContainer.addEventListener('click', (e) => {
-    const header = e.target.closest('.category-header');
+  listContainer.addEventListener("click", (e) => {
+    const header = e.target.closest(".category-header");
     if (header) {
-      const category = header.closest('.lesson-category');
-      const list = category.querySelector('.lesson-list');
-      const icon = category.querySelector('.category-icon');
+      const category = header.closest(".lesson-category");
+      const list = category.querySelector(".lesson-list");
+      const icon = category.querySelector(".category-icon");
 
-      if (list.style.display === 'none') {
-        list.style.display = 'block';
-        icon.textContent = '▼';
+      if (list.style.display === "none") {
+        list.style.display = "block";
+        icon.textContent = "▼";
       } else {
-        list.style.display = 'none';
-        icon.textContent = '▶';
+        list.style.display = "none";
+        icon.textContent = "▶";
       }
     }
   });
 
   // Lesson click
-  listContainer.addEventListener('click', async (e) => {
-    const link = e.target.closest('.lesson-link');
+  listContainer.addEventListener("click", async (e) => {
+    const link = e.target.closest(".lesson-link");
     if (link) {
       e.preventDefault();
-      const lessonId = link.closest('.lesson-item').getAttribute('data-lesson-id');
+      const lessonId = link
+        .closest(".lesson-item")
+        .getAttribute("data-lesson-id");
       await loadLesson(lessonId);
     }
   });
 
   // Search input
-  const searchInput = document.getElementById('lesson-search');
+  const searchInput = document.getElementById("lesson-search");
   if (searchInput) {
     let searchTimeout;
-    searchInput.addEventListener('input', (e) => {
+    searchInput.addEventListener("input", (e) => {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(async () => {
         await handleSearch(e.target.value);
@@ -127,19 +137,19 @@ function setupNavigationListeners() {
   }
 
   // Listen for navigation events
-  window.addEventListener('navigateLesson', async (e) => {
+  window.addEventListener("navigateLesson", async (e) => {
     const { direction } = e.detail;
     await navigateLesson(direction);
   });
 
   // Listen for complete lesson events
-  window.addEventListener('completeLesson', async (e) => {
+  window.addEventListener("completeLesson", async (e) => {
     const { lessonId } = e.detail;
     await handleCompleteLesson(lessonId);
   });
 
   // Listen for progress updates
-  window.addEventListener('progressUpdated', () => {
+  window.addEventListener("progressUpdated", () => {
     updateCompletionIndicators();
   });
 }
@@ -152,7 +162,7 @@ async function loadLesson(lessonId) {
   try {
     const lesson = await getLessonById(lessonId);
     if (!lesson) {
-      console.error('Lesson not found:', lessonId);
+      console.error("Lesson not found:", lessonId);
       return;
     }
 
@@ -163,19 +173,21 @@ async function loadLesson(lessonId) {
     displayLesson(lesson);
 
     // Update active state in sidebar
-    document.querySelectorAll('.lesson-item').forEach(item => {
-      item.classList.remove('active');
+    document.querySelectorAll(".lesson-item").forEach((item) => {
+      item.classList.remove("active");
     });
-    const activeItem = document.querySelector(`.lesson-item[data-lesson-id="${lessonId}"]`);
+    const activeItem = document.querySelector(
+      `.lesson-item[data-lesson-id="${lessonId}"]`,
+    );
     if (activeItem) {
-      activeItem.classList.add('active');
-      activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      activeItem.classList.add("active");
+      activeItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
     // Update URL (without page reload)
     history.pushState({ lessonId }, lesson.title, `#lesson/${lessonId}`);
   } catch (error) {
-    console.error('Failed to load lesson:', error);
+    console.error("Failed to load lesson:", error);
   }
 }
 
@@ -188,23 +200,26 @@ async function navigateLesson(direction) {
   const currentLessonId = progress.currentLesson;
 
   if (!currentLessonId) {
-    console.warn('No current lesson');
+    console.warn("No current lesson");
     return;
   }
 
   try {
-    const { getNextLesson, getPreviousLesson } = await import('./lesson-loader.js');
-    const lesson = direction === 'next'
-      ? await getNextLesson(currentLessonId)
-      : await getPreviousLesson(currentLessonId);
+    const { getNextLesson, getPreviousLesson } = await import(
+      "./lesson-loader.js"
+    );
+    const lesson =
+      direction === "next"
+        ? await getNextLesson(currentLessonId)
+        : await getPreviousLesson(currentLessonId);
 
     if (lesson) {
       await loadLesson(lesson.id);
     } else {
-      console.log('No', direction, 'lesson available');
+      console.log("No", direction, "lesson available");
     }
   } catch (error) {
-    console.error('Failed to navigate lesson:', error);
+    console.error("Failed to navigate lesson:", error);
   }
 }
 
@@ -213,7 +228,7 @@ async function navigateLesson(direction) {
  * @param {string} query - Search query
  */
 async function handleSearch(query) {
-  const listContainer = document.getElementById('lesson-list');
+  const listContainer = document.getElementById("lesson-list");
   if (!listContainer) return;
 
   if (!query.trim()) {
@@ -236,12 +251,12 @@ async function handleSearch(query) {
 
     // Group results by category
     const groupedResults = {};
-    results.forEach(lesson => {
+    results.forEach((lesson) => {
       if (!groupedResults[lesson.category]) {
         groupedResults[lesson.category] = {
           name: lesson.category,
           displayName: currentCategories[lesson.category].displayName,
-          lessons: []
+          lessons: [],
         };
       }
       groupedResults[lesson.category].lessons.push(lesson);
@@ -249,7 +264,7 @@ async function handleSearch(query) {
 
     renderLessonList(groupedResults);
   } catch (error) {
-    console.error('Search failed:', error);
+    console.error("Search failed:", error);
   }
 }
 
@@ -258,7 +273,7 @@ async function handleSearch(query) {
  * @param {string} lessonId - Lesson ID
  */
 async function handleCompleteLesson(lessonId) {
-  const { markLessonCompleted } = await import('./progress.js');
+  const { markLessonCompleted } = await import("./progress.js");
   markLessonCompleted(lessonId);
 
   // Update UI
@@ -268,12 +283,14 @@ async function handleCompleteLesson(lessonId) {
   showCompletionMessage();
 
   // Suggest next lesson
-  const { getNextLesson } = await import('./lesson-loader.js');
+  const { getNextLesson } = await import("./lesson-loader.js");
   const nextLesson = await getNextLesson(lessonId);
 
   if (nextLesson) {
     setTimeout(() => {
-      if (confirm(`Great job! Ready for the next lesson: "${nextLesson.title}"?`)) {
+      if (
+        confirm(`Great job! Ready for the next lesson: "${nextLesson.title}"?`)
+      ) {
         loadLesson(nextLesson.id);
       }
     }, 1000);
@@ -284,17 +301,17 @@ async function handleCompleteLesson(lessonId) {
  * Update completion indicators in the sidebar
  */
 function updateCompletionIndicators() {
-  document.querySelectorAll('.lesson-item').forEach(item => {
-    const lessonId = item.getAttribute('data-lesson-id');
+  document.querySelectorAll(".lesson-item").forEach((item) => {
+    const lessonId = item.getAttribute("data-lesson-id");
     const completed = isLessonCompleted(lessonId);
-    const icon = item.querySelector('.lesson-icon');
+    const icon = item.querySelector(".lesson-icon");
 
     if (completed) {
-      item.classList.add('completed');
-      if (icon) icon.textContent = '✓';
+      item.classList.add("completed");
+      if (icon) icon.textContent = "✓";
     } else {
-      item.classList.remove('completed');
-      if (icon) icon.textContent = '○';
+      item.classList.remove("completed");
+      if (icon) icon.textContent = "○";
     }
   });
 }
@@ -303,8 +320,8 @@ function updateCompletionIndicators() {
  * Show completion message
  */
 function showCompletionMessage() {
-  const message = document.createElement('div');
-  message.className = 'completion-toast';
+  const message = document.createElement("div");
+  message.className = "completion-toast";
   message.innerHTML = `
     <div class="toast-content">
       <span class="toast-icon">🎉</span>
@@ -314,11 +331,11 @@ function showCompletionMessage() {
   document.body.appendChild(message);
 
   setTimeout(() => {
-    message.classList.add('show');
+    message.classList.add("show");
   }, 10);
 
   setTimeout(() => {
-    message.classList.remove('show');
+    message.classList.remove("show");
     setTimeout(() => message.remove(), 300);
   }, 3000);
 }
@@ -328,7 +345,7 @@ function showCompletionMessage() {
  */
 export async function loadLessonFromURL() {
   const hash = window.location.hash;
-  if (hash.startsWith('#lesson/')) {
+  if (hash.startsWith("#lesson/")) {
     const lessonId = hash.substring(8);
     await loadLesson(lessonId);
   } else {
@@ -345,7 +362,7 @@ export async function loadLessonFromURL() {
 /**
  * Handle browser back/forward
  */
-window.addEventListener('popstate', (e) => {
+window.addEventListener("popstate", (e) => {
   if (e.state && e.state.lessonId) {
     loadLesson(e.state.lessonId);
   }

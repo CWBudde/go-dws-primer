@@ -1,8 +1,8 @@
-import * as monaco from 'monaco-editor';
-import { dwscriptLanguage } from './dwscript-lang.js';
-import { registerSnippets } from './snippets.js';
-import { registerIntelliSense } from './intellisense.js';
-import { registerFormatter, registerOnTypeFormatter } from './formatter.js';
+import * as monaco from "monaco-editor";
+import { dwscriptLanguage } from "./dwscript-lang.js";
+import { registerSnippets } from "./snippets.js";
+import { registerIntelliSense } from "./intellisense.js";
+import { registerFormatter, registerOnTypeFormatter } from "./formatter.js";
 
 let editor = null;
 
@@ -14,42 +14,42 @@ let editor = null;
  */
 export function initMonacoEditor(container, options = {}) {
   // Register DWScript language
-  monaco.languages.register({ id: 'dwscript' });
+  monaco.languages.register({ id: "dwscript" });
 
   // Set language configuration
-  monaco.languages.setMonarchTokensProvider('dwscript', dwscriptLanguage);
+  monaco.languages.setMonarchTokensProvider("dwscript", dwscriptLanguage);
 
   // Set language configuration for auto-closing brackets, etc.
-  monaco.languages.setLanguageConfiguration('dwscript', {
+  monaco.languages.setLanguageConfiguration("dwscript", {
     comments: {
-      lineComment: '//',
-      blockComment: ['{', '}']
+      lineComment: "//",
+      blockComment: ["{", "}"],
     },
     brackets: [
-      ['{', '}'],
-      ['[', ']'],
-      ['(', ')']
+      ["{", "}"],
+      ["[", "]"],
+      ["(", ")"],
     ],
     autoClosingPairs: [
-      { open: '{', close: '}' },
-      { open: '[', close: ']' },
-      { open: '(', close: ')' },
+      { open: "{", close: "}" },
+      { open: "[", close: "]" },
+      { open: "(", close: ")" },
       { open: '"', close: '"' },
-      { open: "'", close: "'" }
+      { open: "'", close: "'" },
     ],
     surroundingPairs: [
-      { open: '{', close: '}' },
-      { open: '[', close: ']' },
-      { open: '(', close: ')' },
+      { open: "{", close: "}" },
+      { open: "[", close: "]" },
+      { open: "(", close: ")" },
       { open: '"', close: '"' },
-      { open: "'", close: "'" }
+      { open: "'", close: "'" },
     ],
     folding: {
       markers: {
-        start: new RegExp('^\\s*\\{\\s*$'),
-        end: new RegExp('^\\s*\\}\\s*$')
-      }
-    }
+        start: new RegExp("^\\s*\\{\\s*$"),
+        end: new RegExp("^\\s*\\}\\s*$"),
+      },
+    },
   });
 
   // Register code snippets
@@ -65,39 +65,39 @@ export function initMonacoEditor(container, options = {}) {
   // Default editor options
   const defaultOptions = {
     value: getDefaultCode(),
-    language: 'dwscript',
+    language: "dwscript",
     theme: getTheme(),
     automaticLayout: true,
     fontSize: 14,
-    lineNumbers: 'on',
+    lineNumbers: "on",
     minimap: {
-      enabled: true
+      enabled: true,
     },
     scrollBeyondLastLine: false,
-    wordWrap: 'off',
+    wordWrap: "off",
     tabSize: 2,
     insertSpaces: true,
-    renderWhitespace: 'selection',
+    renderWhitespace: "selection",
     folding: true,
     bracketPairColorization: {
-      enabled: true
-    }
+      enabled: true,
+    },
   };
 
   // Create editor
   editor = monaco.editor.create(container, {
     ...defaultOptions,
-    ...options
+    ...options,
   });
 
   // Listen for theme changes
-  document.addEventListener('themechange', (e) => {
-    const theme = e.detail.theme === 'dark' ? 'vs-dark' : 'vs';
+  document.addEventListener("themechange", (e) => {
+    const theme = e.detail.theme === "dark" ? "vs-dark" : "vs";
     monaco.editor.setTheme(theme);
   });
 
   // Listen for error highlighting requests
-  window.addEventListener('highlightError', (e) => {
+  window.addEventListener("highlightError", (e) => {
     const { line, column } = e.detail;
     highlightLine(line, column);
   });
@@ -118,7 +118,7 @@ export function getEditor() {
  * @returns {string}
  */
 export function getCode() {
-  return editor ? editor.getValue() : '';
+  return editor ? editor.getValue() : "";
 }
 
 /**
@@ -136,8 +136,8 @@ export function setCode(code) {
  * @returns {string}
  */
 function getTheme() {
-  const theme = document.documentElement.getAttribute('data-theme');
-  return theme === 'dark' ? 'vs-dark' : 'vs';
+  const theme = document.documentElement.getAttribute("data-theme");
+  return theme === "dark" ? "vs-dark" : "vs";
 }
 
 /**
@@ -162,7 +162,7 @@ end.
  */
 export function formatCode() {
   if (editor) {
-    editor.getAction('editor.action.formatDocument').run();
+    editor.getAction("editor.action.formatDocument").run();
   }
 }
 
@@ -174,16 +174,16 @@ export function addErrorMarkers(errors) {
   if (!editor) return;
 
   const model = editor.getModel();
-  const markers = errors.map(error => ({
+  const markers = errors.map((error) => ({
     severity: monaco.MarkerSeverity.Error,
     startLineNumber: error.line,
     startColumn: error.column || 1,
     endLineNumber: error.line,
     endColumn: error.endColumn || 1000,
-    message: error.message
+    message: error.message,
   }));
 
-  monaco.editor.setModelMarkers(model, 'dwscript', markers);
+  monaco.editor.setModelMarkers(model, "dwscript", markers);
 }
 
 /**
@@ -192,7 +192,7 @@ export function addErrorMarkers(errors) {
 export function clearErrorMarkers() {
   if (!editor) return;
   const model = editor.getModel();
-  monaco.editor.setModelMarkers(model, 'dwscript', []);
+  monaco.editor.setModelMarkers(model, "dwscript", []);
 }
 
 /**
@@ -216,23 +216,26 @@ export function highlightLine(line, column = 1) {
     startLineNumber: line,
     startColumn: 1,
     endLineNumber: line,
-    endColumn: lineLength + 1
+    endColumn: lineLength + 1,
   });
 
   // Focus the editor
   editor.focus();
 
   // Add a temporary highlight decoration
-  const decorations = editor.deltaDecorations([], [
-    {
-      range: new monaco.Range(line, 1, line, lineLength + 1),
-      options: {
-        isWholeLine: true,
-        className: 'error-line-highlight',
-        glyphMarginClassName: 'error-line-glyph'
-      }
-    }
-  ]);
+  const decorations = editor.deltaDecorations(
+    [],
+    [
+      {
+        range: new monaco.Range(line, 1, line, lineLength + 1),
+        options: {
+          isWholeLine: true,
+          className: "error-line-highlight",
+          glyphMarginClassName: "error-line-glyph",
+        },
+      },
+    ],
+  );
 
   // Remove highlight after 2 seconds
   setTimeout(() => {
@@ -248,11 +251,11 @@ export function setupKeyboardShortcuts() {
 
   // Ctrl+Enter / Cmd+Enter to run code
   editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-    document.getElementById('btn-run')?.click();
+    document.getElementById("btn-run")?.click();
   });
 
   // F5 to run code
   editor.addCommand(monaco.KeyCode.F5, () => {
-    document.getElementById('btn-run')?.click();
+    document.getElementById("btn-run")?.click();
   });
 }

@@ -118,7 +118,7 @@ export class AnimationController {
         this.animate();
       } else {
         // Map speed 1-10 to delay 500ms-10ms
-        delay = 510 - (speed * 50);
+        delay = 510 - speed * 50;
         this.animationId = setTimeout(() => {
           this.turtle.redraw();
           this.animate();
@@ -237,7 +237,7 @@ export class CommandRecorder {
       this.commands = JSON.parse(json);
       return true;
     } catch (e) {
-      console.error('Failed to import commands:', e);
+      console.error("Failed to import commands:", e);
       return false;
     }
   }

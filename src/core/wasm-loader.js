@@ -3,7 +3,7 @@
  * Handles loading and initializing the Go-compiled WASM module
  */
 
-import { dwsAPI } from './dwscript-api.js';
+import { dwsAPI } from "./dwscript-api.js";
 
 let wasmInstance = null;
 let wasmReady = false;
@@ -19,14 +19,14 @@ export async function initWASM(handlers = {}) {
   try {
     // Check if Go WASM support is available
     if (!window.Go) {
-      throw new Error('Go WASM runtime (wasm_exec.js) not loaded');
+      throw new Error("Go WASM runtime (wasm_exec.js) not loaded");
     }
 
     // Create a new Go instance
     const go = new window.Go();
 
     // Fetch and instantiate the WASM module
-    const response = await fetch('/wasm/dwscript.wasm');
+    const response = await fetch("/wasm/dwscript.wasm");
     if (!response.ok) {
       throw new Error(`Failed to fetch WASM module: ${response.statusText}`);
     }
@@ -41,11 +41,11 @@ export async function initWASM(handlers = {}) {
 
     // IMPORTANT: Wait for API registration (~100ms)
     // The go.run() call above is async but doesn't wait for full init
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Verify global export exists
     if (!window.DWScript) {
-      throw new Error('DWScript API not available after initialization');
+      throw new Error("DWScript API not available after initialization");
     }
 
     // Initialize the DWScript API wrapper
@@ -53,11 +53,11 @@ export async function initWASM(handlers = {}) {
     dwsAPIInstance = dwsAPI;
 
     wasmReady = true;
-    console.log('DWScript WASM runtime initialized successfully');
+    console.log("DWScript WASM runtime initialized successfully");
 
     return true;
   } catch (error) {
-    console.error('Failed to initialize WASM:', error);
+    console.error("Failed to initialize WASM:", error);
     wasmError = error;
     wasmReady = false;
     return false;
@@ -89,7 +89,7 @@ export function getWASMError() {
  */
 export async function executeDWScript(code, options = {}) {
   if (!wasmReady) {
-    throw new Error('WASM runtime not initialized');
+    throw new Error("WASM runtime not initialized");
   }
 
   try {
@@ -97,22 +97,22 @@ export async function executeDWScript(code, options = {}) {
     if (dwsAPIInstance && dwsAPIInstance.isReady()) {
       const result = await dwsAPIInstance.eval(code, options);
       return result;
-    } else if (typeof window.executeDWScript === 'function') {
+    } else if (typeof window.executeDWScript === "function") {
       // Direct call to WASM function
       const result = await window.executeDWScript(code);
       return result;
     } else {
       // Fallback: simulate execution for development
-      console.warn('WASM execute function not available, using mock execution');
+      console.warn("WASM execute function not available, using mock execution");
       return mockExecution(code);
     }
   } catch (error) {
-    console.error('Execution error:', error);
+    console.error("Execution error:", error);
     return {
       success: false,
-      output: '',
+      output: "",
       errors: [{ line: 0, column: 0, message: error.message }],
-      executionTime: 0
+      executionTime: 0,
     };
   }
 }
@@ -126,10 +126,13 @@ function mockExecution(code) {
   // Simple mock that just returns a success message
   return {
     success: true,
-    output: 'Mock execution: WASM module not yet integrated.\nYour code would run here.',
+    output:
+      "Mock execution: WASM module not yet integrated.\nYour code would run here.",
     errors: [],
     executionTime: 0,
-    warnings: ['This is a mock execution. The actual DWScript WASM runtime is not yet connected.']
+    warnings: [
+      "This is a mock execution. The actual DWScript WASM runtime is not yet connected.",
+    ],
   };
 }
 
@@ -142,7 +145,7 @@ export function getWASMInfo() {
     ready: wasmReady,
     error: wasmError,
     instance: wasmInstance,
-    api: dwsAPIInstance
+    api: dwsAPIInstance,
   };
 }
 

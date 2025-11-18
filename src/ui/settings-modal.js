@@ -3,8 +3,8 @@
  * Provides UI for user preferences and accessibility settings
  */
 
-import { getState, setValue, updateState } from '../core/state-manager.js';
-import { getEditor } from '../editor/monaco-setup.js';
+import { getState, setValue, updateState } from "../core/state-manager.js";
+import { getEditor } from "../editor/monaco-setup.js";
 
 let modal = null;
 
@@ -32,12 +32,12 @@ export function showSettingsModal() {
  * Create modal HTML structure
  */
 function createModal() {
-  const modal = document.createElement('div');
-  modal.className = 'modal-overlay';
-  modal.id = 'settings-modal';
-  modal.setAttribute('role', 'dialog');
-  modal.setAttribute('aria-labelledby', 'settings-title');
-  modal.setAttribute('aria-modal', 'true');
+  const modal = document.createElement("div");
+  modal.className = "modal-overlay";
+  modal.id = "settings-modal";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-labelledby", "settings-title");
+  modal.setAttribute("aria-modal", "true");
 
   modal.innerHTML = `
     <div class="modal-content settings-modal">
@@ -261,18 +261,27 @@ function createModal() {
  */
 function populateSettings(state) {
   // Editor settings
-  document.getElementById('setting-font-size').value = state.fontSize || 14;
-  document.getElementById('font-size-value').textContent = `${state.fontSize || 14}px`;
-  document.getElementById('setting-tab-size').value = state.preferences?.tabSize || 2;
-  document.getElementById('setting-minimap').checked = state.showMinimap !== false;
-  document.getElementById('setting-word-wrap').checked = state.preferences?.wordWrap || false;
+  document.getElementById("setting-font-size").value = state.fontSize || 14;
+  document.getElementById("font-size-value").textContent =
+    `${state.fontSize || 14}px`;
+  document.getElementById("setting-tab-size").value =
+    state.preferences?.tabSize || 2;
+  document.getElementById("setting-minimap").checked =
+    state.showMinimap !== false;
+  document.getElementById("setting-word-wrap").checked =
+    state.preferences?.wordWrap || false;
 
   // Accessibility settings
-  document.getElementById('setting-high-contrast').checked = state.highContrast || false;
-  document.getElementById('setting-color-blind-mode').value = state.colorBlindMode || 'none';
-  document.getElementById('setting-animations').checked = state.enableAnimations !== false;
-  document.getElementById('setting-announce-output').checked = state.announceOutput !== false;
-  document.getElementById('setting-announce-errors').checked = state.announceErrors !== false;
+  document.getElementById("setting-high-contrast").checked =
+    state.highContrast || false;
+  document.getElementById("setting-color-blind-mode").value =
+    state.colorBlindMode || "none";
+  document.getElementById("setting-animations").checked =
+    state.enableAnimations !== false;
+  document.getElementById("setting-announce-output").checked =
+    state.announceOutput !== false;
+  document.getElementById("setting-announce-errors").checked =
+    state.announceErrors !== false;
 }
 
 /**
@@ -280,80 +289,96 @@ function populateSettings(state) {
  */
 function setupSettingsListeners() {
   // Close button
-  const closeButtons = modal.querySelectorAll('.modal-close, #settings-close');
-  closeButtons.forEach(btn => {
-    btn.addEventListener('click', hideSettingsModal);
+  const closeButtons = modal.querySelectorAll(".modal-close, #settings-close");
+  closeButtons.forEach((btn) => {
+    btn.addEventListener("click", hideSettingsModal);
   });
 
   // Close on overlay click
-  modal.addEventListener('click', (e) => {
+  modal.addEventListener("click", (e) => {
     if (e.target === modal) {
       hideSettingsModal();
     }
   });
 
   // Close on Escape key
-  document.addEventListener('keydown', handleEscapeKey);
+  document.addEventListener("keydown", handleEscapeKey);
 
   // Tab switching
-  const tabs = modal.querySelectorAll('.settings-tab');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
+  const tabs = modal.querySelectorAll(".settings-tab");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
       const tabName = tab.dataset.tab;
       switchTab(tabName);
     });
   });
 
   // Font size
-  const fontSizeInput = document.getElementById('setting-font-size');
-  fontSizeInput.addEventListener('input', (e) => {
+  const fontSizeInput = document.getElementById("setting-font-size");
+  fontSizeInput.addEventListener("input", (e) => {
     const size = parseInt(e.target.value);
-    document.getElementById('font-size-value').textContent = `${size}px`;
+    document.getElementById("font-size-value").textContent = `${size}px`;
     applyFontSize(size);
   });
 
   // Tab size
-  document.getElementById('setting-tab-size').addEventListener('change', (e) => {
-    const tabSize = parseInt(e.target.value);
-    applyTabSize(tabSize);
-  });
+  document
+    .getElementById("setting-tab-size")
+    .addEventListener("change", (e) => {
+      const tabSize = parseInt(e.target.value);
+      applyTabSize(tabSize);
+    });
 
   // Minimap
-  document.getElementById('setting-minimap').addEventListener('change', (e) => {
+  document.getElementById("setting-minimap").addEventListener("change", (e) => {
     applyMinimap(e.target.checked);
   });
 
   // Word wrap
-  document.getElementById('setting-word-wrap').addEventListener('change', (e) => {
-    applyWordWrap(e.target.checked);
-  });
+  document
+    .getElementById("setting-word-wrap")
+    .addEventListener("change", (e) => {
+      applyWordWrap(e.target.checked);
+    });
 
   // High contrast
-  document.getElementById('setting-high-contrast').addEventListener('change', (e) => {
-    applyHighContrast(e.target.checked);
-  });
+  document
+    .getElementById("setting-high-contrast")
+    .addEventListener("change", (e) => {
+      applyHighContrast(e.target.checked);
+    });
 
   // Color blind mode
-  document.getElementById('setting-color-blind-mode').addEventListener('change', (e) => {
-    applyColorBlindMode(e.target.value);
-  });
+  document
+    .getElementById("setting-color-blind-mode")
+    .addEventListener("change", (e) => {
+      applyColorBlindMode(e.target.value);
+    });
 
   // Animations
-  document.getElementById('setting-animations').addEventListener('change', (e) => {
-    applyAnimations(e.target.checked);
-  });
+  document
+    .getElementById("setting-animations")
+    .addEventListener("change", (e) => {
+      applyAnimations(e.target.checked);
+    });
 
   // Announce settings
-  document.getElementById('setting-announce-output').addEventListener('change', (e) => {
-    setValue('announceOutput', e.target.checked);
-  });
+  document
+    .getElementById("setting-announce-output")
+    .addEventListener("change", (e) => {
+      setValue("announceOutput", e.target.checked);
+    });
 
-  document.getElementById('setting-announce-errors').addEventListener('change', (e) => {
-    setValue('announceErrors', e.target.checked);
-  });
+  document
+    .getElementById("setting-announce-errors")
+    .addEventListener("change", (e) => {
+      setValue("announceErrors", e.target.checked);
+    });
 
   // Reset button
-  document.getElementById('settings-reset').addEventListener('click', resetSettings);
+  document
+    .getElementById("settings-reset")
+    .addEventListener("click", resetSettings);
 }
 
 /**
@@ -364,14 +389,14 @@ function hideSettingsModal() {
     modal.remove();
     modal = null;
   }
-  document.removeEventListener('keydown', handleEscapeKey);
+  document.removeEventListener("keydown", handleEscapeKey);
 }
 
 /**
  * Handle Escape key press
  */
 function handleEscapeKey(e) {
-  if (e.key === 'Escape') {
+  if (e.key === "Escape") {
     hideSettingsModal();
   }
 }
@@ -381,13 +406,13 @@ function handleEscapeKey(e) {
  */
 function switchTab(tabName) {
   // Update tab buttons
-  modal.querySelectorAll('.settings-tab').forEach(tab => {
-    tab.classList.toggle('active', tab.dataset.tab === tabName);
+  modal.querySelectorAll(".settings-tab").forEach((tab) => {
+    tab.classList.toggle("active", tab.dataset.tab === tabName);
   });
 
   // Update panels
-  modal.querySelectorAll('.settings-panel').forEach(panel => {
-    panel.classList.toggle('active', panel.dataset.panel === tabName);
+  modal.querySelectorAll(".settings-panel").forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.panel === tabName);
   });
 }
 
@@ -399,7 +424,7 @@ function applyFontSize(size) {
   if (editor) {
     editor.updateOptions({ fontSize: size });
   }
-  setValue('fontSize', size);
+  setValue("fontSize", size);
 }
 
 /**
@@ -413,8 +438,8 @@ function applyTabSize(tabSize) {
   updateState({
     preferences: {
       ...getState().preferences,
-      tabSize: tabSize
-    }
+      tabSize: tabSize,
+    },
   });
 }
 
@@ -425,10 +450,10 @@ function applyMinimap(enabled) {
   const editor = getEditor();
   if (editor) {
     editor.updateOptions({
-      minimap: { enabled: enabled }
+      minimap: { enabled: enabled },
     });
   }
-  setValue('showMinimap', enabled);
+  setValue("showMinimap", enabled);
 }
 
 /**
@@ -438,14 +463,14 @@ function applyWordWrap(enabled) {
   const editor = getEditor();
   if (editor) {
     editor.updateOptions({
-      wordWrap: enabled ? 'on' : 'off'
+      wordWrap: enabled ? "on" : "off",
     });
   }
   updateState({
     preferences: {
       ...getState().preferences,
-      wordWrap: enabled
-    }
+      wordWrap: enabled,
+    },
   });
 }
 
@@ -453,18 +478,18 @@ function applyWordWrap(enabled) {
  * Apply high contrast mode
  */
 function applyHighContrast(enabled) {
-  document.documentElement.classList.toggle('high-contrast', enabled);
-  setValue('highContrast', enabled);
+  document.documentElement.classList.toggle("high-contrast", enabled);
+  setValue("highContrast", enabled);
 
   // Optionally switch Monaco theme
   const editor = getEditor();
   if (editor) {
     const monaco = window.monaco;
-    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const currentTheme = document.documentElement.getAttribute("data-theme");
     if (enabled) {
-      monaco.editor.setTheme('hc-black');
+      monaco.editor.setTheme("hc-black");
     } else {
-      monaco.editor.setTheme(currentTheme === 'dark' ? 'vs-dark' : 'vs');
+      monaco.editor.setTheme(currentTheme === "dark" ? "vs-dark" : "vs");
     }
   }
 }
@@ -474,29 +499,33 @@ function applyHighContrast(enabled) {
  */
 function applyColorBlindMode(mode) {
   // Remove existing color blind classes
-  document.documentElement.classList.remove('cb-protanopia', 'cb-deuteranopia', 'cb-tritanopia');
+  document.documentElement.classList.remove(
+    "cb-protanopia",
+    "cb-deuteranopia",
+    "cb-tritanopia",
+  );
 
   // Apply new mode
-  if (mode !== 'none') {
+  if (mode !== "none") {
     document.documentElement.classList.add(`cb-${mode}`);
   }
 
-  setValue('colorBlindMode', mode);
+  setValue("colorBlindMode", mode);
 }
 
 /**
  * Apply animations setting
  */
 function applyAnimations(enabled) {
-  document.documentElement.classList.toggle('reduce-motion', !enabled);
-  setValue('enableAnimations', enabled);
+  document.documentElement.classList.toggle("reduce-motion", !enabled);
+  setValue("enableAnimations", enabled);
 }
 
 /**
  * Reset all settings to defaults
  */
 function resetSettings() {
-  if (!confirm('Reset all settings to defaults?')) {
+  if (!confirm("Reset all settings to defaults?")) {
     return;
   }
 
@@ -506,10 +535,10 @@ function resetSettings() {
   applyMinimap(true);
   applyWordWrap(false);
   applyHighContrast(false);
-  applyColorBlindMode('none');
+  applyColorBlindMode("none");
   applyAnimations(true);
-  setValue('announceOutput', true);
-  setValue('announceErrors', true);
+  setValue("announceOutput", true);
+  setValue("announceErrors", true);
 
   // Update UI
   const state = getState();
@@ -521,9 +550,9 @@ function resetSettings() {
  */
 export function initSettings() {
   // Add global keyboard shortcut for settings
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener("keydown", (e) => {
     // Ctrl/Cmd + ,
-    if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+    if ((e.ctrlKey || e.metaKey) && e.key === ",") {
       e.preventDefault();
       showSettingsModal();
     }
@@ -534,7 +563,7 @@ export function initSettings() {
   if (state.highContrast) {
     applyHighContrast(true);
   }
-  if (state.colorBlindMode && state.colorBlindMode !== 'none') {
+  if (state.colorBlindMode && state.colorBlindMode !== "none") {
     applyColorBlindMode(state.colorBlindMode);
   }
   if (state.enableAnimations === false) {
