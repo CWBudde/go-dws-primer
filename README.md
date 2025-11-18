@@ -30,7 +30,7 @@ An interactive, browser-based educational programming environment for learning D
 ### Prerequisites
 
 - Node.js 18 or higher
-- npm or yarn
+- Yarn 4 (included via Corepack)
 
 ### Installation
 
@@ -40,10 +40,10 @@ git clone https://github.com/cwbudde/go-dws-primer.git
 cd go-dws-primer
 
 # Install dependencies
-npm install
+yarn install
 
 # Start development server
-npm run dev
+yarn dev
 ```
 
 The application will open at `http://localhost:3000`
@@ -92,18 +92,18 @@ go-dws-primer/
 ### Available Scripts
 
 ```bash
-npm run dev       # Start development server
-npm run build     # Build for production
-npm run preview   # Preview production build
-npm run test      # Run unit tests
-npm run lint      # Lint code
-npm run format    # Format code
+yarn dev       # Start development server
+yarn build     # Build for production
+yarn preview   # Preview production build
+yarn test      # Run unit tests
+yarn lint      # Lint code
+yarn format    # Format code
 ```
 
 ### Building for Production
 
 ```bash
-npm run build
+yarn build
 ```
 
 The production-ready files will be in the `dist/` directory.
