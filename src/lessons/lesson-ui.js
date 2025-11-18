@@ -3,11 +3,16 @@
  * Handles rendering and displaying lesson content
  */
 
-import { marked } from 'marked';
-import { setCode, getCode } from '../editor/monaco-setup.js';
-import { executeCode } from '../core/executor.js';
-import { markExerciseCompleted, getLessonProgress } from './progress.js';
-import { compareOutput, formatOutputComparison, runExerciseTests, formatTestResults } from './exercise-validator.js';
+import { marked } from "marked";
+import { setCode, getCode } from "../editor/monaco-setup.js";
+import { executeCode } from "../core/executor.js";
+import { markExerciseCompleted, getLessonProgress } from "./progress.js";
+import {
+  compareOutput,
+  formatOutputComparison,
+  runExerciseTests,
+  formatTestResults,
+} from "./exercise-validator.js";
 
 let currentLesson = null;
 
@@ -138,13 +143,15 @@ function buildLessonHTML(lesson) {
     html += `<section class="lesson-section"><h2>Practice Exercises</h2>`;
 
     content.exercises.forEach((exercise, index) => {
-      const hasValidation = exercise.expectedOutput || (exercise.tests && exercise.tests.length > 0);
+      const hasValidation =
+        exercise.expectedOutput ||
+        (exercise.tests && exercise.tests.length > 0);
 
       html += `
         <div class="exercise-block"
              data-exercise-index="${index}"
-             ${exercise.expectedOutput ? `data-expected-output="${escapeHtml(exercise.expectedOutput)}"` : ''}
-             ${exercise.tests ? `data-tests="${escapeHtml(JSON.stringify(exercise.tests))}"` : ''}>
+             ${exercise.expectedOutput ? `data-expected-output="${escapeHtml(exercise.expectedOutput)}"` : ""}
+             ${exercise.tests ? `data-tests="${escapeHtml(JSON.stringify(exercise.tests))}"` : ""}>
           <div class="exercise-header">
             <h3>${exercise.title}</h3>
             <div class="exercise-status" data-exercise="${index}">
@@ -179,12 +186,18 @@ function buildLessonHTML(lesson) {
             <button class="btn btn-primary btn-start-exercise" data-code="${escapeHtml(exercise.starterCode || "")}">
               Start Exercise
             </button>
-            ${hasValidation ? `
+            ${
+              hasValidation
+                ? `
               <button class="btn btn-success btn-check-output">
                 ✓ Check Output
               </button>
-            ` : ''}
-            ${exercise.solution ? `
+            `
+                : ""
+            }
+            ${
+              exercise.solution
+                ? `
               <button class="btn btn-sm btn-show-solution">
                 Show Solution
               </button>
@@ -193,7 +206,9 @@ function buildLessonHTML(lesson) {
             }
           </div>
           <div class="validation-results" style="display: none;"></div>
-          ${exercise.solution ? `
+          ${
+            exercise.solution
+              ? `
             <div class="solution" style="display: none;">
               <h4>Solution:</h4>
               <pre><code class="language-pascal">${escapeHtml(exercise.solution)}</code></pre>
@@ -335,21 +350,23 @@ function attachLessonEventListeners(lesson) {
   });
 
   // Check output buttons
-  panel.querySelectorAll('.btn-check-output').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const exerciseBlock = e.target.closest('.exercise-block');
-      const exerciseIndex = exerciseBlock.getAttribute('data-exercise-index');
-      const expectedOutput = exerciseBlock.getAttribute('data-expected-output');
-      const testsJson = exerciseBlock.getAttribute('data-tests');
-      const validationContainer = exerciseBlock.querySelector('.validation-results');
+  panel.querySelectorAll(".btn-check-output").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const exerciseBlock = e.target.closest(".exercise-block");
+      const exerciseIndex = exerciseBlock.getAttribute("data-exercise-index");
+      const expectedOutput = exerciseBlock.getAttribute("data-expected-output");
+      const testsJson = exerciseBlock.getAttribute("data-tests");
+      const validationContainer = exerciseBlock.querySelector(
+        ".validation-results",
+      );
 
       // Get current code from editor
       const code = getCode();
 
       // Show loading state
       btn.disabled = true;
-      btn.textContent = 'Checking...';
-      validationContainer.style.display = 'none';
+      btn.textContent = "Checking...";
+      validationContainer.style.display = "none";
 
       try {
         // Execute the code
@@ -364,11 +381,11 @@ function attachLessonEventListeners(lesson) {
                 <span class="comparison-title">Execution failed</span>
               </div>
               <div class="comparison-details">
-                <p>${escapeHtml(result.error?.message || 'Unknown error occurred')}</p>
+                <p>${escapeHtml(result.error?.message || "Unknown error occurred")}</p>
               </div>
             </div>
           `;
-          validationContainer.style.display = 'block';
+          validationContainer.style.display = "block";
           return;
         }
 
@@ -385,7 +402,10 @@ function attachLessonEventListeners(lesson) {
           }
         } else if (expectedOutput) {
           // Compare output
-          const comparison = compareOutput(result.output, decodeHtml(expectedOutput));
+          const comparison = compareOutput(
+            result.output,
+            decodeHtml(expectedOutput),
+          );
           validationContainer.innerHTML = formatOutputComparison(comparison);
 
           if (comparison.success) {
@@ -394,10 +414,13 @@ function attachLessonEventListeners(lesson) {
           }
         }
 
-        validationContainer.style.display = 'block';
+        validationContainer.style.display = "block";
 
         // Scroll to results
-        validationContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        validationContainer.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
       } catch (error) {
         validationContainer.innerHTML = `
           <div class="output-comparison failure">
@@ -410,10 +433,10 @@ function attachLessonEventListeners(lesson) {
             </div>
           </div>
         `;
-        validationContainer.style.display = 'block';
+        validationContainer.style.display = "block";
       } finally {
         btn.disabled = false;
-        btn.textContent = '✓ Check Output';
+        btn.textContent = "✓ Check Output";
       }
     });
   });
@@ -492,10 +515,12 @@ function updateProgressIndicators(lesson, progress) {
  * @param {boolean} completed - Completion status
  */
 function updateExerciseStatus(exerciseBlock, exerciseIndex, completed) {
-  const status = exerciseBlock.querySelector(`.exercise-status[data-exercise="${exerciseIndex}"] .status-icon`);
+  const status = exerciseBlock.querySelector(
+    `.exercise-status[data-exercise="${exerciseIndex}"] .status-icon`,
+  );
   if (status) {
-    status.textContent = completed ? '✓' : '○';
-    status.style.color = completed ? 'var(--success)' : 'inherit';
+    status.textContent = completed ? "✓" : "○";
+    status.style.color = completed ? "var(--success)" : "inherit";
   }
 }
 

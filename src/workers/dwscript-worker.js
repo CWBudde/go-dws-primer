@@ -64,7 +64,7 @@ self.onmessage = async function (event) {
  */
 async function initializeWASM(config) {
   try {
-    const { wasmPath, timeout } = config;
+    const { wasmPath, timeout: _timeout } = config;
 
     // Import the WASM loader (need to handle paths correctly)
     // For now, we'll load the WASM directly
