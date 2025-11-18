@@ -17,6 +17,14 @@ export class DWScriptAPI {
     this.instance = null;
     this.initialized = false;
     this.programs = new Map(); // Cache compiled programs
+    this.executionTimeout = 30000; // Default 30 seconds
+    this.performanceMetrics = {
+      totalExecutions: 0,
+      totalCompilations: 0,
+      totalExecutionTime: 0,
+      averageExecutionTime: 0,
+      errorCount: 0
+    };
   }
 
   /**
@@ -59,6 +67,9 @@ export class DWScriptAPI {
     try {
       const program = this.instance.compile(source);
 
+      // Update metrics
+      this.performanceMetrics.totalCompilations++;
+
       if (program.success && cacheKey) {
         this.programs.set(cacheKey, program);
       }
@@ -75,15 +86,39 @@ export class DWScriptAPI {
   /**
    * Execute source code (compile + run)
    * @param {string} source - DWScript source code
-   * @returns {Object} Normalized result
+   * @param {Object} options - Execution options
+   * @param {number} options.timeout - Timeout in milliseconds (optional)
+   * @returns {Promise<Object>} Normalized result
    */
-  eval(source) {
+  async eval(source, options = {}) {
     this.assertInitialized();
 
+    const timeout = options.timeout || this.executionTimeout;
+    const startTime = performance.now();
+
     try {
-      const result = this.instance.eval(source);
+      let result;
+
+      if (timeout > 0) {
+        // Execute with timeout
+        result = await this.executeWithTimeout(
+          () => this.instance.eval(source),
+          timeout
+        );
+      } else {
+        // Execute without timeout
+        result = this.instance.eval(source);
+      }
+
+      const executionTime = performance.now() - startTime;
+
+      // Update performance metrics
+      this.updateMetrics(executionTime, result.success);
+
       return this.normalizeResult(result);
     } catch (error) {
+      const executionTime = performance.now() - startTime;
+      this.updateMetrics(executionTime, false);
       return this.normalizeError(error);
     }
   }
@@ -217,6 +252,66 @@ export class DWScriptAPI {
    */
   isReady() {
     return this.initialized && this.instance !== null;
+  }
+
+  /**
+   * Set execution timeout
+   * @param {number} timeout - Timeout in milliseconds (0 = no timeout)
+   */
+  setTimeout(timeout) {
+    this.executionTimeout = Math.max(0, timeout);
+  }
+
+  /**
+   * Execute with timeout using Promise.race
+   * @param {Function} fn - Function to execute
+   * @param {number} timeout - Timeout in milliseconds
+   * @returns {Promise<any>}
+   */
+  async executeWithTimeout(fn, timeout) {
+    return Promise.race([
+      Promise.resolve(fn()),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`Execution timeout after ${timeout}ms`)), timeout)
+      )
+    ]);
+  }
+
+  /**
+   * Update performance metrics
+   * @param {number} executionTime - Execution time in ms
+   * @param {boolean} success - Whether execution was successful
+   */
+  updateMetrics(executionTime, success) {
+    this.performanceMetrics.totalExecutions++;
+    this.performanceMetrics.totalExecutionTime += executionTime;
+    this.performanceMetrics.averageExecutionTime =
+      this.performanceMetrics.totalExecutionTime / this.performanceMetrics.totalExecutions;
+
+    if (!success) {
+      this.performanceMetrics.errorCount++;
+    }
+  }
+
+  /**
+   * Get performance metrics
+   * @returns {Object} Performance metrics
+   */
+  getMetrics() {
+    return { ...this.performanceMetrics };
+  }
+
+  /**
+   * Reset performance metrics
+   */
+  resetMetrics() {
+    this.performanceMetrics = {
+      totalExecutions: 0,
+      totalCompilations: 0,
+      totalExecutionTime: 0,
+      averageExecutionTime: 0,
+      errorCount: 0
+    };
   }
 }
 
