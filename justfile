@@ -11,19 +11,19 @@ default:
 
 # Install dependencies
 install:
-    npm install
+    yarn install
 
 # Start development server (http://localhost:3000)
 dev:
-    npm run dev
+    yarn dev
 
 # Build for production
 build:
-    npm run build
+    yarn build
 
 # Preview production build
 preview: build
-    npm run preview
+    yarn preview
 
 # Clean build artifacts
 clean:
@@ -42,19 +42,19 @@ reinstall: clean-all install
 
 # Run linter
 lint:
-    npm run lint
+    yarn lint
 
 # Fix linter issues automatically
 lint-fix:
-    npm run lint -- --fix
+    yarn lint --fix
 
 # Format code with Prettier
 format:
-    npm run format
+    yarn format
 
 # Check code formatting without making changes
 format-check:
-    npx prettier --check "src/**/*.{js,jsx,ts,tsx,css,md}"
+    yarn prettier --check "src/**/*.{js,jsx,ts,tsx,css,md}"
 
 # Run all quality checks (lint + format-check)
 check: lint format-check
@@ -68,27 +68,27 @@ fix: lint-fix format
 
 # Run unit tests
 test:
-    npm run test
+    yarn test
 
 # Run unit tests in watch mode
 test-watch:
-    npm run test -- --watch
+    yarn test --watch
 
 # Run unit tests with coverage
 test-coverage:
-    npm run test -- --coverage
+    yarn test --coverage
 
 # Run end-to-end tests
 test-e2e:
-    npm run test:e2e
+    yarn test:e2e
 
 # Run E2E tests in headed mode (visible browser)
 test-e2e-headed:
-    npm run test:e2e -- --headed
+    yarn test:e2e --headed
 
 # Run E2E tests in debug mode
 test-e2e-debug:
-    npm run test:e2e -- --debug
+    yarn test:e2e --debug
 
 # Run all tests (unit + e2e)
 test-all: test test-e2e
@@ -224,7 +224,7 @@ deploy-check:
     fi
 
     # Check if tests pass
-    if npm run test -- --passWithNoTests 2>&1 | grep -q "PASS\|Tests:.*0 total"; then
+    if yarn test --passWithNoTests 2>&1 | grep -q "PASS\|Tests:.*0 total"; then
         echo "✓ Tests passing"
     else
         echo "✗ Tests failing"
@@ -232,7 +232,7 @@ deploy-check:
     fi
 
     # Check for linter errors
-    if npm run lint 2>&1 | grep -q "error"; then
+    if yarn lint 2>&1 | grep -q "error"; then
         echo "✗ Linter errors present"
         checks=$((checks + 1))
     else
@@ -258,7 +258,7 @@ info:
     @echo "Repository: $(git remote get-url origin 2>/dev/null || echo 'N/A')"
     @echo "Branch: $(git branch --show-current 2>/dev/null || echo 'N/A')"
     @echo "Node: $(node --version 2>/dev/null || echo 'Not installed')"
-    @echo "NPM: $(npm --version 2>/dev/null || echo 'Not installed')"
+    @echo "Yarn: $(yarn --version 2>/dev/null || echo 'Not installed')"
     @echo ""
     @just wasm-check
 
@@ -273,15 +273,15 @@ stats:
 
 # Show dependency tree
 deps:
-    npm list --depth=0
+    yarn info --name-only
 
 # Check for outdated dependencies
 deps-check:
-    npm outdated
+    yarn outdated
 
 # Update dependencies (interactive)
 deps-update:
-    npm update
+    yarn upgrade-interactive
 
 # ============================================================================
 # Git Helpers
