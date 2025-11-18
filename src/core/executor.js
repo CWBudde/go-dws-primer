@@ -8,7 +8,6 @@ import {
   clearOutput,
   appendConsoleOutput,
   appendCompilerOutput,
-  showOutput,
 } from "../output/output-manager.js";
 import { clearTurtle } from "../turtle/turtle-api.js";
 import {

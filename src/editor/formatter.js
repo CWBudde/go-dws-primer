@@ -13,8 +13,8 @@ export function formatDWScript(code, options = {}) {
   const {
     indentSize = 2,
     useTabs = false,
-    insertSpaces = true,
-    maxLineLength = 120,
+    insertSpaces: _insertSpaces = true,
+    maxLineLength: _maxLineLength = 120,
   } = options;
 
   const indent = useTabs ? "\t" : " ".repeat(indentSize);
@@ -173,7 +173,7 @@ export function registerFormatter(languages) {
 export function registerOnTypeFormatter(languages) {
   languages.registerOnTypeFormattingEditProvider("dwscript", {
     autoFormatTriggerCharacters: [";", "\n"],
-    provideOnTypeFormattingEdits: (model, position, ch, options) => {
+    provideOnTypeFormattingEdits: (model, position, _ch, _options) => {
       // Auto-format the current line when ; is typed
       const lineNumber = position.lineNumber;
       const line = model.getLineContent(lineNumber);

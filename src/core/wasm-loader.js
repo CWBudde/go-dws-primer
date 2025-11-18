@@ -119,10 +119,10 @@ export async function executeDWScript(code, options = {}) {
 
 /**
  * Mock execution for development/testing when WASM is not available
- * @param {string} code
+ * @param {string} _code
  * @returns {Object}
  */
-function mockExecution(code) {
+function mockExecution(_code) {
   // Simple mock that just returns a success message
   return {
     success: true,
