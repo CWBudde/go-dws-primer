@@ -101,17 +101,17 @@
 ### 2.3 Interactive Execution
 - [x] Implement "Run" button with execution controls
 - [x] Implement execution time tracking (from FFI result)
-- [ ] Create execution performance metrics display
+- [x] Create execution performance metrics display
 - [x] Add "Stop" functionality using Web Worker termination (see FFI section 8)
-  - [ ] Create `src/workers/dwscript-worker.js`
-  - [ ] Initialize WASM in Web Worker context
-  - [ ] Implement message passing for code execution
-  - [ ] Add worker termination for cancellation
-- [ ] Investigate "Step" execution mode for debugging
-  - [ ] Research if go-dws supports breakpoints
-  - [ ] Consider implementing via code injection
-- [ ] Add memory usage display (if exposed by WASM)
-- [ ] Implement execution timeout mechanism
+  - [x] Create `src/workers/dwscript-worker.js`
+  - [x] Initialize WASM in Web Worker context
+  - [x] Implement message passing for code execution
+  - [x] Add worker termination for cancellation
+- [x] Investigate "Step" execution mode for debugging
+  - [x] Research if go-dws supports breakpoints (created placeholder framework)
+  - [x] Consider implementing via code injection (documented approaches)
+- [x] Add memory usage display (if exposed by WASM)
+- [x] Implement execution timeout mechanism
 
 **Deliverable**: Rich output environment with visual programming support
 
