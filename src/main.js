@@ -22,10 +22,10 @@ import { initSnippetsPanel } from './ui/snippets-panel.js';
  * Initialize the application
  */
 async function init() {
-  console.log('Initializing DWScript Primer...');
+  console.log("Initializing DWScript Primer...");
 
   // Show loading overlay
-  const loading = document.getElementById('loading');
+  const loading = document.getElementById("loading");
 
   try {
     // Initialize state
@@ -38,23 +38,23 @@ async function init() {
     initOutputPanels();
 
     // Initialize Turtle Graphics
-    const canvas = document.getElementById('turtle-canvas');
+    const canvas = document.getElementById("turtle-canvas");
     if (canvas) {
       initTurtle(canvas);
       installTurtleAPI();
-      console.log('Turtle Graphics initialized');
+      console.log("Turtle Graphics initialized");
     }
 
     // Initialize Lesson System
     await initLessonNavigation();
-    console.log('Lesson system initialized');
+    console.log("Lesson system initialized");
 
     // Initialize Monaco Editor
-    const editorContainer = document.getElementById('editor-container');
+    const editorContainer = document.getElementById("editor-container");
     if (editorContainer) {
       const editor = initMonacoEditor(editorContainer);
       setupKeyboardShortcuts();
-      console.log('Monaco Editor initialized');
+      console.log("Monaco Editor initialized");
 
       // Setup cursor position tracking
       editor.onDidChangeCursorPosition((e) => {
@@ -76,7 +76,7 @@ async function init() {
     enhanceARIA();
 
     // Load WASM runtime (async, non-blocking)
-    console.log('Loading DWScript WASM runtime...');
+    console.log("Loading DWScript WASM runtime...");
     const wasmSuccess = await initWASM({
       onOutput: (text) => {
         // Stream output to console in real-time
@@ -84,27 +84,30 @@ async function init() {
       },
       onError: (error) => {
         // Handle runtime errors
-        const errorMsg = error.line > 0
-          ? `Runtime error at line ${error.line}: ${error.message}`
-          : `Runtime error: ${error.message}`;
-        appendCompilerOutput(errorMsg, 'error');
+        const errorMsg =
+          error.line > 0
+            ? `Runtime error at line ${error.line}: ${error.message}`
+            : `Runtime error: ${error.message}`;
+        appendCompilerOutput(errorMsg, "error");
       },
       onInput: () => {
         // Handle input requests
-        return prompt('Input requested:') || '';
-      }
+        return prompt("Input requested:") || "";
+      },
     });
 
     if (wasmSuccess) {
-      console.log('WASM loaded successfully');
-      updateStatus('Ready');
+      console.log("WASM loaded successfully");
+      updateStatus("Ready");
     } else {
       const error = getWASMError();
-      console.error('WASM failed to load:', error);
-      updateStatus('WASM runtime not available (using mock mode)');
+      console.error("WASM failed to load:", error);
+      updateStatus("WASM runtime not available (using mock mode)");
 
       // Show warning in compiler output
-      const compilerOutput = document.querySelector('#output-compiler .output-content');
+      const compilerOutput = document.querySelector(
+        "#output-compiler .output-content",
+      );
       if (compilerOutput) {
         compilerOutput.innerHTML = `
           <div class="compiler-message compiler-warning">
@@ -115,7 +118,7 @@ async function init() {
             1. Build the WASM module from go-dws<br>
             2. Place dwscript.wasm and wasm_exec.js in the /wasm directory<br>
             <br>
-            Error: ${error ? error.message : 'Unknown error'}
+            Error: ${error ? error.message : "Unknown error"}
           </div>
         `;
       }
@@ -128,21 +131,21 @@ async function init() {
     const sharedCode = loadFromURL();
     if (sharedCode && sharedCode.code) {
       // Load shared code into editor
-      const monaco = await import('monaco-editor');
+      const monaco = await import("monaco-editor");
       const editor = monaco.editor.getModels()[0];
       if (editor) {
         editor.setValue(sharedCode.code);
       }
-      console.log('Loaded shared code from URL');
+      console.log("Loaded shared code from URL");
     }
 
     // Load lesson from URL or default
     await loadLessonFromURL();
 
-    console.log('DWScript Primer initialized successfully');
+    console.log("DWScript Primer initialized successfully");
   } catch (error) {
-    console.error('Initialization error:', error);
-    updateStatus('Initialization failed');
+    console.error("Initialization error:", error);
+    updateStatus("Initialization failed");
 
     // Show error
     alert(`Failed to initialize DWScript Primer:\n${error.message}`);
@@ -150,7 +153,7 @@ async function init() {
     // Hide loading overlay
     if (loading) {
       setTimeout(() => {
-        loading.classList.add('hidden');
+        loading.classList.add("hidden");
       }, 500);
     }
   }
@@ -161,109 +164,111 @@ async function init() {
  */
 function setupEventListeners() {
   // Run button
-  const runBtn = document.getElementById('btn-run');
+  const runBtn = document.getElementById("btn-run");
   if (runBtn) {
-    runBtn.addEventListener('click', handleRun);
+    runBtn.addEventListener("click", handleRun);
   }
 
   // Stop button
-  const stopBtn = document.getElementById('btn-stop');
+  const stopBtn = document.getElementById("btn-stop");
   if (stopBtn) {
-    stopBtn.addEventListener('click', handleStop);
+    stopBtn.addEventListener("click", handleStop);
   }
 
   // Clear button
-  const clearBtn = document.getElementById('btn-clear');
+  const clearBtn = document.getElementById("btn-clear");
   if (clearBtn) {
-    clearBtn.addEventListener('click', handleClear);
+    clearBtn.addEventListener("click", handleClear);
   }
 
   // Format button
-  const formatBtn = document.getElementById('btn-format');
+  const formatBtn = document.getElementById("btn-format");
   if (formatBtn) {
-    formatBtn.addEventListener('click', () => {
+    formatBtn.addEventListener("click", () => {
       formatCode();
-      updateStatus('Code formatted');
+      updateStatus("Code formatted");
     });
   }
 
   // Theme toggle
-  const themeBtn = document.getElementById('btn-theme');
+  const themeBtn = document.getElementById("btn-theme");
   if (themeBtn) {
-    themeBtn.addEventListener('click', () => {
+    themeBtn.addEventListener("click", () => {
       toggleTheme();
     });
   }
 
   // Settings button
-  const settingsBtn = document.getElementById('btn-settings');
+  const settingsBtn = document.getElementById("btn-settings");
   if (settingsBtn) {
-    settingsBtn.addEventListener('click', () => {
+    settingsBtn.addEventListener("click", () => {
       showSettingsModal();
     });
   }
 
   // Share button
-  const shareBtn = document.getElementById('btn-share');
+  const shareBtn = document.getElementById("btn-share");
   if (shareBtn) {
-    shareBtn.addEventListener('click', async () => {
+    shareBtn.addEventListener("click", async () => {
       const code = getCode();
-      const currentLesson = getValue('currentLesson');
+      const currentLesson = getValue("currentLesson");
 
       const result = await shareCode(code, {
         lessonId: currentLesson,
-        title: document.querySelector('.lesson-content h2')?.textContent || 'DWScript Code'
+        title:
+          document.querySelector(".lesson-content h2")?.textContent ||
+          "DWScript Code",
       });
 
       if (result.success) {
-        updateStatus('✓ ' + result.message);
+        updateStatus("✓ " + result.message);
         // Show a temporary success message
-        const originalIcon = shareBtn.querySelector('.icon').textContent;
-        shareBtn.querySelector('.icon').textContent = '✓';
+        const originalIcon = shareBtn.querySelector(".icon").textContent;
+        shareBtn.querySelector(".icon").textContent = "✓";
         setTimeout(() => {
-          shareBtn.querySelector('.icon').textContent = originalIcon;
+          shareBtn.querySelector(".icon").textContent = originalIcon;
         }, 2000);
       } else {
-        updateStatus('✗ Failed to share code');
+        updateStatus("✗ Failed to share code");
       }
     });
   }
 
   // Navigation buttons
-  const navButtons = document.querySelectorAll('.nav-btn');
-  navButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  const navButtons = document.querySelectorAll(".nav-btn");
+  navButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
       // Remove active class from all
-      navButtons.forEach(b => b.classList.remove('active'));
+      navButtons.forEach((b) => b.classList.remove("active"));
       // Add to clicked
-      e.target.classList.add('active');
+      e.target.classList.add("active");
 
       // TODO: Implement view switching
-      console.log('Navigate to:', e.target.textContent);
+      console.log("Navigate to:", e.target.textContent);
     });
   });
 
   // Canvas controls
-  const clearCanvas = document.getElementById('btn-clear-canvas');
+  const clearCanvas = document.getElementById("btn-clear-canvas");
   if (clearCanvas) {
-    clearCanvas.addEventListener('click', () => {
+    clearCanvas.addEventListener("click", () => {
       clearTurtle();
-      updateStatus('Canvas cleared');
+      updateStatus("Canvas cleared");
     });
   }
 
-  const exportCanvas = document.getElementById('btn-export-canvas');
+  const exportCanvas = document.getElementById("btn-export-canvas");
   if (exportCanvas) {
-    exportCanvas.addEventListener('click', () => {
+    exportCanvas.addEventListener("click", () => {
       exportCanvasPNG();
-      updateStatus('Canvas exported');
+      updateStatus("Canvas exported");
     });
   }
 
   // Turtle speed control
-  const speedControl = document.getElementById('turtle-speed');
+  const speedControl = document.getElementById("turtle-speed");
   if (speedControl) {
-    speedControl.addEventListener('input', (e) => {
+    speedControl.addEventListener("input", (e) => {
       const speed = parseInt(e.target.value);
       setTurtleSpeed(speed);
     });
@@ -276,11 +281,11 @@ function setupEventListeners() {
 async function handleRun() {
   const code = getCode();
   if (!code.trim()) {
-    updateStatus('No code to execute');
+    updateStatus("No code to execute");
     return;
   }
 
-  updateStatus('Executing...');
+  updateStatus("Executing...");
   await executeCode(code);
 }
 
@@ -295,13 +300,17 @@ function handleStop() {
  * Handle Clear button click
  */
 function handleClear() {
-  const consoleOutput = document.querySelector('#output-console .output-content');
-  const compilerOutput = document.querySelector('#output-compiler .output-content');
+  const consoleOutput = document.querySelector(
+    "#output-console .output-content",
+  );
+  const compilerOutput = document.querySelector(
+    "#output-compiler .output-content",
+  );
 
-  if (consoleOutput) consoleOutput.innerHTML = '';
-  if (compilerOutput) compilerOutput.innerHTML = '';
+  if (consoleOutput) consoleOutput.innerHTML = "";
+  if (compilerOutput) compilerOutput.innerHTML = "";
 
-  updateStatus('Output cleared');
+  updateStatus("Output cleared");
 }
 
 /**
@@ -309,7 +318,7 @@ function handleClear() {
  * @param {string} message
  */
 function updateStatus(message) {
-  const statusEl = document.getElementById('status-message');
+  const statusEl = document.getElementById("status-message");
   if (statusEl) {
     statusEl.textContent = message;
   }
@@ -321,15 +330,15 @@ function updateStatus(message) {
  * @param {number} column
  */
 function updateCursorPosition(line, column) {
-  const cursorPos = document.getElementById('cursor-position');
+  const cursorPos = document.getElementById("cursor-position");
   if (cursorPos) {
     cursorPos.textContent = `Ln ${line}, Col ${column}`;
   }
 }
 
 // Start the application when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
 } else {
   init();
 }

@@ -15,38 +15,40 @@ export function setupUI() {
  * Setup resizable panel functionality
  */
 function setupResizers() {
-  const resizers = document.querySelectorAll('.resizer');
+  const resizers = document.querySelectorAll(".resizer");
 
-  resizers.forEach(resizer => {
+  resizers.forEach((resizer) => {
     let isResizing = false;
     let startPos = 0;
     let startSize = 0;
     let targetElement = null;
 
-    resizer.addEventListener('mousedown', (e) => {
+    resizer.addEventListener("mousedown", (e) => {
       isResizing = true;
-      startPos = resizer.classList.contains('vertical') ? e.clientX : e.clientY;
+      startPos = resizer.classList.contains("vertical") ? e.clientX : e.clientY;
 
       // Determine which element to resize
-      if (resizer.id === 'sidebar-resizer') {
-        targetElement = document.querySelector('.sidebar');
+      if (resizer.id === "sidebar-resizer") {
+        targetElement = document.querySelector(".sidebar");
         startSize = targetElement.offsetWidth;
-      } else if (resizer.id === 'editor-resizer') {
-        targetElement = document.querySelector('.editor-section');
+      } else if (resizer.id === "editor-resizer") {
+        targetElement = document.querySelector(".editor-section");
         startSize = targetElement.offsetWidth;
-      } else if (resizer.id === 'lesson-resizer') {
-        targetElement = document.querySelector('.lesson-panel');
+      } else if (resizer.id === "lesson-resizer") {
+        targetElement = document.querySelector(".lesson-panel");
         startSize = targetElement.offsetHeight;
       }
 
-      document.body.style.cursor = resizer.classList.contains('vertical') ? 'col-resize' : 'row-resize';
+      document.body.style.cursor = resizer.classList.contains("vertical")
+        ? "col-resize"
+        : "row-resize";
       e.preventDefault();
     });
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener("mousemove", (e) => {
       if (!isResizing || !targetElement) return;
 
-      if (resizer.classList.contains('vertical')) {
+      if (resizer.classList.contains("vertical")) {
         // Horizontal resize
         const delta = e.clientX - startPos;
         const newWidth = startSize + delta;
@@ -63,11 +65,11 @@ function setupResizers() {
       }
     });
 
-    document.addEventListener('mouseup', () => {
+    document.addEventListener("mouseup", () => {
       if (isResizing) {
         isResizing = false;
         targetElement = null;
-        document.body.style.cursor = '';
+        document.body.style.cursor = "";
       }
     });
   });
@@ -78,7 +80,7 @@ function setupResizers() {
  */
 function addCompilerStyles() {
   // Add dynamic styles for compiler messages
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.textContent = `
     .compiler-message {
       padding: 4px 0;
@@ -111,9 +113,9 @@ function addCompilerStyles() {
  * Toggle sidebar visibility
  */
 export function toggleSidebar() {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector(".sidebar");
   if (sidebar) {
-    sidebar.style.display = sidebar.style.display === 'none' ? 'flex' : 'none';
+    sidebar.style.display = sidebar.style.display === "none" ? "flex" : "none";
   }
 }
 
@@ -121,8 +123,8 @@ export function toggleSidebar() {
  * Toggle lesson panel visibility
  */
 export function toggleLessonPanel() {
-  const panel = document.querySelector('.lesson-panel');
+  const panel = document.querySelector(".lesson-panel");
   if (panel) {
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    panel.style.display = panel.style.display === "none" ? "block" : "none";
   }
 }
