@@ -1,0 +1,126 @@
+{
+  "id": "if-statements",
+  "title": "If Statements and Conditions",
+  "category": "control-flow",
+  "difficulty": "beginner",
+  "order": 1,
+  "description": "Learn how to make decisions in your programs using if statements",
+  "estimatedTime": 20,
+  "tags": ["if", "else", "conditions", "decision", "control-flow"],
+  "content": {
+    "introduction": "Programs need to make decisions based on different conditions. The `if` statement is the most fundamental control flow structure that allows your program to execute different code based on whether a condition is true or false.\n\nIn this lesson, you'll learn how to use if statements to create programs that respond intelligently to different situations.\n\n### What You'll Learn\n- Basic if statements\n- if-else statements\n- if-else-if chains\n- Nested if statements\n- Combining conditions",
+    "concepts": [
+      {
+        "title": "Basic If Statement",
+        "description": "Executes code only if a condition is true: if condition then statement"
+      },
+      {
+        "title": "If-Else Statement",
+        "description": "Executes one block if true, another if false: if condition then statement1 else statement2"
+      },
+      {
+        "title": "If-Else-If Chains",
+        "description": "Check multiple conditions in sequence, executing the first one that's true"
+      },
+      {
+        "title": "Begin-End Blocks",
+        "description": "Use begin-end to execute multiple statements in an if branch"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Simple If Statement",
+        "description": "Check a single condition and execute code if true",
+        "code": "program SimpleIf;\n\nvar\n  age: Integer;\n\nbegin\n  age := 20;\n  \n  if age >= 18 then\n    WriteLn('You are an adult.');\n  \n  WriteLn('Program finished.');\nend.",
+        "expectedOutput": "You are an adult.\nProgram finished."
+      },
+      {
+        "title": "If-Else Statement",
+        "description": "Execute one block if true, another if false",
+        "code": "program IfElse;\n\nvar\n  temperature: Integer;\n\nbegin\n  temperature := 25;\n  \n  if temperature > 30 then\n    WriteLn('It\\'s hot outside!')\n  else\n    WriteLn('The temperature is comfortable.');\nend.",
+        "expectedOutput": "The temperature is comfortable."
+      },
+      {
+        "title": "If-Else-If Chain",
+        "description": "Check multiple conditions in sequence",
+        "code": "program GradeChecker;\n\nvar\n  score: Integer;\n\nbegin\n  score := 85;\n  \n  if score >= 90 then\n    WriteLn('Grade: A - Excellent!')\n  else if score >= 80 then\n    WriteLn('Grade: B - Good job!')\n  else if score >= 70 then\n    WriteLn('Grade: C - Fair')\n  else if score >= 60 then\n    WriteLn('Grade: D - Needs improvement')\n  else\n    WriteLn('Grade: F - Failed');\nend.",
+        "expectedOutput": "Grade: B - Good job!"
+      },
+      {
+        "title": "Multiple Statements with Begin-End",
+        "description": "Execute multiple statements in an if branch",
+        "code": "program MultipleStatements;\n\nvar\n  balance: Float;\n  amount: Float;\n\nbegin\n  balance := 100.0;\n  amount := 30.0;\n  \n  WriteLn('Current balance: $', balance);\n  WriteLn('Withdrawal amount: $', amount);\n  \n  if balance >= amount then\n  begin\n    balance := balance - amount;\n    WriteLn('Withdrawal successful!');\n    WriteLn('New balance: $', balance);\n  end\n  else\n  begin\n    WriteLn('Insufficient funds!');\n    WriteLn('Balance remains: $', balance);\n  end;\nend.",
+        "expectedOutput": "Current balance: $100\nWithdrawal amount: $30\nWithdrawal successful!\nNew balance: $70"
+      },
+      {
+        "title": "Nested If Statements",
+        "description": "If statements inside other if statements",
+        "code": "program NestedIf;\n\nvar\n  age: Integer;\n  hasLicense: Boolean;\n\nbegin\n  age := 20;\n  hasLicense := True;\n  \n  if age >= 16 then\n  begin\n    if hasLicense then\n      WriteLn('You can drive!')\n    else\n      WriteLn('You need to get a license first.');\n  end\n  else\n    WriteLn('You are too young to drive.');\nend.",
+        "expectedOutput": "You can drive!"
+      },
+      {
+        "title": "Combining Conditions",
+        "description": "Using and, or, not in conditions",
+        "code": "program CombinedConditions;\n\nvar\n  age: Integer;\n  isStudent: Boolean;\n  ticketPrice: Float;\n\nbegin\n  age := 15;\n  isStudent := True;\n  \n  if (age < 18) or isStudent then\n  begin\n    ticketPrice := 8.0;\n    WriteLn('Discounted ticket: $', ticketPrice);\n  end\n  else\n  begin\n    ticketPrice := 12.0;\n    WriteLn('Regular ticket: $', ticketPrice);\n  end;\nend.",
+        "expectedOutput": "Discounted ticket: $8"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Even or Odd Checker",
+        "description": "Write a program that checks if a number is even or odd. Use the modulus operator (mod) to check if a number is divisible by 2.",
+        "starterCode": "program EvenOdd;\n\nvar\n  number: Integer;\n\nbegin\n  number := 42;\n  \n  // Your code here\n  \nend.",
+        "solution": "program EvenOdd;\n\nvar\n  number: Integer;\n\nbegin\n  number := 42;\n  \n  if (number mod 2) = 0 then\n    WriteLn(number, ' is even')\n  else\n    WriteLn(number, ' is odd');\nend.",
+        "hints": [
+          "Use the mod operator: number mod 2",
+          "If number mod 2 = 0, the number is even",
+          "Otherwise, the number is odd",
+          "Use an if-else statement"
+        ]
+      },
+      {
+        "title": "Temperature Warning System",
+        "description": "Create a program that displays different messages based on temperature: Below 0: 'Freezing!', 0-15: 'Cold', 16-25: 'Comfortable', Above 25: 'Hot'",
+        "starterCode": "program TempWarning;\n\nvar\n  temp: Integer;\n\nbegin\n  temp := 18;\n  \n  // Your code here\n  \nend.",
+        "solution": "program TempWarning;\n\nvar\n  temp: Integer;\n\nbegin\n  temp := 18;\n  \n  if temp < 0 then\n    WriteLn('Freezing!')\n  else if temp <= 15 then\n    WriteLn('Cold')\n  else if temp <= 25 then\n    WriteLn('Comfortable')\n  else\n    WriteLn('Hot');\nend.",
+        "hints": [
+          "Use an if-else-if chain",
+          "Check conditions in order from lowest to highest",
+          "Use <= or >= for ranges",
+          "The else clause handles anything above 25"
+        ]
+      },
+      {
+        "title": "Login Validator",
+        "description": "Write a program that checks if both username is 'admin' AND password is 'secret123'. Display 'Login successful' if both are correct, otherwise 'Login failed'.",
+        "starterCode": "program LoginValidator;\n\nvar\n  username: String;\n  password: String;\n\nbegin\n  username := 'admin';\n  password := 'secret123';\n  \n  // Your code here\n  \nend.",
+        "solution": "program LoginValidator;\n\nvar\n  username: String;\n  password: String;\n\nbegin\n  username := 'admin';\n  password := 'secret123';\n  \n  if (username = 'admin') and (password = 'secret123') then\n    WriteLn('Login successful')\n  else\n    WriteLn('Login failed');\nend.",
+        "hints": [
+          "Use the 'and' operator to combine two conditions",
+          "Check if username = 'admin'",
+          "Check if password = 'secret123'",
+          "Both must be true for login to succeed",
+          "Use parentheses around each condition for clarity"
+        ]
+      },
+      {
+        "title": "Leap Year Checker",
+        "description": "A year is a leap year if: it's divisible by 4 AND (not divisible by 100 OR divisible by 400). Write a program to check if a year is a leap year.",
+        "starterCode": "program LeapYear;\n\nvar\n  year: Integer;\n\nbegin\n  year := 2024;\n  \n  // Your code here\n  \nend.",
+        "solution": "program LeapYear;\n\nvar\n  year: Integer;\n  isLeap: Boolean;\n\nbegin\n  year := 2024;\n  \n  isLeap := (year mod 4 = 0) and ((year mod 100 <> 0) or (year mod 400 = 0));\n  \n  if isLeap then\n    WriteLn(year, ' is a leap year')\n  else\n    WriteLn(year, ' is not a leap year');\nend.",
+        "hints": [
+          "Divisible by 4: (year mod 4 = 0)",
+          "Not divisible by 100: (year mod 100 <> 0)",
+          "Divisible by 400: (year mod 400 = 0)",
+          "Combine with: (div by 4) AND ((not div by 100) OR (div by 400))",
+          "You can store the result in a boolean variable first"
+        ]
+      }
+    ],
+    "summary": "Great work! You've mastered:\n\n- **Basic if statements**: Execute code conditionally\n- **If-else statements**: Choose between two alternatives\n- **If-else-if chains**: Handle multiple conditions\n- **Begin-end blocks**: Execute multiple statements in a branch\n- **Nested if statements**: If statements inside if statements\n- **Combined conditions**: Using and, or, not operators\n\nIf statements are the foundation of program logic and decision-making!",
+    "nextSteps": "Next, you'll learn about **case statements** - a cleaner way to handle multiple specific values. Case statements are perfect when you need to check a variable against many different values!"
+  },
+  "prerequisites": ["operators-and-expressions"],
+  "relatedLessons": ["operators-and-expressions", "case-statements", "input-output"],
+  "estimatedTime": 20
+}

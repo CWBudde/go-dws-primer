@@ -3,10 +3,12 @@
  * Handles running DWScript code and managing execution state
  */
 
-import { executeDWScript, isWASMReady } from './wasm-loader.js';
+import { executeDWScript, isWASMReady, getDWScriptAPI } from './wasm-loader.js';
 import { clearOutput, appendConsoleOutput, appendCompilerOutput, showOutput } from '../output/output-manager.js';
 import { clearTurtle } from '../turtle/turtle-api.js';
 import { executeInWorker, stopWorkerExecution, isWorkerInitialized, initWorker } from '../workers/worker-manager.js';
+import { announceOutput, announceError, announceStatus } from '../utils/accessibility.js';
+import { addErrorMarkers, clearErrorMarkers } from '../editor/monaco-setup.js';
 
 let isExecuting = false;
 let executionStartTime = 0;
@@ -68,6 +70,7 @@ export async function executeCode(code, options = {}) {
     // Update UI
     updateExecutionUI(true);
     clearOutput();
+    clearErrorMarkers();
 
     // Clear turtle canvas if graphics tab is visible
     const graphicsTab = document.getElementById('output-graphics');
@@ -173,25 +176,37 @@ export async function executeCode(code, options = {}) {
       // Show output
       if (result.output) {
         appendConsoleOutput(result.output);
+        announceOutput(result.output);
       }
 
       // Show execution stats with enhanced metrics
       updateExecutionTime(executionTime);
+
       const metricsText = formatExecutionMetrics(executionTime);
       updateStatus(`${metricsText}`);
+
+      const statusMsg = `Execution completed in ${executionTime.toFixed(2)}ms`;
+      updateStatus(statusMsg);
+      announceStatus(statusMsg);
     } else {
       // Show errors
       appendCompilerOutput('Compilation failed:', 'error');
       if (result.errors && result.errors.length > 0) {
+        // Add error markers to the editor
+        addErrorMarkers(result.errors);
+
+        // Display errors in compiler output
         result.errors.forEach(error => {
           const errorMsg = error.line > 0
             ? `Line ${error.line}: ${error.message}`
             : error.message;
           appendCompilerOutput(errorMsg, 'error');
+          announceError(error.message, error.line);
         });
       }
 
       updateStatus('Compilation failed');
+      announceStatus('Compilation failed');
     }
 
     return result;
@@ -294,6 +309,53 @@ function updateExecutionTime(timeMs) {
       timeEl.textContent = `⏱️ ${(timeMs / 1000).toFixed(2)}s`;
     }
   }
+
+  // Update performance metrics
+  updatePerformanceMetrics();
+}
+
+/**
+ * Update performance metrics display
+ */
+function updatePerformanceMetrics() {
+  const metricsEl = document.getElementById('performance-metrics');
+  if (!metricsEl) return;
+
+  const api = getDWScriptAPI();
+  if (!api || !api.isReady()) return;
+
+  const metrics = api.getMetrics();
+
+  // Display summary in status bar
+  const avgTime = metrics.averageExecutionTime.toFixed(1);
+  const errorRate = metrics.totalExecutions > 0
+    ? ((metrics.errorCount / metrics.totalExecutions) * 100).toFixed(0)
+    : 0;
+
+  metricsEl.textContent = `📊 ${metrics.totalExecutions} runs | avg ${avgTime}ms | ${errorRate}% errors`;
+
+  // Add click handler to show detailed metrics
+  metricsEl.onclick = () => showDetailedMetrics(metrics);
+}
+
+/**
+ * Show detailed performance metrics in a modal/alert
+ * @param {Object} metrics
+ */
+function showDetailedMetrics(metrics) {
+  const message = `
+Performance Metrics
+═══════════════════
+
+Total Executions: ${metrics.totalExecutions}
+Total Compilations: ${metrics.totalCompilations}
+Total Execution Time: ${metrics.totalExecutionTime.toFixed(2)}ms
+Average Execution Time: ${metrics.averageExecutionTime.toFixed(2)}ms
+Error Count: ${metrics.errorCount}
+Success Rate: ${(((metrics.totalExecutions - metrics.errorCount) / metrics.totalExecutions) * 100).toFixed(1)}%
+  `.trim();
+
+  alert(message);
 }
 
 /**

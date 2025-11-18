@@ -2,6 +2,14 @@
   "lessons": [
     "/content/lessons/01-fundamentals/01-hello-world.json",
     "/content/lessons/01-fundamentals/02-variables.json",
+    "/content/lessons/01-fundamentals/03-operators.json",
+    "/content/lessons/01-fundamentals/04-input-output.json",
+    "/content/lessons/02-control-flow/01-if-statements.json",
+    "/content/lessons/02-control-flow/02-case-statements.json",
+    "/content/lessons/02-control-flow/03-while-loops.json",
+    "/content/lessons/02-control-flow/04-for-loops.json",
+    "/content/lessons/02-control-flow/05-repeat-until.json",
+    "/content/lessons/02-control-flow/06-break-continue.json",
     "/content/lessons/06-turtle-graphics/01-turtle-basics.json"
   ]
 }

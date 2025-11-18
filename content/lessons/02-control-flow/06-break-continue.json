@@ -1,0 +1,133 @@
+{
+  "id": "break-continue",
+  "title": "Break and Continue",
+  "category": "control-flow",
+  "difficulty": "intermediate",
+  "order": 6,
+  "description": "Learn to control loop flow with break and continue statements",
+  "estimatedTime": 15,
+  "tags": ["break", "continue", "loop", "control-flow", "exit"],
+  "content": {
+    "introduction": "Sometimes you need more control over loop execution. The `break` statement lets you exit a loop early, while `continue` lets you skip the rest of the current iteration and move to the next one.\n\nThese statements give you fine-grained control over loop behavior.\n\n### What You'll Learn\n- Using break to exit loops early\n- Using continue to skip iterations\n- When to use break vs continue\n- Breaking from nested loops\n- Best practices for loop control",
+    "concepts": [
+      {
+        "title": "Break Statement",
+        "description": "Immediately exits the current loop, continuing execution after the loop"
+      },
+      {
+        "title": "Continue Statement",
+        "description": "Skips the rest of the current iteration and starts the next iteration"
+      },
+      {
+        "title": "Early Exit",
+        "description": "Break allows you to exit a loop when a condition is met, even if the loop condition is still true"
+      },
+      {
+        "title": "Nested Loop Control",
+        "description": "Break only exits the innermost loop; to exit outer loops requires different logic"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Basic Break",
+        "description": "Exit a loop when a condition is met",
+        "code": "program BasicBreak;\n\nvar\n  i: Integer;\n\nbegin\n  for i := 1 to 10 do\n  begin\n    if i = 6 then\n      break;  // Exit loop when i reaches 6\n    \n    WriteLn('i = ', i);\n  end;\n  \n  WriteLn('Loop finished, i = ', i);\nend.",
+        "expectedOutput": "i = 1\ni = 2\ni = 3\ni = 4\ni = 5\nLoop finished, i = 6"
+      },
+      {
+        "title": "Break in While Loop",
+        "description": "Search for a specific value and exit when found",
+        "code": "program SearchWithBreak;\n\nvar\n  i: Integer;\n  target: Integer;\n  found: Boolean;\n\nbegin\n  target := 7;\n  i := 1;\n  found := False;\n  \n  while i <= 10 do\n  begin\n    WriteLn('Checking ', i);\n    \n    if i = target then\n    begin\n      found := True;\n      break;  // Found it, exit loop\n    end;\n    \n    i := i + 1;\n  end;\n  \n  if found then\n    WriteLn('Found ', target, '!')\n  else\n    WriteLn('Not found');\nend.",
+        "expectedOutput": "Checking 1\nChecking 2\nChecking 3\nChecking 4\nChecking 5\nChecking 6\nChecking 7\nFound 7!"
+      },
+      {
+        "title": "Basic Continue",
+        "description": "Skip even numbers using continue",
+        "code": "program BasicContinue;\n\nvar\n  i: Integer;\n\nbegin\n  for i := 1 to 10 do\n  begin\n    if (i mod 2) = 0 then\n      continue;  // Skip even numbers\n    \n    WriteLn('Odd number: ', i);\n  end;\nend.",
+        "expectedOutput": "Odd number: 1\nOdd number: 3\nOdd number: 5\nOdd number: 7\nOdd number: 9"
+      },
+      {
+        "title": "Continue in While Loop",
+        "description": "Skip specific values in a while loop",
+        "code": "program ContinueWhile;\n\nvar\n  i: Integer;\n\nbegin\n  i := 0;\n  \n  while i < 10 do\n  begin\n    i := i + 1;\n    \n    if (i mod 3) = 0 then\n      continue;  // Skip multiples of 3\n    \n    WriteLn(i);\n  end;\nend.",
+        "expectedOutput": "1\n2\n4\n5\n7\n8\n10"
+      },
+      {
+        "title": "Break with Validation",
+        "description": "Exit loop on invalid input",
+        "code": "program BreakOnInvalid;\n\nvar\n  i: Integer;\n  num: Integer;\n  numStr: String;\n  sum: Integer;\n\nbegin\n  sum := 0;\n  \n  WriteLn('Enter 5 positive numbers:');\n  \n  for i := 1 to 5 do\n  begin\n    Write('Number ', i, ': ');\n    ReadLn(numStr);\n    num := StrToInt(numStr);\n    \n    if num <= 0 then\n    begin\n      WriteLn('Invalid! Must be positive. Stopping.');\n      break;\n    end;\n    \n    sum := sum + num;\n  end;\n  \n  WriteLn('Sum: ', sum);\nend.",
+        "expectedOutput": "Enter 5 positive numbers:\nNumber 1: [User enters: 10]\nNumber 2: [User enters: 20]\nNumber 3: [User enters: -5]\nInvalid! Must be positive. Stopping.\nSum: 30"
+      },
+      {
+        "title": "Continue with Filtering",
+        "description": "Process only valid data using continue",
+        "code": "program FilterData;\n\nvar\n  i: Integer;\n  value: Integer;\n  sum: Integer;\n\nbegin\n  sum := 0;\n  \n  WriteLn('Processing values 1-10, skipping multiples of 5:');\n  \n  for i := 1 to 10 do\n  begin\n    value := i;\n    \n    // Skip multiples of 5\n    if (value mod 5) = 0 then\n    begin\n      WriteLn('Skipping ', value);\n      continue;\n    end;\n    \n    WriteLn('Adding ', value);\n    sum := sum + value;\n  end;\n  \n  WriteLn('Sum: ', sum);\nend.",
+        "expectedOutput": "Processing values 1-10, skipping multiples of 5:\nAdding 1\nAdding 2\nAdding 3\nAdding 4\nSkipping 5\nAdding 6\nAdding 7\nAdding 8\nAdding 9\nSkipping 10\nSum: 40"
+      },
+      {
+        "title": "Nested Loop with Break",
+        "description": "Breaking from nested loops",
+        "code": "program NestedBreak;\n\nvar\n  row, col: Integer;\n  found: Boolean;\n\nbegin\n  found := False;\n  \n  for row := 1 to 5 do\n  begin\n    if found then\n      break;  // Exit outer loop\n    \n    for col := 1 to 5 do\n    begin\n      if (row * col) = 12 then\n      begin\n        WriteLn('Found 12 at row=', row, ', col=', col);\n        found := True;\n        break;  // Exit inner loop\n      end;\n    end;\n  end;\nend.",
+        "expectedOutput": "Found 12 at row=3, col=4"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "First Divisor Finder",
+        "description": "Find the first number between 2 and 10 that divides 100 evenly. Use break to exit when found.",
+        "starterCode": "program FirstDivisor;\n\nvar\n  i: Integer;\n\nbegin\n  WriteLn('Finding first divisor of 100:');\n  \n  for i := 2 to 10 do\n  begin\n    // Your code here\n    \n  end;\nend.",
+        "solution": "program FirstDivisor;\n\nvar\n  i: Integer;\n\nbegin\n  WriteLn('Finding first divisor of 100:');\n  \n  for i := 2 to 10 do\n  begin\n    if (100 mod i) = 0 then\n    begin\n      WriteLn('First divisor: ', i);\n      break;\n    end;\n  end;\nend.",
+        "hints": [
+          "Loop from 2 to 10",
+          "Check if 100 mod i = 0",
+          "If true, print the divisor",
+          "Use break to exit the loop",
+          "Don't check remaining numbers"
+        ]
+      },
+      {
+        "title": "Skip Negative Numbers",
+        "description": "Sum numbers from an array of values: 5, -3, 8, -1, 12, 4. Skip negative numbers using continue.",
+        "starterCode": "program SkipNegative;\n\nvar\n  i: Integer;\n  sum: Integer;\n  values: array[1..6] of Integer;\n\nbegin\n  // Simulated array values\n  values[1] := 5;\n  values[2] := -3;\n  values[3] := 8;\n  values[4] := -1;\n  values[5] := 12;\n  values[6] := 4;\n  \n  sum := 0;\n  \n  for i := 1 to 6 do\n  begin\n    // Your code here\n    \n  end;\n  \n  WriteLn('Sum of positive numbers: ', sum);\nend.",
+        "solution": "program SkipNegative;\n\nvar\n  i: Integer;\n  sum: Integer;\n  values: array[1..6] of Integer;\n\nbegin\n  // Simulated array values\n  values[1] := 5;\n  values[2] := -3;\n  values[3] := 8;\n  values[4] := -1;\n  values[5] := 12;\n  values[6] := 4;\n  \n  sum := 0;\n  \n  for i := 1 to 6 do\n  begin\n    if values[i] < 0 then\n      continue;  // Skip negative\n    \n    sum := sum + values[i];\n  end;\n  \n  WriteLn('Sum of positive numbers: ', sum);\nend.",
+        "hints": [
+          "Check if values[i] < 0",
+          "If negative, use continue to skip",
+          "Otherwise, add to sum",
+          "Sum should be 5+8+12+4 = 29"
+        ]
+      },
+      {
+        "title": "Stop on Sentinel",
+        "description": "Read numbers until -1 is entered (sentinel value). Sum all numbers except the sentinel. Use break to exit.",
+        "starterCode": "program SentinelSum;\n\nvar\n  num: Integer;\n  numStr: String;\n  sum: Integer;\n  i: Integer;\n\nbegin\n  sum := 0;\n  WriteLn('Enter numbers (-1 to stop):');\n  \n  for i := 1 to 100 do  // Max 100 numbers\n  begin\n    // Your code here\n    \n  end;\n  \n  WriteLn('Sum: ', sum);\nend.",
+        "solution": "program SentinelSum;\n\nvar\n  num: Integer;\n  numStr: String;\n  sum: Integer;\n  i: Integer;\n\nbegin\n  sum := 0;\n  WriteLn('Enter numbers (-1 to stop):');\n  \n  for i := 1 to 100 do  // Max 100 numbers\n  begin\n    ReadLn(numStr);\n    num := StrToInt(numStr);\n    \n    if num = -1 then\n      break;  // Stop on sentinel\n    \n    sum := sum + num;\n  end;\n  \n  WriteLn('Sum: ', sum);\nend.",
+        "hints": [
+          "Read number inside the loop",
+          "Check if num = -1",
+          "If true, use break",
+          "Otherwise, add num to sum",
+          "The -1 should not be added to sum"
+        ]
+      },
+      {
+        "title": "Prime Number Checker",
+        "description": "Check if 17 is prime by testing divisibility from 2 to 16. Use break to exit early if a divisor is found.",
+        "starterCode": "program PrimeCheck;\n\nvar\n  number: Integer;\n  i: Integer;\n  isPrime: Boolean;\n\nbegin\n  number := 17;\n  isPrime := True;\n  \n  // Your code here\n  \n  if isPrime then\n    WriteLn(number, ' is prime')\n  else\n    WriteLn(number, ' is not prime');\nend.",
+        "solution": "program PrimeCheck;\n\nvar\n  number: Integer;\n  i: Integer;\n  isPrime: Boolean;\n\nbegin\n  number := 17;\n  isPrime := True;\n  \n  for i := 2 to (number - 1) do\n  begin\n    if (number mod i) = 0 then\n    begin\n      isPrime := False;\n      break;  // Found a divisor, not prime\n    end;\n  end;\n  \n  if isPrime then\n    WriteLn(number, ' is prime')\n  else\n    WriteLn(number, ' is not prime');\nend.",
+        "hints": [
+          "Loop from 2 to number-1",
+          "Check if number mod i = 0",
+          "If true, set isPrime to False",
+          "Use break to exit (no need to check more)",
+          "17 should be prime"
+        ]
+      }
+    ],
+    "summary": "Great job! You've learned:\n\n- **Break statement**: Exit a loop immediately\n- **Continue statement**: Skip to the next iteration\n- **Early exit patterns**: Using break to stop when a condition is met\n- **Filtering patterns**: Using continue to skip unwanted values\n- **Nested loop control**: Managing break and continue in nested structures\n\nBreak and continue give you powerful control over loop execution!",
+    "nextSteps": "Congratulations on completing the Control Flow section! Next, you'll learn about **functions and procedures** - how to organize your code into reusable blocks. This is a crucial step toward writing larger, more maintainable programs!"
+  },
+  "prerequisites": ["for-loops", "while-loops", "repeat-until-loops"],
+  "relatedLessons": ["for-loops", "while-loops", "if-statements"],
+  "estimatedTime": 15
+}
