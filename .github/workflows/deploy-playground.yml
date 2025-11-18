@@ -41,6 +41,8 @@ jobs:
         run: yarn install --immutable
 
       - name: Build
+        env:
+          VITE_BASE_PATH: /go-dws-primer/
         run: yarn build
 
       - name: Setup Pages
