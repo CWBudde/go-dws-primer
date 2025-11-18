@@ -1,0 +1,144 @@
+{
+  "id": "for-loops",
+  "title": "For Loops",
+  "category": "control-flow",
+  "difficulty": "beginner",
+  "order": 4,
+  "description": "Learn to use for loops for counting and iteration",
+  "estimatedTime": 20,
+  "tags": ["for", "loop", "iteration", "counting", "control-flow"],
+  "content": {
+    "introduction": "When you know exactly how many times you want to repeat something, the `for` loop is the perfect tool. It's more concise and readable than a while loop for counting operations.\n\nIn this lesson, you'll learn how to use for loops to iterate over ranges of values efficiently.\n\n### What You'll Learn\n- Basic for loop syntax (for...to)\n- Counting backwards (for...downto)\n- Using the loop variable\n- Nested for loops\n- When to use for vs while",
+    "concepts": [
+      {
+        "title": "For-To Loop",
+        "description": "Counts upward from start to end: for variable := start to end do statement"
+      },
+      {
+        "title": "For-Downto Loop",
+        "description": "Counts downward from start to end: for variable := start downto end do statement"
+      },
+      {
+        "title": "Loop Variable",
+        "description": "The counter variable is automatically updated; you don't manually increment it"
+      },
+      {
+        "title": "Loop Scope",
+        "description": "The loop variable should be declared before the loop and is read-only inside the loop"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Basic For Loop",
+        "description": "Count from 1 to 5 using a for loop",
+        "code": "program BasicFor;\n\nvar\n  i: Integer;\n\nbegin\n  for i := 1 to 5 do\n    WriteLn('Count: ', i);\n  \n  WriteLn('Done!');\nend.",
+        "expectedOutput": "Count: 1\nCount: 2\nCount: 3\nCount: 4\nCount: 5\nDone!"
+      },
+      {
+        "title": "For-Downto Loop",
+        "description": "Count backwards from 10 to 1",
+        "code": "program Countdown;\n\nvar\n  i: Integer;\n\nbegin\n  WriteLn('Countdown:');\n  \n  for i := 10 downto 1 do\n    WriteLn(i);\n  \n  WriteLn('Blastoff!');\nend.",
+        "expectedOutput": "Countdown:\n10\n9\n8\n7\n6\n5\n4\n3\n2\n1\nBlastoff!"
+      },
+      {
+        "title": "Multiple Statements with Begin-End",
+        "description": "Execute multiple statements in each iteration",
+        "code": "program ForMultiple;\n\nvar\n  i: Integer;\n  square: Integer;\n\nbegin\n  for i := 1 to 5 do\n  begin\n    square := i * i;\n    WriteLn(i, ' squared is ', square);\n  end;\nend.",
+        "expectedOutput": "1 squared is 1\n2 squared is 4\n3 squared is 9\n4 squared is 16\n5 squared is 25"
+      },
+      {
+        "title": "Sum Using For Loop",
+        "description": "Calculate sum of numbers from 1 to 100",
+        "code": "program SumNumbers;\n\nvar\n  i: Integer;\n  sum: Integer;\n\nbegin\n  sum := 0;\n  \n  for i := 1 to 100 do\n    sum := sum + i;\n  \n  WriteLn('Sum of 1 to 100: ', sum);\nend.",
+        "expectedOutput": "Sum of 1 to 100: 5050"
+      },
+      {
+        "title": "Multiplication Table",
+        "description": "Display a complete multiplication table",
+        "code": "program TimesTable;\n\nvar\n  i: Integer;\n  multiplier: Integer;\n\nbegin\n  multiplier := 7;\n  WriteLn('Multiplication table for ', multiplier, ':');\n  WriteLn('');\n  \n  for i := 1 to 10 do\n    WriteLn(multiplier, ' x ', i, ' = ', multiplier * i);\nend.",
+        "expectedOutput": "Multiplication table for 7:\n\n7 x 1 = 7\n7 x 2 = 14\n7 x 3 = 21\n7 x 4 = 28\n7 x 5 = 35\n7 x 6 = 42\n7 x 7 = 49\n7 x 8 = 56\n7 x 9 = 63\n7 x 10 = 70"
+      },
+      {
+        "title": "Nested For Loops",
+        "description": "Create a multiplication grid using nested loops",
+        "code": "program MultiplicationGrid;\n\nvar\n  row, col: Integer;\n\nbegin\n  WriteLn('Multiplication Grid (1-5):');\n  WriteLn('');\n  \n  for row := 1 to 5 do\n  begin\n    for col := 1 to 5 do\n      Write(row * col, ' ');\n    WriteLn('');\n  end;\nend.",
+        "expectedOutput": "Multiplication Grid (1-5):\n\n1 2 3 4 5 \n2 4 6 8 10 \n3 6 9 12 15 \n4 8 12 16 20 \n5 10 15 20 25 "
+      },
+      {
+        "title": "Pattern Drawing",
+        "description": "Create a triangle pattern using nested for loops",
+        "code": "program Triangle;\n\nvar\n  row, col: Integer;\n\nbegin\n  for row := 1 to 5 do\n  begin\n    for col := 1 to row do\n      Write('* ');\n    WriteLn('');\n  end;\nend.",
+        "expectedOutput": "* \n* * \n* * * \n* * * * \n* * * * * "
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Even Numbers",
+        "description": "Write a program that displays all even numbers from 2 to 20 using a for loop.",
+        "starterCode": "program EvenNumbers;\n\nvar\n  i: Integer;\n\nbegin\n  WriteLn('Even numbers from 2 to 20:');\n  // Your code here\n  \nend.",
+        "solution": "program EvenNumbers;\n\nvar\n  i: Integer;\n\nbegin\n  WriteLn('Even numbers from 2 to 20:');\n  \n  for i := 1 to 10 do\n    WriteLn(i * 2);\nend.",
+        "hints": [
+          "You can loop from 1 to 10 and multiply by 2",
+          "Or loop from 2 to 20 by 2 (but DWScript for loops increment by 1)",
+          "Inside the loop, calculate the even number: i * 2",
+          "Alternative: loop 2 to 20, use if (i mod 2 = 0)"
+        ]
+      },
+      {
+        "title": "Factorial Calculator",
+        "description": "Calculate the factorial of 6 (6! = 6 * 5 * 4 * 3 * 2 * 1) using a for loop.",
+        "starterCode": "program Factorial;\n\nvar\n  // Declare your variables\n\nbegin\n  // Your code here\n  \n  WriteLn('6! = ', result);\nend.",
+        "solution": "program Factorial;\n\nvar\n  i: Integer;\n  result: Integer;\n\nbegin\n  result := 1;\n  \n  for i := 1 to 6 do\n    result := result * i;\n  \n  WriteLn('6! = ', result);\nend.",
+        "hints": [
+          "Initialize result to 1 (not 0!)",
+          "Loop from 1 to 6",
+          "Multiply result by i in each iteration",
+          "result := result * i"
+        ]
+      },
+      {
+        "title": "FizzBuzz",
+        "description": "Print numbers 1-15, but for multiples of 3 print 'Fizz', for multiples of 5 print 'Buzz', and for multiples of both print 'FizzBuzz'.",
+        "starterCode": "program FizzBuzz;\n\nvar\n  i: Integer;\n\nbegin\n  for i := 1 to 15 do\n  begin\n    // Your code here\n    \n  end;\nend.",
+        "solution": "program FizzBuzz;\n\nvar\n  i: Integer;\n\nbegin\n  for i := 1 to 15 do\n  begin\n    if (i mod 15 = 0) then\n      WriteLn('FizzBuzz')\n    else if (i mod 3 = 0) then\n      WriteLn('Fizz')\n    else if (i mod 5 = 0) then\n      WriteLn('Buzz')\n    else\n      WriteLn(i);\n  end;\nend.",
+        "hints": [
+          "Check if divisible by both 3 AND 5 first (i mod 15 = 0)",
+          "Then check divisible by 3 (i mod 3 = 0)",
+          "Then check divisible by 5 (i mod 5 = 0)",
+          "Otherwise just print the number",
+          "Use if-else-if chain"
+        ]
+      },
+      {
+        "title": "Right-Aligned Triangle",
+        "description": "Create a right-aligned triangle pattern with 5 rows. Row 1 has 4 spaces and 1 star, row 2 has 3 spaces and 2 stars, etc.",
+        "starterCode": "program RightTriangle;\n\nvar\n  // Declare your variables\n\nbegin\n  // Your code here\n  \nend.",
+        "solution": "program RightTriangle;\n\nvar\n  row, spaces, stars: Integer;\n\nbegin\n  for row := 1 to 5 do\n  begin\n    // Print spaces\n    for spaces := 1 to (5 - row) do\n      Write(' ');\n    \n    // Print stars\n    for stars := 1 to row do\n      Write('*');\n    \n    WriteLn('');\n  end;\nend.",
+        "hints": [
+          "Use nested for loops",
+          "Outer loop: for each row (1 to 5)",
+          "Inner loop 1: print (5 - row) spaces",
+          "Inner loop 2: print row stars",
+          "Don't forget WriteLn after each row"
+        ]
+      },
+      {
+        "title": "Sum of Squares",
+        "description": "Calculate the sum of squares from 1² to 10² (1² + 2² + 3² + ... + 10²).",
+        "starterCode": "program SumOfSquares;\n\nvar\n  // Declare your variables\n\nbegin\n  // Your code here\n  \n  WriteLn('Sum of squares 1-10: ', sum);\nend.",
+        "solution": "program SumOfSquares;\n\nvar\n  i: Integer;\n  sum: Integer;\n\nbegin\n  sum := 0;\n  \n  for i := 1 to 10 do\n    sum := sum + (i * i);\n  \n  WriteLn('Sum of squares 1-10: ', sum);\nend.",
+        "hints": [
+          "Initialize sum to 0",
+          "Loop from 1 to 10",
+          "In each iteration, add i * i to sum",
+          "sum := sum + (i * i)"
+        ]
+      }
+    ],
+    "summary": "Fantastic work! You've learned:\n\n- **For-to loops**: Counting upward with for...to\n- **For-downto loops**: Counting downward with for...downto\n- **Automatic incrementing**: The loop variable updates automatically\n- **Begin-end blocks**: Executing multiple statements per iteration\n- **Nested loops**: Using for loops inside other for loops\n\nFor loops are perfect when you know exactly how many iterations you need!",
+    "nextSteps": "Next, you'll learn about **repeat-until loops** - another type of loop that always executes at least once and checks the condition at the end!"
+  },
+  "prerequisites": ["while-loops"],
+  "relatedLessons": ["while-loops", "repeat-until-loops"],
+  "estimatedTime": 20
+}
