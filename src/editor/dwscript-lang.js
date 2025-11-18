@@ -178,7 +178,7 @@ export const dwscriptLanguage = {
   ],
 
   // Common symbols
-  symbols: /[=><!~?:&|+\-*\/\^%]+/,
+  symbols: /[=><!~?:&|+\-*/^%]+/,
 
   // Tokenizer
   tokenizer: {
@@ -199,7 +199,7 @@ export const dwscriptLanguage = {
       { include: "@whitespace" },
 
       // Delimiters and operators
-      [/[{}()\[\]]/, "@brackets"],
+      [/[{}()[\]]/, "@brackets"],
       [/[<>](?!@symbols)/, "@brackets"],
       [
         /@symbols/,
@@ -212,7 +212,7 @@ export const dwscriptLanguage = {
       ],
 
       // Numbers
-      [/\d*\.\d+([eE][\-+]?\d+)?/, "number.float"],
+      [/\d*\.\d+([eE][-+]?\d+)?/, "number.float"],
       [/\$[0-9a-fA-F]+/, "number.hex"],
       [/\d+/, "number"],
 
@@ -229,10 +229,10 @@ export const dwscriptLanguage = {
     ],
 
     comment: [
-      [/[^\{\}]+/, "comment"],
+      [/[^{}]+/, "comment"],
       [/\{/, "comment", "@push"],
       [/\}/, "comment", "@pop"],
-      [/[\{\}]/, "comment"],
+      [/[{}]/, "comment"],
     ],
 
     string: [
@@ -249,9 +249,9 @@ export const dwscriptLanguage = {
     ],
 
     comment2: [
-      [/[^\*\)]+/, "comment"],
+      [/[^*)]+/, "comment"],
       [/\*\)/, "comment", "@pop"],
-      [/[\*\)]/, "comment"],
+      [/[*)]/, "comment"],
     ],
   },
 };

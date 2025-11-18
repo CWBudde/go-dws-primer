@@ -9,13 +9,13 @@
  * @returns {string} Normalized output
  */
 function normalizeOutput(output) {
-  if (!output) return '';
+  if (!output) return "";
 
   return output
     .trim()
-    .replace(/\r\n/g, '\n')  // Normalize line endings
-    .replace(/\s+$/gm, '')    // Remove trailing whitespace from each line
-    .toLowerCase();           // Case-insensitive comparison
+    .replace(/\r\n/g, "\n") // Normalize line endings
+    .replace(/\s+$/gm, "") // Remove trailing whitespace from each line
+    .toLowerCase(); // Case-insensitive comparison
 }
 
 /**
@@ -29,11 +29,11 @@ export function compareOutput(actual, expected, options = {}) {
   const {
     caseSensitive = false,
     ignoreWhitespace = true,
-    exactMatch = false
+    exactMatch: _exactMatch = false,
   } = options;
 
-  let actualNorm = actual || '';
-  let expectedNorm = expected || '';
+  let actualNorm = actual || "";
+  let expectedNorm = expected || "";
 
   // Apply normalization based on options
   if (!caseSensitive) {
@@ -54,7 +54,7 @@ export function compareOutput(actual, expected, options = {}) {
     expected: expected,
     actualNormalized: actualNorm,
     expectedNormalized: expectedNorm,
-    differences: matches ? [] : findDifferences(actualNorm, expectedNorm)
+    differences: matches ? [] : findDifferences(actualNorm, expectedNorm),
   };
 }
 
@@ -65,21 +65,21 @@ export function compareOutput(actual, expected, options = {}) {
  * @returns {Array} Array of difference objects
  */
 function findDifferences(actual, expected) {
-  const actualLines = actual.split('\n');
-  const expectedLines = expected.split('\n');
+  const actualLines = actual.split("\n");
+  const expectedLines = expected.split("\n");
   const maxLines = Math.max(actualLines.length, expectedLines.length);
   const differences = [];
 
   for (let i = 0; i < maxLines; i++) {
-    const actualLine = actualLines[i] || '';
-    const expectedLine = expectedLines[i] || '';
+    const actualLine = actualLines[i] || "";
+    const expectedLine = expectedLines[i] || "";
 
     if (actualLine !== expectedLine) {
       differences.push({
         line: i + 1,
         actual: actualLine,
         expected: expectedLine,
-        type: !actualLine ? 'missing' : !expectedLine ? 'extra' : 'different'
+        type: !actualLine ? "missing" : !expectedLine ? "extra" : "different",
       });
     }
   }
@@ -98,8 +98,8 @@ export async function runExerciseTests(executeFunc, code, tests) {
   if (!tests || tests.length === 0) {
     return {
       success: true,
-      message: 'No tests defined',
-      results: []
+      message: "No tests defined",
+      results: [],
     };
   }
 
@@ -117,9 +117,9 @@ export async function runExerciseTests(executeFunc, code, tests) {
         results.push({
           testNumber: i + 1,
           passed: false,
-          error: result.error?.message || 'Execution failed',
+          error: result.error?.message || "Execution failed",
           input: test.input,
-          expectedOutput: test.expectedOutput
+          expectedOutput: test.expectedOutput,
         });
         allPassed = false;
         continue;
@@ -128,7 +128,7 @@ export async function runExerciseTests(executeFunc, code, tests) {
       // Compare output
       const comparison = compareOutput(result.output, test.expectedOutput, {
         caseSensitive: test.caseSensitive || false,
-        ignoreWhitespace: test.ignoreWhitespace !== false
+        ignoreWhitespace: test.ignoreWhitespace !== false,
       });
 
       results.push({
@@ -137,7 +137,7 @@ export async function runExerciseTests(executeFunc, code, tests) {
         input: test.input,
         actualOutput: result.output,
         expectedOutput: test.expectedOutput,
-        differences: comparison.differences
+        differences: comparison.differences,
       });
 
       if (!comparison.success) {
@@ -149,7 +149,7 @@ export async function runExerciseTests(executeFunc, code, tests) {
         passed: false,
         error: error.message,
         input: test.input,
-        expectedOutput: test.expectedOutput
+        expectedOutput: test.expectedOutput,
       });
       allPassed = false;
     }
@@ -158,8 +158,8 @@ export async function runExerciseTests(executeFunc, code, tests) {
   return {
     success: allPassed,
     totalTests: tests.length,
-    passedTests: results.filter(r => r.passed).length,
-    results: results
+    passedTests: results.filter((r) => r.passed).length,
+    results: results,
   };
 }
 
@@ -175,24 +175,25 @@ export function validateExercise(exercise, userCode, output) {
   if (exercise.expectedOutput) {
     const comparison = compareOutput(output, exercise.expectedOutput);
     return {
-      type: 'output',
-      ...comparison
+      type: "output",
+      ...comparison,
     };
   }
 
   // Check if exercise has tests defined
   if (exercise.tests && exercise.tests.length > 0) {
     return {
-      type: 'tests',
-      message: 'Run tests to validate your solution'
+      type: "tests",
+      message: "Run tests to validate your solution",
     };
   }
 
   // If no validation criteria, consider it complete if it runs
   return {
-    type: 'completion',
+    type: "completion",
     success: true,
-    message: 'Exercise completed! Make sure your code produces the expected behavior.'
+    message:
+      "Exercise completed! Make sure your code produces the expected behavior.",
   };
 }
 
@@ -203,25 +204,25 @@ export function validateExercise(exercise, userCode, output) {
  */
 export function formatTestResults(testResults) {
   if (!testResults || !testResults.results) {
-    return '<p>No test results available</p>';
+    return "<p>No test results available</p>";
   }
 
   const { success, totalTests, passedTests, results } = testResults;
 
   let html = `
-    <div class="test-results ${success ? 'success' : 'failure'}">
+    <div class="test-results ${success ? "success" : "failure"}">
       <div class="test-summary">
-        <h4>${success ? '✓ All tests passed!' : '✗ Some tests failed'}</h4>
+        <h4>${success ? "✓ All tests passed!" : "✗ Some tests failed"}</h4>
         <p>Passed: ${passedTests}/${totalTests}</p>
       </div>
       <div class="test-details">
   `;
 
-  results.forEach(result => {
+  results.forEach((result) => {
     html += `
-      <div class="test-result ${result.passed ? 'passed' : 'failed'}">
+      <div class="test-result ${result.passed ? "passed" : "failed"}">
         <div class="test-header">
-          <span class="test-icon">${result.passed ? '✓' : '✗'}</span>
+          <span class="test-icon">${result.passed ? "✓" : "✗"}</span>
           <span class="test-title">Test ${result.testNumber}</span>
         </div>
     `;
@@ -242,7 +243,7 @@ export function formatTestResults(testResults) {
 
       if (result.differences && result.differences.length > 0) {
         html += `<div class="test-differences"><strong>Differences:</strong>`;
-        result.differences.forEach(diff => {
+        result.differences.forEach((diff) => {
           html += `<div>Line ${diff.line}: Expected "${escapeHtml(diff.expected)}", got "${escapeHtml(diff.actual)}"</div>`;
         });
         html += `</div>`;
@@ -297,13 +298,14 @@ export function formatOutputComparison(comparison) {
         <ul>
     `;
 
-    comparison.differences.forEach(diff => {
-      const icon = diff.type === 'missing' ? '−' : diff.type === 'extra' ? '+' : '≠';
+    comparison.differences.forEach((diff) => {
+      const icon =
+        diff.type === "missing" ? "−" : diff.type === "extra" ? "+" : "≠";
       html += `
         <li class="diff-${diff.type}">
           <span class="diff-icon">${icon}</span>
           Line ${diff.line}:
-          ${diff.type === 'missing' ? 'Missing: ' : diff.type === 'extra' ? 'Extra: ' : ''}
+          ${diff.type === "missing" ? "Missing: " : diff.type === "extra" ? "Extra: " : ""}
           Expected "<code>${escapeHtml(diff.expected)}</code>",
           got "<code>${escapeHtml(diff.actual)}</code>"
         </li>
@@ -323,8 +325,8 @@ export function formatOutputComparison(comparison) {
  * @returns {string} Escaped text
  */
 function escapeHtml(text) {
-  if (!text) return '';
-  const div = document.createElement('div');
+  if (!text) return "";
+  const div = document.createElement("div");
   div.textContent = text;
   return div.innerHTML;
 }
