@@ -1,0 +1,81 @@
+{
+  "id": "procedure-basics",
+  "title": "Procedure Basics - Organizing Your Code",
+  "category": "functions",
+  "difficulty": "beginner",
+  "order": 1,
+  "description": "Learn how to create and use procedures to organize your code into reusable blocks",
+  "estimatedTime": 15,
+  "tags": ["procedures", "functions", "organization", "beginner"],
+  "content": {
+    "introduction": "As your programs grow, you'll want to organize your code into smaller, reusable pieces. **Procedures** help you do just that!\n\nA procedure is a named block of code that performs a specific task. You can call (execute) the procedure by name whenever you need that task done.\n\n### What You'll Learn\n- How to declare and define procedures\n- Calling procedures from your code\n- Why procedures make code more organized and maintainable\n- Best practices for naming and structuring procedures",
+    "concepts": [
+      {
+        "title": "Procedure Declaration",
+        "description": "A procedure is declared with the 'procedure' keyword, followed by a name and parameters (if any)"
+      },
+      {
+        "title": "Procedure Body",
+        "description": "The procedure body contains the code to execute, enclosed between 'begin' and 'end'"
+      },
+      {
+        "title": "Calling a Procedure",
+        "description": "To execute a procedure, simply write its name followed by semicolon (or with parameters if it has them)"
+      },
+      {
+        "title": "Code Reusability",
+        "description": "Procedures let you write code once and use it multiple times, reducing duplication"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Simple Procedure",
+        "description": "A basic procedure that displays a greeting message",
+        "code": "program SimpleProcedure;\n\nprocedure SayHello;\nbegin\n  WriteLn('Hello from the procedure!');\n  WriteLn('This is line 2');\nend;\n\nbegin\n  WriteLn('Program starting...');\n  SayHello;  // Call the procedure\n  WriteLn('Program ending...');\nend.",
+        "expectedOutput": "Program starting...\nHello from the procedure!\nThis is line 2\nProgram ending..."
+      },
+      {
+        "title": "Reusing a Procedure",
+        "description": "You can call the same procedure multiple times",
+        "code": "program ReuseProcedure;\n\nprocedure PrintSeparator;\nbegin\n  WriteLn('--------------------');\nend;\n\nbegin\n  WriteLn('Section 1');\n  PrintSeparator;\n  WriteLn('Section 2');\n  PrintSeparator;\n  WriteLn('Section 3');\n  PrintSeparator;\nend.",
+        "expectedOutput": "Section 1\n--------------------\nSection 2\n--------------------\nSection 3\n--------------------"
+      },
+      {
+        "title": "Multiple Procedures",
+        "description": "You can define multiple procedures in the same program",
+        "code": "program MultipleProcedures;\n\nprocedure ShowHeader;\nbegin\n  WriteLn('====================');\n  WriteLn('  My Program v1.0');\n  WriteLn('====================');\nend;\n\nprocedure ShowFooter;\nbegin\n  WriteLn('====================');\n  WriteLn('  End of Program');\n  WriteLn('====================');\nend;\n\nbegin\n  ShowHeader;\n  WriteLn('');\n  WriteLn('Program content here...');\n  WriteLn('');\n  ShowFooter;\nend.",
+        "expectedOutput": "====================\n  My Program v1.0\n====================\n\nProgram content here...\n\n====================\n  End of Program\n===================="
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Create a Greeting Procedure",
+        "description": "Create a procedure called `ShowGreeting` that displays a welcome message. Call it twice from the main program.",
+        "starterCode": "program GreetingProcedure;\n\n// Define your procedure here\n\nbegin\n  // Call your procedure twice here\n  \nend.",
+        "solution": "program GreetingProcedure;\n\nprocedure ShowGreeting;\nbegin\n  WriteLn('Welcome to DWScript!');\n  WriteLn('Happy coding!');\nend;\n\nbegin\n  ShowGreeting;\n  WriteLn('');\n  ShowGreeting;\nend.",
+        "hints": [
+          "Use the 'procedure' keyword followed by the procedure name",
+          "Put the code to execute between 'begin' and 'end'",
+          "Call the procedure by writing its name",
+          "You can call the same procedure as many times as you want"
+        ]
+      },
+      {
+        "title": "Menu Display",
+        "description": "Create three procedures: `ShowMainMenu`, `ShowHelp`, and `ShowAbout`. Each should display different menu information. Call all three from the main program.",
+        "starterCode": "program MenuSystem;\n\n// Define your three procedures here\n\nbegin\n  // Call all three procedures here\n  \nend.",
+        "solution": "program MenuSystem;\n\nprocedure ShowMainMenu;\nbegin\n  WriteLn('=== Main Menu ===');\n  WriteLn('1. Start');\n  WriteLn('2. Help');\n  WriteLn('3. About');\n  WriteLn('4. Exit');\nend;\n\nprocedure ShowHelp;\nbegin\n  WriteLn('=== Help ===');\n  WriteLn('Use the menu to navigate.');\n  WriteLn('Press numbers to select options.');\nend;\n\nprocedure ShowAbout;\nbegin\n  WriteLn('=== About ===');\n  WriteLn('Program: Menu System v1.0');\n  WriteLn('Author: Student');\nend;\n\nbegin\n  ShowMainMenu;\n  WriteLn('');\n  ShowHelp;\n  WriteLn('');\n  ShowAbout;\nend.",
+        "hints": [
+          "Create each procedure with a descriptive name",
+          "Each procedure should display different information",
+          "Call them in sequence from the main program",
+          "Add empty WriteLn() between calls for spacing"
+        ]
+      }
+    ],
+    "summary": "Excellent work! You've learned:\n\n- How to declare procedures using the `procedure` keyword\n- Defining procedure bodies with `begin` and `end`\n- Calling procedures by name\n- Reusing procedures to avoid code duplication\n- Organizing code into logical, named blocks\n\nProcedures are fundamental to writing clean, organized code. They help break down complex problems into manageable pieces!",
+    "nextSteps": "Next, you'll learn about **functions** - similar to procedures, but they can return values! This opens up powerful new possibilities for your programs."
+  },
+  "prerequisites": ["hello-world", "variables-and-types"],
+  "relatedLessons": ["function-basics", "parameters"]
+}
