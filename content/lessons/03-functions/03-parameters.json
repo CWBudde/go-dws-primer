@@ -1,0 +1,106 @@
+{
+  "id": "parameters",
+  "title": "Parameters - Passing Data to Functions",
+  "category": "functions",
+  "difficulty": "intermediate",
+  "order": 3,
+  "description": "Master different parameter passing mechanisms: value, var, const, and out parameters",
+  "estimatedTime": 25,
+  "tags": ["parameters", "var", "const", "out", "reference", "intermediate"],
+  "content": {
+    "introduction": "Parameters are how functions and procedures receive input data. But there's more than one way to pass parameters!\n\nDWScript supports four parameter passing mechanisms, each with different behaviors and use cases.\n\n### What You'll Learn\n- **Value parameters** - pass a copy of the data\n- **Var parameters** - pass by reference (modifiable)\n- **Const parameters** - pass by reference (read-only, optimized)\n- **Out parameters** - for output values\n- When to use each type",
+    "concepts": [
+      {
+        "title": "Value Parameters (Default)",
+        "description": "Passes a copy of the value. Changes inside the function don't affect the original variable. Safe but can be slow for large data."
+      },
+      {
+        "title": "Var Parameters",
+        "description": "Passes a reference to the original variable. Changes inside the function affect the original. Use when you need to modify the input."
+      },
+      {
+        "title": "Const Parameters",
+        "description": "Passes a reference but prevents modification. Efficient for large data while protecting against accidental changes."
+      },
+      {
+        "title": "Out Parameters",
+        "description": "Used for output values. The parameter doesn't need an initial value and must be set inside the function. Clearly indicates output intent."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Value Parameters (Default)",
+        "description": "Value parameters receive a copy - changes don't affect the original",
+        "code": "program ValueParameters;\n\nprocedure TryToChange(x: Integer);\nbegin\n  WriteLn('Inside procedure, x = ' + IntToStr(x));\n  x := 100;  // Changes the copy, not the original\n  WriteLn('Inside procedure after change, x = ' + IntToStr(x));\nend;\n\nbegin\n  var num := 5;\n  WriteLn('Before procedure, num = ' + IntToStr(num));\n  TryToChange(num);\n  WriteLn('After procedure, num = ' + IntToStr(num));  // Still 5!\nend.",
+        "expectedOutput": "Before procedure, num = 5\nInside procedure, x = 5\nInside procedure after change, x = 100\nAfter procedure, num = 5"
+      },
+      {
+        "title": "Var Parameters",
+        "description": "Var parameters modify the original variable",
+        "code": "program VarParameters;\n\nprocedure DoubleValue(var x: Integer);\nbegin\n  x := x * 2;  // Modifies the original!\nend;\n\nprocedure Swap(var a, b: Integer);\nbegin\n  var temp := a;\n  a := b;\n  b := temp;\nend;\n\nbegin\n  var num := 5;\n  WriteLn('Before: num = ' + IntToStr(num));\n  DoubleValue(num);\n  WriteLn('After: num = ' + IntToStr(num));\n  \n  var x := 10, y := 20;\n  WriteLn('Before swap: x=' + IntToStr(x) + ', y=' + IntToStr(y));\n  Swap(x, y);\n  WriteLn('After swap: x=' + IntToStr(x) + ', y=' + IntToStr(y));\nend.",
+        "expectedOutput": "Before: num = 5\nAfter: num = 10\nBefore swap: x=10, y=20\nAfter swap: x=20, y=10"
+      },
+      {
+        "title": "Const Parameters",
+        "description": "Const parameters are efficient and safe - can't be modified",
+        "code": "program ConstParameters;\n\n// Const is efficient for strings (no copying)\n// But prevents modification\nfunction GetLength(const text: String): Integer;\nbegin\n  // text := 'x';  // ERROR: Can't modify const parameter\n  Result := Length(text);\nend;\n\nfunction FormatName(const first, last: String): String;\nbegin\n  Result := last + ', ' + first;\nend;\n\nbegin\n  var name := 'Hello World';\n  WriteLn('Length: ' + IntToStr(GetLength(name)));\n  WriteLn(FormatName('John', 'Smith'));\nend.",
+        "expectedOutput": "Length: 11\nSmith, John"
+      },
+      {
+        "title": "Out Parameters",
+        "description": "Out parameters are used for returning multiple values",
+        "code": "program OutParameters;\n\n// Function returns true/false, but also outputs the result\nfunction TryDivide(a, b: Integer; out result: Float): Boolean;\nbegin\n  if b = 0 then\n  begin\n    result := 0.0;\n    Result := false;  // Can't divide by zero\n  end\n  else\n  begin\n    result := a / b;\n    Result := true;   // Success\n  end;\nend;\n\nbegin\n  var quotient: Float;\n  \n  if TryDivide(10, 2, quotient) then\n    WriteLn('10 / 2 = ' + FloatToStr(quotient))\n  else\n    WriteLn('Division failed');\n    \n  if TryDivide(10, 0, quotient) then\n    WriteLn('10 / 0 = ' + FloatToStr(quotient))\n  else\n    WriteLn('Division by zero!');\nend.",
+        "expectedOutput": "10 / 2 = 5\nDivision by zero!"
+      },
+      {
+        "title": "Multiple Output Values",
+        "description": "Use var or out parameters to return multiple values from a procedure",
+        "code": "program MultipleOutputs;\n\nprocedure GetMinMax(a, b, c: Integer; var min, max: Integer);\nbegin\n  // Find minimum\n  min := a;\n  if b < min then min := b;\n  if c < min then min := c;\n  \n  // Find maximum\n  max := a;\n  if b > max then max := b;\n  if c > max then max := c;\nend;\n\nbegin\n  var minimum, maximum: Integer;\n  GetMinMax(15, 7, 23, minimum, maximum);\n  \n  WriteLn('Numbers: 15, 7, 23');\n  WriteLn('Minimum: ' + IntToStr(minimum));\n  WriteLn('Maximum: ' + IntToStr(maximum));\nend.",
+        "expectedOutput": "Numbers: 15, 7, 23\nMinimum: 7\nMaximum: 23"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Increment Procedure",
+        "description": "Create a procedure `Increment` that takes a var parameter and increases it by 1. Test it with a variable.",
+        "starterCode": "program IncrementTest;\n\n// Define your Increment procedure here\n// It should take a var Integer parameter\n\nbegin\n  var count := 0;\n  WriteLn('Start: ' + IntToStr(count));\n  // Call Increment three times\n  \n  WriteLn('End: ' + IntToStr(count));\nend.",
+        "solution": "program IncrementTest;\n\nprocedure Increment(var x: Integer);\nbegin\n  x := x + 1;\nend;\n\nbegin\n  var count := 0;\n  WriteLn('Start: ' + IntToStr(count));\n  Increment(count);\n  Increment(count);\n  Increment(count);\n  WriteLn('End: ' + IntToStr(count));\nend.",
+        "hints": [
+          "Use 'var' before the parameter name",
+          "Add 1 to the parameter inside the procedure",
+          "Call the procedure multiple times to see it work",
+          "The variable will be modified each time"
+        ]
+      },
+      {
+        "title": "Circle Calculator",
+        "description": "Create a procedure `CalculateCircle` that takes a radius and two var parameters for area and circumference. Formula: area = π*r², circumference = 2*π*r. Use 3.14159 for π.",
+        "starterCode": "program CircleCalc;\n\n// Define CalculateCircle procedure\n// Parameters: radius (const Float), area (var Float), circumference (var Float)\n\nbegin\n  var r := 5.0;\n  var a, c: Float;\n  \n  CalculateCircle(r, a, c);\n  \n  WriteLn('Radius: ' + FloatToStr(r));\n  WriteLn('Area: ' + FloatToStr(a));\n  WriteLn('Circumference: ' + FloatToStr(c));\nend.",
+        "solution": "program CircleCalc;\n\nprocedure CalculateCircle(const radius: Float; var area, circumference: Float);\nbegin\n  const PI = 3.14159;\n  area := PI * radius * radius;\n  circumference := 2.0 * PI * radius;\nend;\n\nbegin\n  var r := 5.0;\n  var a, c: Float;\n  \n  CalculateCircle(r, a, c);\n  \n  WriteLn('Radius: ' + FloatToStr(r));\n  WriteLn('Area: ' + FloatToStr(a));\n  WriteLn('Circumference: ' + FloatToStr(c));\nend.",
+        "hints": [
+          "Use const for radius since you're not modifying it",
+          "Use var for area and circumference since you're setting them",
+          "Area = π * r²",
+          "Circumference = 2 * π * r"
+        ]
+      },
+      {
+        "title": "Safe Division",
+        "description": "Create a function `SafeDivide` that takes two integers and an out Float parameter for the result. Return true if division succeeds, false if dividing by zero.",
+        "starterCode": "program SafeDivision;\n\n// Define SafeDivide function\n// Returns Boolean, takes two Integer params and one out Float param\n\nbegin\n  var result: Float;\n  \n  if SafeDivide(20, 4, result) then\n    WriteLn('20 / 4 = ' + FloatToStr(result));\n    \n  if not SafeDivide(10, 0, result) then\n    WriteLn('Cannot divide by zero!');\nend.",
+        "solution": "program SafeDivision;\n\nfunction SafeDivide(a, b: Integer; out quotient: Float): Boolean;\nbegin\n  if b = 0 then\n  begin\n    quotient := 0.0;\n    Result := false;\n  end\n  else\n  begin\n    quotient := a / b;\n    Result := true;\n  end;\nend;\n\nbegin\n  var result: Float;\n  \n  if SafeDivide(20, 4, result) then\n    WriteLn('20 / 4 = ' + FloatToStr(result));\n    \n  if not SafeDivide(10, 0, result) then\n    WriteLn('Cannot divide by zero!');\nend.",
+        "hints": [
+          "Return type is Boolean",
+          "Use out for the quotient parameter",
+          "Check if b equals 0",
+          "Return false for division by zero, true otherwise",
+          "Set the quotient when division is possible"
+        ]
+      }
+    ],
+    "summary": "Excellent work! You now understand parameter passing:\n\n- **Value parameters**: Safe copies, can't modify original (default)\n- **Var parameters**: Modify the original, use for input/output\n- **Const parameters**: Efficient, read-only, good for large data\n- **Out parameters**: Clear intent for output values\n\nChoosing the right parameter type makes your code more efficient, safer, and clearer in intent!",
+    "nextSteps": "Next, you'll learn about **variable scope** - understanding where variables are visible and how local and global variables work."
+  },
+  "prerequisites": ["function-basics", "procedure-basics"],
+  "relatedLessons": ["local-vs-global-scope", "recursion"]
+}

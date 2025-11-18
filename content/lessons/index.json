@@ -10,6 +10,12 @@
     "/content/lessons/02-control-flow/04-for-loops.json",
     "/content/lessons/02-control-flow/05-repeat-until.json",
     "/content/lessons/02-control-flow/06-break-continue.json",
+    "/content/lessons/03-functions/01-procedure-basics.json",
+    "/content/lessons/03-functions/02-function-basics.json",
+    "/content/lessons/03-functions/03-parameters.json",
+    "/content/lessons/03-functions/04-scope.json",
+    "/content/lessons/03-functions/05-recursion.json",
+    "/content/lessons/03-functions/06-overloading.json",
     "/content/lessons/06-turtle-graphics/01-turtle-basics.json"
   ]
 }
