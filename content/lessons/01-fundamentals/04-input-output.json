@@ -1,0 +1,101 @@
+{
+  "id": "input-output",
+  "title": "Input and Basic I/O",
+  "category": "fundamentals",
+  "difficulty": "beginner",
+  "order": 4,
+  "description": "Learn how to get input from users and create interactive programs",
+  "estimatedTime": 15,
+  "tags": ["input", "output", "readln", "interactive", "io"],
+  "content": {
+    "introduction": "So far, you've been writing programs that just display output. But real programs are interactive - they respond to user input!\n\nIn this lesson, you'll learn how to get input from users, making your programs dynamic and interactive.\n\n### What You'll Learn\n- Reading user input with `ReadLn`\n- Converting input to different data types\n- Creating interactive programs\n- Combining input and output",
+    "concepts": [
+      {
+        "title": "ReadLn Function",
+        "description": "ReadLn reads a line of input from the user and stores it in a variable"
+      },
+      {
+        "title": "Type Conversion",
+        "description": "Input is often read as strings and needs to be converted to numbers using functions like StrToInt, StrToFloat"
+      },
+      {
+        "title": "Interactive Programs",
+        "description": "Programs that prompt users for input and respond accordingly create engaging experiences"
+      },
+      {
+        "title": "Input Validation",
+        "description": "Always consider what happens if users enter unexpected input"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Simple Name Input",
+        "description": "Ask for the user's name and greet them personally",
+        "code": "program GreetUser;\n\nvar\n  name: String;\n\nbegin\n  WriteLn('What is your name?');\n  ReadLn(name);\n  WriteLn('Hello, ', name, '! Welcome to DWScript!');\nend.",
+        "expectedOutput": "What is your name?\n[User enters: Alice]\nHello, Alice! Welcome to DWScript!"
+      },
+      {
+        "title": "Reading Numbers",
+        "description": "Read a number from the user and perform calculations",
+        "code": "program SquareNumber;\n\nvar\n  input: String;\n  number: Integer;\n  square: Integer;\n\nbegin\n  WriteLn('Enter a number:');\n  ReadLn(input);\n  number := StrToInt(input);\n  square := number * number;\n  \n  WriteLn('The square of ', number, ' is ', square);\nend.",
+        "expectedOutput": "Enter a number:\n[User enters: 5]\nThe square of 5 is 25"
+      },
+      {
+        "title": "Multiple Inputs",
+        "description": "Read multiple values and use them together",
+        "code": "program Calculator;\n\nvar\n  input1, input2: String;\n  num1, num2: Float;\n  sum: Float;\n\nbegin\n  WriteLn('Simple Addition Calculator');\n  WriteLn('Enter first number:');\n  ReadLn(input1);\n  \n  WriteLn('Enter second number:');\n  ReadLn(input2);\n  \n  num1 := StrToFloat(input1);\n  num2 := StrToFloat(input2);\n  sum := num1 + num2;\n  \n  WriteLn(num1, ' + ', num2, ' = ', sum);\nend.",
+        "expectedOutput": "Simple Addition Calculator\nEnter first number:\n[User enters: 3.5]\nEnter second number:\n[User enters: 2.5]\n3.5 + 2.5 = 6"
+      },
+      {
+        "title": "Interactive Conversation",
+        "description": "Create a simple chatbot-like interaction",
+        "code": "program SimpleChat;\n\nvar\n  name, color: String;\n  age: Integer;\n  ageStr: String;\n\nbegin\n  WriteLn('Hi! I\\'d like to get to know you.');\n  WriteLn('');\n  \n  WriteLn('What\\'s your name?');\n  ReadLn(name);\n  \n  WriteLn('How old are you, ', name, '?');\n  ReadLn(ageStr);\n  age := StrToInt(ageStr);\n  \n  WriteLn('What\\'s your favorite color?');\n  ReadLn(color);\n  \n  WriteLn('');\n  WriteLn('Nice to meet you, ', name, '!');\n  WriteLn('You are ', age, ' years old and you love ', color, '.');\nend.",
+        "expectedOutput": "Hi! I'd like to get to know you.\n\nWhat's your name?\n[User enters: Bob]\nHow old are you, Bob?\n[User enters: 25]\nWhat's your favorite color?\n[User enters: blue]\n\nNice to meet you, Bob!\nYou are 25 years old and you love blue."
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Celsius to Fahrenheit Converter",
+        "description": "Create an interactive temperature converter. Ask the user for a temperature in Celsius, then convert and display it in Fahrenheit using the formula: F = C * 9/5 + 32",
+        "starterCode": "program TempConverter;\n\nvar\n  // Declare your variables here\n\nbegin\n  WriteLn('Temperature Converter (Celsius to Fahrenheit)');\n  // Your code here\n  \nend.",
+        "solution": "program TempConverter;\n\nvar\n  celsiusStr: String;\n  celsius, fahrenheit: Float;\n\nbegin\n  WriteLn('Temperature Converter (Celsius to Fahrenheit)');\n  WriteLn('Enter temperature in Celsius:');\n  ReadLn(celsiusStr);\n  \n  celsius := StrToFloat(celsiusStr);\n  fahrenheit := celsius * 9 / 5 + 32;\n  \n  WriteLn(celsius, '°C = ', fahrenheit, '°F');\nend.",
+        "hints": [
+          "Declare a String variable to read input",
+          "Declare Float variables for celsius and fahrenheit",
+          "Use ReadLn to get user input",
+          "Convert the string to float using StrToFloat",
+          "Apply the formula: F = C * 9/5 + 32"
+        ]
+      },
+      {
+        "title": "Rectangle Area Calculator",
+        "description": "Write a program that asks for the width and height of a rectangle, then calculates and displays its area (area = width * height).",
+        "starterCode": "program RectangleArea;\n\nvar\n  // Declare your variables here\n\nbegin\n  WriteLn('Rectangle Area Calculator');\n  // Your code here\n  \nend.",
+        "solution": "program RectangleArea;\n\nvar\n  widthStr, heightStr: String;\n  width, height, area: Float;\n\nbegin\n  WriteLn('Rectangle Area Calculator');\n  \n  WriteLn('Enter width:');\n  ReadLn(widthStr);\n  \n  WriteLn('Enter height:');\n  ReadLn(heightStr);\n  \n  width := StrToFloat(widthStr);\n  height := StrToFloat(heightStr);\n  area := width * height;\n  \n  WriteLn('The area of a rectangle with width ', width);\n  WriteLn('and height ', height, ' is ', area);\nend.",
+        "hints": [
+          "You need to read two numbers from the user",
+          "Read each as a String first, then convert to Float",
+          "Area = width * height",
+          "Display the result in a friendly format"
+        ]
+      },
+      {
+        "title": "Personal Info Summary",
+        "description": "Create a program that asks for: name, age, and favorite hobby. Then display a summary sentence combining all three pieces of information.",
+        "starterCode": "program PersonalInfo;\n\nvar\n  // Declare your variables here\n\nbegin\n  WriteLn('Tell me about yourself!');\n  // Your code here\n  \nend.",
+        "solution": "program PersonalInfo;\n\nvar\n  name, hobby, ageStr: String;\n  age: Integer;\n\nbegin\n  WriteLn('Tell me about yourself!');\n  \n  WriteLn('What is your name?');\n  ReadLn(name);\n  \n  WriteLn('How old are you?');\n  ReadLn(ageStr);\n  age := StrToInt(ageStr);\n  \n  WriteLn('What is your favorite hobby?');\n  ReadLn(hobby);\n  \n  WriteLn('');\n  WriteLn('Summary:');\n  WriteLn(name, ' is ', age, ' years old and enjoys ', hobby, '.');\nend.",
+        "hints": [
+          "You need String variables for name and hobby",
+          "Read age as a String, then convert to Integer",
+          "Use ReadLn three times for the three inputs",
+          "Combine all values in a final output statement"
+        ]
+      }
+    ],
+    "summary": "Excellent! You've learned:\n\n- Using `ReadLn` to get input from users\n- Converting strings to numbers with `StrToInt` and `StrToFloat`\n- Creating interactive programs that respond to user input\n- Combining multiple inputs in calculations and output\n\nYour programs can now interact with users, making them much more useful and engaging!",
+    "nextSteps": "Next, you'll learn about **control flow** - using if statements and conditions to make decisions in your programs. This will allow your programs to behave differently based on user input and other conditions!"
+  },
+  "prerequisites": ["hello-world", "variables-and-types", "operators-and-expressions"],
+  "relatedLessons": ["operators-and-expressions", "if-statements"],
+  "estimatedTime": 15
+}
