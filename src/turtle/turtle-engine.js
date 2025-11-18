@@ -52,10 +52,13 @@ export class TurtleEngine {
 
   /**
    * Clear the canvas
+   * @param {boolean} preserveBackground - Whether to preserve background color
    */
-  clear() {
-    this.ctx.fillStyle = this.backgroundColor;
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  clear(preserveBackground = true) {
+    if (preserveBackground) {
+      this.ctx.fillStyle = this.backgroundColor;
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
     if (this.visible) {
       this.drawTurtle();
     }
