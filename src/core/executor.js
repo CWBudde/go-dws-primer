@@ -6,6 +6,7 @@
 import { executeDWScript, isWASMReady } from './wasm-loader.js';
 import { clearOutput, appendConsoleOutput, appendCompilerOutput, showOutput } from '../output/output-manager.js';
 import { clearTurtle } from '../turtle/turtle-api.js';
+import { announceOutput, announceError, announceStatus } from '../utils/accessibility.js';
 
 let isExecuting = false;
 let executionStartTime = 0;
@@ -67,11 +68,14 @@ export async function executeCode(code) {
       // Show output
       if (result.output) {
         appendConsoleOutput(result.output);
+        announceOutput(result.output);
       }
 
       // Show execution stats
       updateExecutionTime(executionTime);
-      updateStatus(`Execution completed in ${executionTime.toFixed(2)}ms`);
+      const statusMsg = `Execution completed in ${executionTime.toFixed(2)}ms`;
+      updateStatus(statusMsg);
+      announceStatus(statusMsg);
     } else {
       // Show errors
       appendCompilerOutput('Compilation failed:', 'error');
@@ -81,10 +85,12 @@ export async function executeCode(code) {
             ? `Line ${error.line}: ${error.message}`
             : error.message;
           appendCompilerOutput(errorMsg, 'error');
+          announceError(error.message, error.line);
         });
       }
 
       updateStatus('Compilation failed');
+      announceStatus('Compilation failed');
     }
 
     return result;

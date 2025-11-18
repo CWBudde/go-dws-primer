@@ -1,5 +1,6 @@
-/* Import Lesson Styles */
+/* Import Component Styles */
 @import './lessons.css';
+@import './modals.css';
 
 /* CSS Variables for Theming */
 :root {
