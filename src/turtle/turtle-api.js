@@ -3,9 +3,9 @@
  * DWScript bindings for turtle graphics functions
  */
 
-import { TurtleEngine } from './turtle-engine.js';
-import { AnimationController } from './animation.js';
-import { exportAsPNG, exportAsSVG, drawGrid } from './canvas-renderer.js';
+import { TurtleEngine } from "./turtle-engine.js";
+import { AnimationController } from "./animation.js";
+import { exportAsPNG, exportAsSVG, drawGrid } from "./canvas-renderer.js";
 
 let turtleEngine = null;
 let animationController = null;
@@ -170,7 +170,7 @@ export const TurtleAPI = {
  * Install turtle API into global scope for DWScript
  */
 export function installTurtleAPI() {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     // Make turtle functions available globally
     Object.assign(window, TurtleAPI);
   }
@@ -184,7 +184,12 @@ export function toggleGrid() {
   if (turtleEngine && turtleEngine.canvas) {
     // Store current canvas state
     const ctx = turtleEngine.ctx;
-    const imageData = ctx.getImageData(0, 0, turtleEngine.canvas.width, turtleEngine.canvas.height);
+    const imageData = ctx.getImageData(
+      0,
+      0,
+      turtleEngine.canvas.width,
+      turtleEngine.canvas.height,
+    );
 
     // Clear and redraw with or without grid
     turtleEngine.clear();
@@ -267,7 +272,7 @@ export function setTurtleSpeed(speed) {
 export function rgbToHex(r, g, b) {
   const toHex = (n) => {
     const hex = Math.max(0, Math.min(255, Math.round(n))).toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
+    return hex.length === 1 ? "0" + hex : hex;
   };
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
@@ -280,12 +285,12 @@ export function randomColor() {
   return rgbToHex(
     Math.random() * 255,
     Math.random() * 255,
-    Math.random() * 255
+    Math.random() * 255,
   );
 }
 
 // Also expose helper functions globally if needed
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.RGBToHex = rgbToHex;
   window.RandomColor = randomColor;
 }

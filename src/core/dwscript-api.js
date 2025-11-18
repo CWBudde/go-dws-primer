@@ -23,7 +23,7 @@ export class DWScriptAPI {
       totalCompilations: 0,
       totalExecutionTime: 0,
       averageExecutionTime: 0,
-      errorCount: 0
+      errorCount: 0,
     };
   }
 
@@ -37,7 +37,7 @@ export class DWScriptAPI {
    */
   async init(handlers = {}) {
     if (!window.DWScript) {
-      throw new Error('DWScript WASM module not loaded');
+      throw new Error("DWScript WASM module not loaded");
     }
 
     this.instance = new window.DWScript();
@@ -45,7 +45,7 @@ export class DWScriptAPI {
     await this.instance.init({
       onOutput: handlers.onOutput || console.log,
       onError: handlers.onError || console.error,
-      onInput: handlers.onInput || (() => prompt('Input:'))
+      onInput: handlers.onInput || (() => prompt("Input:")),
     });
 
     this.initialized = true;
@@ -76,7 +76,7 @@ export class DWScriptAPI {
 
       return {
         success: program.success,
-        programId: program.id
+        programId: program.id,
       };
     } catch (error) {
       return this.normalizeError(error);
@@ -103,7 +103,7 @@ export class DWScriptAPI {
         // Execute with timeout
         result = await this.executeWithTimeout(
           () => this.instance.eval(source),
-          timeout
+          timeout,
         );
       } else {
         // Execute without timeout
@@ -132,9 +132,10 @@ export class DWScriptAPI {
     this.assertInitialized();
 
     try {
-      const program = typeof programRef === 'string'
-        ? this.programs.get(programRef)
-        : { id: programRef };
+      const program =
+        typeof programRef === "string"
+          ? this.programs.get(programRef)
+          : { id: programRef };
 
       if (!program) {
         throw new Error(`Program not found: ${programRef}`);
@@ -155,10 +156,10 @@ export class DWScriptAPI {
   normalizeResult(result) {
     return {
       success: result.success,
-      output: result.output || '',
+      output: result.output || "",
       errors: result.error ? [this.normalizeErrorObject(result.error)] : [],
       warnings: result.warnings || [],
-      executionTime: result.executionTime || 0
+      executionTime: result.executionTime || 0,
     };
   }
 
@@ -170,10 +171,10 @@ export class DWScriptAPI {
   normalizeError(error) {
     return {
       success: false,
-      output: '',
+      output: "",
       errors: [this.normalizeErrorObject(error)],
       warnings: [],
-      executionTime: 0
+      executionTime: 0,
     };
   }
 
@@ -183,23 +184,23 @@ export class DWScriptAPI {
    * @returns {Object} Normalized error object
    */
   normalizeErrorObject(error) {
-    if (typeof error === 'string') {
+    if (typeof error === "string") {
       return {
-        type: 'Error',
+        type: "Error",
         message: error,
         line: 0,
         column: 0,
-        source: null
+        source: null,
       };
     }
 
     return {
-      type: error.type || 'UnknownError',
+      type: error.type || "UnknownError",
       message: error.message || String(error),
       line: error.line || 0,
       column: error.column || 0,
       source: error.source || null,
-      details: error.details || null
+      details: error.details || null,
     };
   }
 
@@ -209,7 +210,7 @@ export class DWScriptAPI {
    */
   assertInitialized() {
     if (!this.initialized) {
-      throw new Error('DWScript API not initialized. Call init() first.');
+      throw new Error("DWScript API not initialized. Call init() first.");
     }
   }
 
@@ -272,8 +273,11 @@ export class DWScriptAPI {
     return Promise.race([
       Promise.resolve(fn()),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`Execution timeout after ${timeout}ms`)), timeout)
-      )
+        setTimeout(
+          () => reject(new Error(`Execution timeout after ${timeout}ms`)),
+          timeout,
+        ),
+      ),
     ]);
   }
 
@@ -286,7 +290,8 @@ export class DWScriptAPI {
     this.performanceMetrics.totalExecutions++;
     this.performanceMetrics.totalExecutionTime += executionTime;
     this.performanceMetrics.averageExecutionTime =
-      this.performanceMetrics.totalExecutionTime / this.performanceMetrics.totalExecutions;
+      this.performanceMetrics.totalExecutionTime /
+      this.performanceMetrics.totalExecutions;
 
     if (!success) {
       this.performanceMetrics.errorCount++;
@@ -310,7 +315,7 @@ export class DWScriptAPI {
       totalCompilations: 0,
       totalExecutionTime: 0,
       averageExecutionTime: 0,
-      errorCount: 0
+      errorCount: 0,
     };
   }
 }
