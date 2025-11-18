@@ -1,0 +1,99 @@
+{
+  "id": "operators-and-expressions",
+  "title": "Operators and Expressions",
+  "category": "fundamentals",
+  "difficulty": "beginner",
+  "order": 3,
+  "description": "Learn about arithmetic, comparison, and logical operators in DWScript",
+  "estimatedTime": 20,
+  "tags": ["operators", "arithmetic", "comparison", "logic", "expressions"],
+  "content": {
+    "introduction": "Operators are the building blocks of expressions in DWScript. They allow you to perform calculations, compare values, and make logical decisions.\n\nIn this lesson, you'll learn about different types of operators and how to combine them to create powerful expressions.\n\n### What You'll Learn\n- Arithmetic operators (+, -, *, /, div, mod)\n- Comparison operators (=, <>, <, >, <=, >=)\n- Logical operators (and, or, not)\n- Operator precedence and parentheses",
+    "concepts": [
+      {
+        "title": "Arithmetic Operators",
+        "description": "Perform mathematical calculations: + (addition), - (subtraction), * (multiplication), / (division), div (integer division), mod (modulus/remainder)"
+      },
+      {
+        "title": "Comparison Operators",
+        "description": "Compare values and return true or false: = (equal), <> (not equal), < (less than), > (greater than), <= (less or equal), >= (greater or equal)"
+      },
+      {
+        "title": "Logical Operators",
+        "description": "Combine boolean values: and (both true), or (at least one true), not (inverse)"
+      },
+      {
+        "title": "Operator Precedence",
+        "description": "Operators are evaluated in a specific order: parentheses first, then *, /, div, mod, then +, -, then comparisons, then logical operators"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Arithmetic Operations",
+        "description": "Basic mathematical operations with numbers",
+        "code": "program ArithmeticDemo;\n\nvar\n  a, b: Integer;\n  result: Float;\n\nbegin\n  a := 10;\n  b := 3;\n  \n  WriteLn('Addition: ', a + b);        // 13\n  WriteLn('Subtraction: ', a - b);     // 7\n  WriteLn('Multiplication: ', a * b);  // 30\n  WriteLn('Division: ', a / b);        // 3.333...\n  WriteLn('Integer division: ', a div b); // 3\n  WriteLn('Modulus (remainder): ', a mod b); // 1\nend.",
+        "expectedOutput": "Addition: 13\nSubtraction: 7\nMultiplication: 30\nDivision: 3.333333\nInteger division: 3\nModulus (remainder): 1"
+      },
+      {
+        "title": "Comparison Operators",
+        "description": "Comparing values returns Boolean results (True or False)",
+        "code": "program ComparisonDemo;\n\nvar\n  x, y: Integer;\n\nbegin\n  x := 5;\n  y := 10;\n  \n  WriteLn('x = y: ', x = y);    // False\n  WriteLn('x <> y: ', x <> y);  // True\n  WriteLn('x < y: ', x < y);    // True\n  WriteLn('x > y: ', x > y);    // False\n  WriteLn('x <= 5: ', x <= 5);  // True\n  WriteLn('y >= 10: ', y >= 10); // True\nend.",
+        "expectedOutput": "x = y: False\nx <> y: True\nx < y: True\nx > y: False\nx <= 5: True\ny >= 10: True"
+      },
+      {
+        "title": "Logical Operators",
+        "description": "Combining boolean conditions with and, or, not",
+        "code": "program LogicalDemo;\n\nvar\n  age: Integer;\n  hasLicense: Boolean;\n\nbegin\n  age := 18;\n  hasLicense := True;\n  \n  WriteLn('Can drive: ', (age >= 18) and hasLicense);  // True\n  WriteLn('Teen or adult: ', (age >= 13) or (age >= 18)); // True\n  WriteLn('Not a minor: ', not (age < 18)); // True\n  \n  // More complex logic\n  WriteLn('Senior discount: ', (age >= 65) or (age < 12)); // False\nend.",
+        "expectedOutput": "Can drive: True\nTeen or adult: True\nNot a minor: True\nSenior discount: False"
+      },
+      {
+        "title": "Operator Precedence",
+        "description": "Understanding the order of operations and using parentheses",
+        "code": "program PrecedenceDemo;\n\nvar\n  result: Integer;\n\nbegin\n  // Without parentheses (follows precedence)\n  result := 2 + 3 * 4;  // 3*4 first, then +2\n  WriteLn('2 + 3 * 4 = ', result);  // 14\n  \n  // With parentheses (forces order)\n  result := (2 + 3) * 4;  // 2+3 first, then *4\n  WriteLn('(2 + 3) * 4 = ', result);  // 20\n  \n  // Complex expression\n  result := 10 + 5 * 2 - 8 div 4;  // 5*2=10, 8div4=2, then 10+10-2\n  WriteLn('10 + 5 * 2 - 8 div 4 = ', result);  // 18\nend.",
+        "expectedOutput": "2 + 3 * 4 = 14\n(2 + 3) * 4 = 20\n10 + 5 * 2 - 8 div 4 = 18"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Temperature Converter",
+        "description": "Write a program that converts a temperature from Celsius to Fahrenheit using the formula: F = C * 9/5 + 32",
+        "starterCode": "program TempConverter;\n\nvar\n  celsius: Float;\n  fahrenheit: Float;\n\nbegin\n  celsius := 25.0;\n  // Calculate fahrenheit here\n  \n  WriteLn('Celsius: ', celsius);\n  WriteLn('Fahrenheit: ', fahrenheit);\nend.",
+        "solution": "program TempConverter;\n\nvar\n  celsius: Float;\n  fahrenheit: Float;\n\nbegin\n  celsius := 25.0;\n  fahrenheit := celsius * 9 / 5 + 32;\n  \n  WriteLn('Celsius: ', celsius);\n  WriteLn('Fahrenheit: ', fahrenheit);\nend.",
+        "hints": [
+          "Use the formula F = C * 9/5 + 32",
+          "Remember operator precedence: * and / before +",
+          "Alternatively use parentheses: C * (9/5) + 32"
+        ]
+      },
+      {
+        "title": "Age Eligibility Checker",
+        "description": "Create a program that checks if a person is eligible to vote (age >= 18) AND has registered (hasRegistered = True). Display the result.",
+        "starterCode": "program VoteEligibility;\n\nvar\n  age: Integer;\n  hasRegistered: Boolean;\n  canVote: Boolean;\n\nbegin\n  age := 20;\n  hasRegistered := True;\n  // Calculate canVote here\n  \n  WriteLn('Age: ', age);\n  WriteLn('Registered: ', hasRegistered);\n  WriteLn('Can vote: ', canVote);\nend.",
+        "solution": "program VoteEligibility;\n\nvar\n  age: Integer;\n  hasRegistered: Boolean;\n  canVote: Boolean;\n\nbegin\n  age := 20;\n  hasRegistered := True;\n  canVote := (age >= 18) and hasRegistered;\n  \n  WriteLn('Age: ', age);\n  WriteLn('Registered: ', hasRegistered);\n  WriteLn('Can vote: ', canVote);\nend.",
+        "hints": [
+          "Use the 'and' operator to combine two conditions",
+          "Check if age >= 18",
+          "Check if hasRegistered is True",
+          "Both conditions must be true for the result to be true"
+        ]
+      },
+      {
+        "title": "Even or Odd",
+        "description": "Write a program that determines if a number is even using the modulus operator. A number is even if number mod 2 equals 0.",
+        "starterCode": "program EvenOdd;\n\nvar\n  number: Integer;\n  isEven: Boolean;\n\nbegin\n  number := 42;\n  // Calculate isEven here\n  \n  WriteLn('Number: ', number);\n  WriteLn('Is even: ', isEven);\nend.",
+        "solution": "program EvenOdd;\n\nvar\n  number: Integer;\n  isEven: Boolean;\n\nbegin\n  number := 42;\n  isEven := (number mod 2) = 0;\n  \n  WriteLn('Number: ', number);\n  WriteLn('Is even: ', isEven);\nend.",
+        "hints": [
+          "Use the mod operator to get the remainder",
+          "number mod 2 gives 0 for even numbers, 1 for odd",
+          "Use the = operator to check if the result equals 0",
+          "Remember to use parentheses: (number mod 2) = 0"
+        ]
+      }
+    ],
+    "summary": "Great work! You've learned:\n\n- **Arithmetic operators**: +, -, *, /, div, mod for calculations\n- **Comparison operators**: =, <>, <, >, <=, >= for comparing values\n- **Logical operators**: and, or, not for combining conditions\n- **Operator precedence**: The order in which operations are evaluated\n- Using parentheses to control evaluation order\n\nOperators are essential tools you'll use constantly in programming!",
+    "nextSteps": "Next, you'll learn about **input and output** - how to get data from the user and create interactive programs. This will make your programs much more dynamic and useful!"
+  },
+  "prerequisites": ["hello-world", "variables-and-types"],
+  "relatedLessons": ["variables-and-types", "input-output"],
+  "estimatedTime": 20
+}

@@ -1,0 +1,127 @@
+{
+  "id": "repeat-until-loops",
+  "title": "Repeat-Until Loops",
+  "category": "control-flow",
+  "difficulty": "beginner",
+  "order": 5,
+  "description": "Learn to use repeat-until loops that execute at least once",
+  "estimatedTime": 15,
+  "tags": ["repeat", "until", "loop", "iteration", "control-flow"],
+  "content": {
+    "introduction": "The `repeat-until` loop is similar to a while loop, but with one crucial difference: it always executes at least once because the condition is checked at the end.\n\nThis makes repeat-until perfect for situations where you need to do something first, then decide whether to repeat.\n\n### What You'll Learn\n- Repeat-until loop syntax\n- Difference between while and repeat-until\n- When to use repeat-until\n- Input validation with repeat-until\n- Post-condition loops",
+    "concepts": [
+      {
+        "title": "Repeat-Until Loop",
+        "description": "Repeats statements until a condition becomes true: repeat statements until condition"
+      },
+      {
+        "title": "Post-Condition",
+        "description": "The condition is checked after execution, so the loop body always runs at least once"
+      },
+      {
+        "title": "While vs Repeat-Until",
+        "description": "While checks condition before (may not execute), repeat-until checks after (always executes once)"
+      },
+      {
+        "title": "No Begin-End Required",
+        "description": "Repeat-until naturally handles multiple statements without needing begin-end"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Basic Repeat-Until",
+        "description": "Count from 1 to 5 using repeat-until",
+        "code": "program BasicRepeat;\n\nvar\n  count: Integer;\n\nbegin\n  count := 1;\n  \n  repeat\n    WriteLn('Count: ', count);\n    count := count + 1;\n  until count > 5;\n  \n  WriteLn('Done!');\nend.",
+        "expectedOutput": "Count: 1\nCount: 2\nCount: 3\nCount: 4\nCount: 5\nDone!"
+      },
+      {
+        "title": "While vs Repeat-Until",
+        "description": "Demonstrating the difference in condition checking",
+        "code": "program WhileVsRepeat;\n\nvar\n  x: Integer;\n\nbegin\n  WriteLn('While loop (condition false from start):');\n  x := 10;\n  while x < 5 do\n  begin\n    WriteLn('This will not print');\n    x := x + 1;\n  end;\n  WriteLn('While loop finished');\n  \n  WriteLn('');\n  WriteLn('Repeat-until loop (same condition):');\n  x := 10;\n  repeat\n    WriteLn('This will print once!');\n    x := x + 1;\n  until x >= 5;  // Already true, so stops after one iteration\n  WriteLn('Repeat loop finished');\nend.",
+        "expectedOutput": "While loop (condition false from start):\nWhile loop finished\n\nRepeat-until loop (same condition):\nThis will print once!\nRepeat loop finished"
+      },
+      {
+        "title": "Input Validation",
+        "description": "Keep asking for valid input - perfect use case for repeat-until",
+        "code": "program InputValidation;\n\nvar\n  input: String;\n  age: Integer;\n\nbegin\n  repeat\n    WriteLn('Enter your age (must be positive):');\n    ReadLn(input);\n    age := StrToInt(input);\n    \n    if age <= 0 then\n      WriteLn('Invalid! Age must be positive.');\n  until age > 0;\n  \n  WriteLn('Thank you! Your age is ', age);\nend.",
+        "expectedOutput": "Enter your age (must be positive):\n[User enters: -5]\nInvalid! Age must be positive.\nEnter your age (must be positive):\n[User enters: 25]\nThank you! Your age is 25"
+      },
+      {
+        "title": "Menu System",
+        "description": "Display a menu repeatedly until user chooses to exit",
+        "code": "program MenuSystem;\n\nvar\n  choice: Integer;\n  choiceStr: String;\n\nbegin\n  repeat\n    WriteLn('');\n    WriteLn('=== Main Menu ===');\n    WriteLn('1. Option One');\n    WriteLn('2. Option Two');\n    WriteLn('3. Option Three');\n    WriteLn('4. Exit');\n    WriteLn('Enter choice:');\n    \n    ReadLn(choiceStr);\n    choice := StrToInt(choiceStr);\n    \n    case choice of\n      1: WriteLn('You selected Option One');\n      2: WriteLn('You selected Option Two');\n      3: WriteLn('You selected Option Three');\n      4: WriteLn('Goodbye!');\n    else\n      WriteLn('Invalid choice!');\n    end;\n  until choice = 4;\nend.",
+        "expectedOutput": "=== Main Menu ===\n1. Option One\n2. Option Two\n3. Option Three\n4. Exit\nEnter choice:\n[User enters: 2]\nYou selected Option Two\n\n=== Main Menu ===\n...\n[User enters: 4]\nGoodbye!"
+      },
+      {
+        "title": "Sum Until Zero",
+        "description": "Add numbers until user enters 0",
+        "code": "program SumUntilZero;\n\nvar\n  num: Integer;\n  numStr: String;\n  sum: Integer;\n\nbegin\n  sum := 0;\n  \n  WriteLn('Enter numbers to sum (0 to stop):');\n  \n  repeat\n    ReadLn(numStr);\n    num := StrToInt(numStr);\n    sum := sum + num;\n    \n    if num <> 0 then\n      WriteLn('Current sum: ', sum);\n  until num = 0;\n  \n  WriteLn('Final sum: ', sum);\nend.",
+        "expectedOutput": "Enter numbers to sum (0 to stop):\n[User enters: 5]\nCurrent sum: 5\n[User enters: 10]\nCurrent sum: 15\n[User enters: 3]\nCurrent sum: 18\n[User enters: 0]\nFinal sum: 18"
+      },
+      {
+        "title": "Countdown with Repeat",
+        "description": "Countdown from 5 to 1",
+        "code": "program Countdown;\n\nvar\n  count: Integer;\n\nbegin\n  count := 5;\n  \n  repeat\n    WriteLn(count);\n    count := count - 1;\n  until count = 0;\n  \n  WriteLn('Blastoff!');\nend.",
+        "expectedOutput": "5\n4\n3\n2\n1\nBlastoff!"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Password Validator",
+        "description": "Keep asking for a password until the user enters 'secret'. The program should run at least once.",
+        "starterCode": "program Password;\n\nvar\n  password: String;\n\nbegin\n  // Your code here\n  \n  WriteLn('Access granted!');\nend.",
+        "solution": "program Password;\n\nvar\n  password: String;\n\nbegin\n  repeat\n    WriteLn('Enter password:');\n    ReadLn(password);\n    \n    if password <> 'secret' then\n      WriteLn('Incorrect! Try again.');\n  until password = 'secret';\n  \n  WriteLn('Access granted!');\nend.",
+        "hints": [
+          "Use repeat...until",
+          "Read the password inside the loop",
+          "Continue until password = 'secret'",
+          "Give feedback for incorrect passwords"
+        ]
+      },
+      {
+        "title": "Positive Number Sum",
+        "description": "Ask the user to enter positive numbers and sum them. Stop when they enter a negative number. Display the sum at the end.",
+        "starterCode": "program PositiveSum;\n\nvar\n  // Declare your variables\n\nbegin\n  WriteLn('Enter positive numbers (negative to stop):');\n  // Your code here\n  \n  WriteLn('Sum: ', sum);\nend.",
+        "solution": "program PositiveSum;\n\nvar\n  num: Integer;\n  numStr: String;\n  sum: Integer;\n\nbegin\n  sum := 0;\n  WriteLn('Enter positive numbers (negative to stop):');\n  \n  repeat\n    ReadLn(numStr);\n    num := StrToInt(numStr);\n    \n    if num >= 0 then\n      sum := sum + num;\n  until num < 0;\n  \n  WriteLn('Sum: ', sum);\nend.",
+        "hints": [
+          "Initialize sum to 0",
+          "Use repeat...until",
+          "Read a number each iteration",
+          "Add it to sum only if it's positive",
+          "Continue until num < 0"
+        ]
+      },
+      {
+        "title": "Dice Roll Game",
+        "description": "Simulate rolling a die (random number 1-6). Keep rolling until you get a 6. Count how many rolls it took. (For this exercise, use a counter that increases each time instead of random).",
+        "starterCode": "program DiceRoll;\n\nvar\n  roll: Integer;\n  count: Integer;\n\nbegin\n  count := 0;\n  roll := 1;  // Simulated die starting at 1\n  \n  // Your code here\n  \n  WriteLn('It took ', count, ' rolls to get a 6');\nend.",
+        "solution": "program DiceRoll;\n\nvar\n  roll: Integer;\n  count: Integer;\n\nbegin\n  count := 0;\n  roll := 1;  // Simulated die starting at 1\n  \n  repeat\n    count := count + 1;\n    WriteLn('Roll ', count, ': ', roll);\n    roll := roll + 1;\n    if roll > 6 then roll := 1;  // Wrap around\n  until roll = 6;\n  \n  WriteLn('It took ', count, ' rolls to get a 6');\nend.",
+        "hints": [
+          "Increment count each iteration",
+          "Display the current roll",
+          "Increment roll (simulate dice)",
+          "For simulation: wrap roll back to 1 if it exceeds 6",
+          "Continue until roll = 6"
+        ]
+      },
+      {
+        "title": "Multiplication Practice",
+        "description": "Create a multiplication quiz. Ask 'What is 7 x 8?' and keep asking until the user answers correctly (56).",
+        "starterCode": "program MultiplicationQuiz;\n\nvar\n  answer: Integer;\n  answerStr: String;\n\nbegin\n  WriteLn('Multiplication Quiz!');\n  // Your code here\n  \nend.",
+        "solution": "program MultiplicationQuiz;\n\nvar\n  answer: Integer;\n  answerStr: String;\n\nbegin\n  WriteLn('Multiplication Quiz!');\n  \n  repeat\n    WriteLn('What is 7 x 8?');\n    ReadLn(answerStr);\n    answer := StrToInt(answerStr);\n    \n    if answer <> 56 then\n      WriteLn('Incorrect! Try again.');\n  until answer = 56;\n  \n  WriteLn('Correct! Well done!');\nend.",
+        "hints": [
+          "Ask the question inside the repeat loop",
+          "Read the user's answer",
+          "Give feedback if wrong",
+          "Continue until answer = 56",
+          "Congratulate when correct"
+        ]
+      }
+    ],
+    "summary": "Excellent! You've mastered:\n\n- **Repeat-until syntax**: repeat statements until condition\n- **Post-condition checking**: Condition checked after execution\n- **Always executes once**: Unlike while, repeat-until always runs at least one time\n- **Input validation**: Perfect for prompting until valid input\n- **No begin-end needed**: Multiple statements work without extra keywords\n\nRepeat-until is perfect when you need to do something first, then decide whether to repeat!",
+    "nextSteps": "Next, you'll learn about **break and continue** - statements that give you more control over loop execution by allowing you to exit early or skip iterations!"
+  },
+  "prerequisites": ["while-loops", "for-loops"],
+  "relatedLessons": ["while-loops", "for-loops", "break-continue"],
+  "estimatedTime": 15
+}
