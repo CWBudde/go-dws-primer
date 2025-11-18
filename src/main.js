@@ -3,41 +3,20 @@
  * Initializes the application and sets up event handlers
  */
 
-import "../styles/main.css";
-import {
-  initMonacoEditor,
-  getCode,
-  setupKeyboardShortcuts,
-  formatCode,
-} from "./editor/monaco-setup.js";
-import { initWASM, isWASMReady, getWASMError } from "./core/wasm-loader.js";
-import { initState, toggleTheme, getValue } from "./core/state-manager.js";
-import { executeCode, stopExecution } from "./core/executor.js";
-import {
-  initOutputPanels,
-  appendConsoleOutput,
-  appendCompilerOutput,
-} from "./output/output-manager.js";
-import { setupUI } from "./ui/layout.js";
-import {
-  initTurtle,
-  installTurtleAPI,
-  exportCanvasPNG,
-  clearTurtle,
-  toggleGrid,
-  setTurtleSpeed,
-} from "./turtle/turtle-api.js";
-import {
-  initLessonNavigation,
-  loadLessonFromURL,
-} from "./lessons/navigation.js";
-import { shareCode, loadFromURL } from "./utils/url-sharing.js";
-import { showSettingsModal, initSettings } from "./ui/settings-modal.js";
-import {
-  initAccessibility,
-  enhanceARIA,
-  announce,
-} from "./utils/accessibility.js";
+import '../styles/main.css';
+import '../styles/snippets.css';
+import { initMonacoEditor, getCode, setupKeyboardShortcuts, formatCode } from './editor/monaco-setup.js';
+import { initWASM, isWASMReady, getWASMError } from './core/wasm-loader.js';
+import { initState, toggleTheme, getValue } from './core/state-manager.js';
+import { executeCode, stopExecution } from './core/executor.js';
+import { initOutputPanels, appendConsoleOutput, appendCompilerOutput } from './output/output-manager.js';
+import { setupUI } from './ui/layout.js';
+import { initTurtle, installTurtleAPI, exportCanvasPNG, clearTurtle, toggleGrid, setTurtleSpeed } from './turtle/turtle-api.js';
+import { initLessonNavigation, loadLessonFromURL } from './lessons/navigation.js';
+import { shareCode, loadFromURL } from './utils/url-sharing.js';
+import { showSettingsModal, initSettings } from './ui/settings-modal.js';
+import { initAccessibility, enhanceARIA, announce } from './utils/accessibility.js';
+import { initSnippetsPanel } from './ui/snippets-panel.js';
 
 /**
  * Initialize the application
@@ -88,6 +67,10 @@ async function init() {
 
     // Initialize settings
     initSettings();
+
+    // Initialize snippets panel
+    await initSnippetsPanel();
+    console.log('Snippets panel initialized');
 
     // Enhance ARIA labels
     enhanceARIA();
