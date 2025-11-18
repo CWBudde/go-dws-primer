@@ -201,10 +201,10 @@
 
 ### 4.1 Editor Improvements
 - [x] Add keyboard shortcuts (run, format, etc.)
-- [ ] Implement code formatting/prettifier
-- [ ] Add code snippets and templates
+- [x] Implement code formatting/prettifier
+- [x] Add code snippets and templates
 - [x] Create autocomplete for DWScript keywords
-- [ ] Implement IntelliSense for functions/classes
+- [x] Implement IntelliSense for functions/classes
 - [x] Add bracket matching and auto-closing
 - [x] Create minimap view for longer code
 - [x] Implement multi-cursor editing
@@ -222,11 +222,11 @@
 ### 4.3 Accessibility
 - [x] Ensure keyboard navigation throughout
 - [x] Add ARIA labels and semantic HTML
-- [ ] Support screen readers
-- [ ] Implement high-contrast mode
-- [ ] Add font size controls
-- [ ] Ensure color-blind friendly palette
-- [ ] Create keyboard shortcut reference
+- [x] Support screen readers
+- [x] Implement high-contrast mode
+- [x] Add font size controls
+- [x] Ensure color-blind friendly palette
+- [x] Create keyboard shortcut reference
 
 **Deliverable**: Polished, accessible user interface
 

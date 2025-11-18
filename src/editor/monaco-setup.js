@@ -1,5 +1,8 @@
 import * as monaco from 'monaco-editor';
 import { dwscriptLanguage } from './dwscript-lang.js';
+import { registerSnippets } from './snippets.js';
+import { registerIntelliSense } from './intellisense.js';
+import { registerFormatter, registerOnTypeFormatter } from './formatter.js';
 
 let editor = null;
 
@@ -40,8 +43,24 @@ export function initMonacoEditor(container, options = {}) {
       { open: '(', close: ')' },
       { open: '"', close: '"' },
       { open: "'", close: "'" }
-    ]
+    ],
+    folding: {
+      markers: {
+        start: new RegExp('^\\s*\\{\\s*$'),
+        end: new RegExp('^\\s*\\}\\s*$')
+      }
+    }
   });
+
+  // Register code snippets
+  registerSnippets(monaco.languages);
+
+  // Register IntelliSense providers
+  registerIntelliSense(monaco.languages);
+
+  // Register code formatter
+  registerFormatter(monaco.languages);
+  registerOnTypeFormatter(monaco.languages);
 
   // Default editor options
   const defaultOptions = {
