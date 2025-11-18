@@ -26,9 +26,9 @@ const debuggerState = {
 
 /**
  * Initialize the debugger
- * @param {Object} options - Debugger options
+ * @param {Object} _options - Debugger options
  */
-export function initDebugger(options = {}) {
+export function initDebugger(_options = {}) {
   debuggerState.enabled = true;
   debuggerState.isPaused = false;
   debuggerState.breakpoints.clear();
@@ -189,10 +189,10 @@ export function getVariables() {
 
 /**
  * Evaluate an expression in the current context
- * @param {string} expression - Expression to evaluate
+ * @param {string} _expression - Expression to evaluate
  * @returns {Promise<Object>} Evaluation result
  */
-export async function evaluateExpression(expression) {
+export async function evaluateExpression(_expression) {
   // TODO: Implement expression evaluation
   console.warn("Expression evaluation not yet implemented");
 

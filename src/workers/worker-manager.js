@@ -214,7 +214,7 @@ export async function stopWorkerExecution() {
   workerInitPromise = null;
 
   // Reject all pending handlers
-  for (const [id, handler] of messageHandlers.entries()) {
+  for (const [_id, handler] of messageHandlers.entries()) {
     handler.reject(new Error("Execution stopped by user"));
   }
   messageHandlers.clear();
