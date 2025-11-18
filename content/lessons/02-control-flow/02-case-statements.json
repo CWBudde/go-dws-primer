@@ -1,0 +1,125 @@
+{
+  "id": "case-statements",
+  "title": "Case Statements",
+  "category": "control-flow",
+  "difficulty": "beginner",
+  "order": 2,
+  "description": "Learn to use case statements for cleaner multi-way branching",
+  "estimatedTime": 15,
+  "tags": ["case", "switch", "control-flow", "decision"],
+  "content": {
+    "introduction": "When you need to check a variable against many different values, using multiple if-else statements can become messy. The `case` statement provides a cleaner, more readable way to handle these situations.\n\nIn this lesson, you'll learn how to use case statements to make your code more elegant and maintainable.\n\n### What You'll Learn\n- Basic case statement syntax\n- Handling multiple values per case\n- Using ranges in case statements\n- The else clause for default cases\n- When to use case vs if-else",
+    "concepts": [
+      {
+        "title": "Case Statement",
+        "description": "Tests a variable against multiple specific values, executing the matching branch"
+      },
+      {
+        "title": "Multiple Values",
+        "description": "A single case can match multiple values separated by commas"
+      },
+      {
+        "title": "Range Matching",
+        "description": "Use '..' to match a range of values (e.g., 1..5)"
+      },
+      {
+        "title": "Else Clause",
+        "description": "Optional else clause handles values that don't match any case"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Basic Case Statement",
+        "description": "Check a number against specific values",
+        "code": "program BasicCase;\n\nvar\n  day: Integer;\n\nbegin\n  day := 3;\n  \n  case day of\n    1: WriteLn('Monday');\n    2: WriteLn('Tuesday');\n    3: WriteLn('Wednesday');\n    4: WriteLn('Thursday');\n    5: WriteLn('Friday');\n    6: WriteLn('Saturday');\n    7: WriteLn('Sunday');\n  else\n    WriteLn('Invalid day');\n  end;\nend.",
+        "expectedOutput": "Wednesday"
+      },
+      {
+        "title": "Multiple Values Per Case",
+        "description": "Group similar cases together",
+        "code": "program DayType;\n\nvar\n  day: Integer;\n\nbegin\n  day := 6;\n  \n  case day of\n    1, 2, 3, 4, 5: WriteLn('Weekday - time to work!');\n    6, 7: WriteLn('Weekend - time to relax!');\n  else\n    WriteLn('Invalid day number');\n  end;\nend.",
+        "expectedOutput": "Weekend - time to relax!"
+      },
+      {
+        "title": "Using Ranges",
+        "description": "Match a range of values with '..'",
+        "code": "program GradeCategory;\n\nvar\n  score: Integer;\n\nbegin\n  score := 85;\n  \n  case score of\n    90..100: WriteLn('Excellent! Grade: A');\n    80..89:  WriteLn('Good job! Grade: B');\n    70..79:  WriteLn('Fair. Grade: C');\n    60..69:  WriteLn('Needs improvement. Grade: D');\n    0..59:   WriteLn('Failed. Grade: F');\n  else\n    WriteLn('Invalid score');\n  end;\nend.",
+        "expectedOutput": "Good job! Grade: B"
+      },
+      {
+        "title": "Multiple Statements with Begin-End",
+        "description": "Execute multiple statements in a case branch",
+        "code": "program MenuSystem;\n\nvar\n  choice: Integer;\n\nbegin\n  choice := 2;\n  \n  WriteLn('Menu Choice: ', choice);\n  WriteLn('');\n  \n  case choice of\n    1: begin\n         WriteLn('You selected: New File');\n         WriteLn('Creating new file...');\n       end;\n    2: begin\n         WriteLn('You selected: Open File');\n         WriteLn('Opening file browser...');\n       end;\n    3: begin\n         WriteLn('You selected: Save File');\n         WriteLn('Saving current file...');\n       end;\n    4: WriteLn('Exiting program...');\n  else\n    WriteLn('Invalid choice!');\n  end;\nend.",
+        "expectedOutput": "Menu Choice: 2\n\nYou selected: Open File\nOpening file browser..."
+      },
+      {
+        "title": "Character Cases",
+        "description": "Case statements work with characters too",
+        "code": "program VowelChecker;\n\nvar\n  letter: Char;\n\nbegin\n  letter := 'e';\n  \n  case letter of\n    'a', 'e', 'i', 'o', 'u': WriteLn(letter, ' is a vowel');\n    'A', 'E', 'I', 'O', 'U': WriteLn(letter, ' is a vowel (uppercase)');\n  else\n    WriteLn(letter, ' is a consonant');\n  end;\nend.",
+        "expectedOutput": "e is a vowel"
+      },
+      {
+        "title": "Calculator with Case",
+        "description": "Implement a simple calculator using case for operations",
+        "code": "program Calculator;\n\nvar\n  num1, num2: Float;\n  operation: Char;\n  result: Float;\n\nbegin\n  num1 := 10.0;\n  num2 := 3.0;\n  operation := '+';\n  \n  case operation of\n    '+': begin\n           result := num1 + num2;\n           WriteLn(num1, ' + ', num2, ' = ', result);\n         end;\n    '-': begin\n           result := num1 - num2;\n           WriteLn(num1, ' - ', num2, ' = ', result);\n         end;\n    '*': begin\n           result := num1 * num2;\n           WriteLn(num1, ' * ', num2, ' = ', result);\n         end;\n    '/': begin\n           if num2 <> 0 then\n           begin\n             result := num1 / num2;\n             WriteLn(num1, ' / ', num2, ' = ', result);\n           end\n           else\n             WriteLn('Error: Division by zero!');\n         end;\n  else\n    WriteLn('Invalid operation: ', operation);\n  end;\nend.",
+        "expectedOutput": "10 + 3 = 13"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Month Name Display",
+        "description": "Write a program that takes a month number (1-12) and displays the month name using a case statement.",
+        "starterCode": "program MonthName;\n\nvar\n  month: Integer;\n\nbegin\n  month := 7;\n  \n  // Your code here\n  \nend.",
+        "solution": "program MonthName;\n\nvar\n  month: Integer;\n\nbegin\n  month := 7;\n  \n  case month of\n    1: WriteLn('January');\n    2: WriteLn('February');\n    3: WriteLn('March');\n    4: WriteLn('April');\n    5: WriteLn('May');\n    6: WriteLn('June');\n    7: WriteLn('July');\n    8: WriteLn('August');\n    9: WriteLn('September');\n    10: WriteLn('October');\n    11: WriteLn('November');\n    12: WriteLn('December');\n  else\n    WriteLn('Invalid month number');\n  end;\nend.",
+        "hints": [
+          "Use case month of",
+          "Create a case for each month number (1-12)",
+          "Add an else clause for invalid numbers",
+          "End with 'end;'"
+        ]
+      },
+      {
+        "title": "Season Detector",
+        "description": "Create a program that determines the season based on month number. Winter: 12,1,2; Spring: 3,4,5; Summer: 6,7,8; Fall: 9,10,11",
+        "starterCode": "program SeasonDetector;\n\nvar\n  month: Integer;\n\nbegin\n  month := 4;\n  \n  // Your code here\n  \nend.",
+        "solution": "program SeasonDetector;\n\nvar\n  month: Integer;\n\nbegin\n  month := 4;\n  \n  case month of\n    12, 1, 2: WriteLn('Winter');\n    3, 4, 5: WriteLn('Spring');\n    6, 7, 8: WriteLn('Summer');\n    9, 10, 11: WriteLn('Fall');\n  else\n    WriteLn('Invalid month');\n  end;\nend.",
+        "hints": [
+          "Use commas to list multiple values in one case",
+          "Group months by season: 12,1,2 for Winter, etc.",
+          "Don't forget the else clause",
+          "Remember the semicolon after each case"
+        ]
+      },
+      {
+        "title": "Traffic Light Controller",
+        "description": "Write a program that displays an action based on traffic light color: 'R' or 'r' = Stop, 'Y' or 'y' = Slow down, 'G' or 'g' = Go",
+        "starterCode": "program TrafficLight;\n\nvar\n  color: Char;\n\nbegin\n  color := 'G';\n  \n  // Your code here\n  \nend.",
+        "solution": "program TrafficLight;\n\nvar\n  color: Char;\n\nbegin\n  color := 'G';\n  \n  case color of\n    'R', 'r': WriteLn('STOP!');\n    'Y', 'y': WriteLn('Slow down, prepare to stop');\n    'G', 'g': WriteLn('GO!');\n  else\n    WriteLn('Invalid traffic light color');\n  end;\nend.",
+        "hints": [
+          "Use a Char variable for the color",
+          "Handle both uppercase and lowercase: 'R', 'r'",
+          "Use commas to list both cases together",
+          "Add an else for invalid input"
+        ]
+      },
+      {
+        "title": "Age Group Classifier",
+        "description": "Classify age into groups using ranges: 0-2: Baby, 3-12: Child, 13-19: Teenager, 20-64: Adult, 65+: Senior",
+        "starterCode": "program AgeGroup;\n\nvar\n  age: Integer;\n\nbegin\n  age := 15;\n  \n  // Your code here\n  \nend.",
+        "solution": "program AgeGroup;\n\nvar\n  age: Integer;\n\nbegin\n  age := 15;\n  \n  case age of\n    0..2: WriteLn('Baby');\n    3..12: WriteLn('Child');\n    13..19: WriteLn('Teenager');\n    20..64: WriteLn('Adult');\n    65..120: WriteLn('Senior');\n  else\n    WriteLn('Invalid age');\n  end;\nend.",
+        "hints": [
+          "Use the range syntax: start..end",
+          "Example: 0..2 for babies",
+          "Make sure ranges don't overlap",
+          "Use a reasonable upper limit for senior (e.g., 120)",
+          "Add else for values outside all ranges"
+        ]
+      }
+    ],
+    "summary": "Excellent! You've learned:\n\n- **Case statement syntax**: A cleaner alternative to multiple if-else statements\n- **Multiple values**: Grouping several values in one case using commas\n- **Ranges**: Matching ranges of values with '..' notation\n- **Else clause**: Handling unmatched values\n- **Begin-end blocks**: Executing multiple statements in a case\n\nCase statements make code more readable when checking one variable against many values!",
+    "nextSteps": "Next, you'll learn about **loops** - how to repeat code multiple times. You'll start with `while` loops that repeat as long as a condition is true!"
+  },
+  "prerequisites": ["if-statements"],
+  "relatedLessons": ["if-statements", "while-loops"],
+  "estimatedTime": 15
+}
