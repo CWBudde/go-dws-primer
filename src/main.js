@@ -4,7 +4,7 @@
  */
 
 import '../styles/main.css';
-import { initMonacoEditor, getCode, setupKeyboardShortcuts } from './editor/monaco-setup.js';
+import { initMonacoEditor, getCode, setupKeyboardShortcuts, formatCode } from './editor/monaco-setup.js';
 import { initWASM, isWASMReady, getWASMError } from './core/wasm-loader.js';
 import { initState, toggleTheme, getValue } from './core/state-manager.js';
 import { executeCode, stopExecution } from './core/executor.js';
@@ -13,6 +13,8 @@ import { setupUI } from './ui/layout.js';
 import { initTurtle, installTurtleAPI, exportCanvasPNG, clearTurtle, toggleGrid, setTurtleSpeed } from './turtle/turtle-api.js';
 import { initLessonNavigation, loadLessonFromURL } from './lessons/navigation.js';
 import { shareCode, loadFromURL } from './utils/url-sharing.js';
+import { showSettingsModal, initSettings } from './ui/settings-modal.js';
+import { initAccessibility, enhanceARIA, announce } from './utils/accessibility.js';
 
 /**
  * Initialize the application
@@ -26,6 +28,9 @@ async function init() {
   try {
     // Initialize state
     initState();
+
+    // Initialize accessibility features
+    initAccessibility();
 
     // Initialize output panels
     initOutputPanels();
@@ -57,6 +62,12 @@ async function init() {
 
     // Initialize UI components
     setupUI();
+
+    // Initialize settings
+    initSettings();
+
+    // Enhance ARIA labels
+    enhanceARIA();
 
     // Load WASM runtime (async, non-blocking)
     console.log('Loading DWScript WASM runtime...');
@@ -161,6 +172,15 @@ function setupEventListeners() {
     clearBtn.addEventListener('click', handleClear);
   }
 
+  // Format button
+  const formatBtn = document.getElementById('btn-format');
+  if (formatBtn) {
+    formatBtn.addEventListener('click', () => {
+      formatCode();
+      updateStatus('Code formatted');
+    });
+  }
+
   // Theme toggle
   const themeBtn = document.getElementById('btn-theme');
   if (themeBtn) {
@@ -173,7 +193,7 @@ function setupEventListeners() {
   const settingsBtn = document.getElementById('btn-settings');
   if (settingsBtn) {
     settingsBtn.addEventListener('click', () => {
-      alert('Settings panel coming soon!');
+      showSettingsModal();
     });
   }
 
