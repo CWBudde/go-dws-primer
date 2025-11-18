@@ -21,7 +21,7 @@
 - [x] Configure WASM build pipeline from go-dws
 - [x] Establish development workflow (local server, hot reload)
 - [x] Set up version control practices
-- [ ] Configure CI/CD for automated builds and deployment
+- [x] Configure CI/CD for automated builds and deployment
 
 ### 1.2 Base Playground Integration & FFI Setup
 - [x] Import and adapt go-dws playground code
