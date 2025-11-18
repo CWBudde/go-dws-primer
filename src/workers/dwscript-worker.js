@@ -1,20 +1,23 @@
 /**
  * DWScript Web Worker
- * Runs DWScript code execution in a separate thread to avoid blocking the main UI
+ * Handles code execution in a separate thread to prevent UI blocking
+ *
+ * This worker:
+ * - Loads and initializes the WASM module
+ * - Executes DWScript code without blocking the main thread
+ * - Streams output back to the main thread
+ * - Can be terminated to stop long-running code
  */
 
-// Import the Go WASM runtime
-// Note: This path may need to be adjusted based on build configuration
-let go = null;
-let wasmInstance = null;
-let dwsInstance = null;
-let initialized = false;
+let dwsAPI = null;
+let isInitialized = false;
+let executionTimeoutId = null;
 
 /**
- * Handle messages from the main thread
+ * Message handler for communication with main thread
  */
-self.onmessage = async function(e) {
-  const { type, data } = e.data;
+self.onmessage = async function(event) {
+  const { type, data } = event.data;
 
   try {
     switch (type) {
@@ -30,195 +33,310 @@ self.onmessage = async function(e) {
         await compileCode(data);
         break;
 
+      case 'run':
+        await runProgram(data);
+        break;
+
       case 'dispose':
-        disposeInstance();
+        disposeAPI();
         break;
 
       default:
-        postError(`Unknown message type: ${type}`);
+        self.postMessage({
+          type: 'error',
+          error: `Unknown message type: ${type}`
+        });
     }
   } catch (error) {
-    postError(error.message, error);
+    self.postMessage({
+      type: 'error',
+      error: {
+        message: error.message,
+        stack: error.stack
+      }
+    });
   }
 };
 
 /**
- * Initialize the WASM module in the worker
+ * Initialize WASM module in worker context
+ * @param {Object} config - Configuration including WASM path and timeout
  */
-async function initializeWASM(config = {}) {
+async function initializeWASM(config) {
   try {
-    // Load the Go WASM runtime script
-    if (config.wasmExecURL) {
-      importScripts(config.wasmExecURL);
-    } else {
-      importScripts('/wasm/wasm_exec.js');
-    }
+    const { wasmPath, timeout } = config;
 
-    // Check if Go is available
-    if (typeof Go === 'undefined') {
-      throw new Error('Go WASM runtime not loaded');
-    }
+    // Import the WASM loader (need to handle paths correctly)
+    // For now, we'll load the WASM directly
 
-    // Create Go instance
-    go = new Go();
+    // Load wasm_exec.js
+    importScripts('/wasm/wasm_exec.js');
 
-    // Fetch and instantiate WASM module
-    const wasmURL = config.wasmURL || '/wasm/dwscript.wasm';
-    const response = await fetch(wasmURL);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch WASM module: ${response.statusText}`);
-    }
+    // Fetch and initialize WASM module
+    const response = await fetch(wasmPath || '/wasm/dwscript.wasm');
+    const wasmBuffer = await response.arrayBuffer();
 
-    const buffer = await response.arrayBuffer();
-    const result = await WebAssembly.instantiate(buffer, go.importObject);
+    // Initialize Go runtime
+    const go = new Go();
+    const result = await WebAssembly.instantiate(wasmBuffer, go.importObject);
 
-    wasmInstance = result.instance;
+    // Run Go program
+    go.run(result.instance);
 
-    // Run the Go program
-    go.run(wasmInstance);
-
-    // Wait for API registration
-    await new Promise(resolve => setTimeout(resolve, 150));
+    // Wait for API registration (critical timing!)
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     // Verify DWScript is available
-    if (typeof self.DWScript === 'undefined') {
+    if (!self.DWScript) {
       throw new Error('DWScript API not available after initialization');
     }
 
-    // Create DWScript instance
-    dwsInstance = new self.DWScript();
+    // Create DWScript instance with callbacks
+    dwsAPI = new self.DWScript();
 
-    // Initialize with handlers
-    await dwsInstance.init({
+    await dwsAPI.init({
       onOutput: (text) => {
-        postMessage({ type: 'output', data: { text } });
+        self.postMessage({
+          type: 'output',
+          output: text
+        });
       },
       onError: (error) => {
-        postMessage({ type: 'error', data: { error } });
+        self.postMessage({
+          type: 'runtime-error',
+          error: {
+            type: error.type || 'RuntimeError',
+            message: error.message || String(error),
+            line: error.line || 0,
+            column: error.column || 0
+          }
+        });
       },
       onInput: () => {
-        // For workers, we can't directly prompt the user
-        // We need to request input from the main thread
-        postMessage({ type: 'inputRequest' });
-        return ''; // Return empty for now
+        // Input not supported in worker context
+        return '';
       }
     });
 
-    initialized = true;
+    isInitialized = true;
 
-    // Notify main thread that initialization is complete
-    postMessage({
-      type: 'initialized',
-      data: {
-        version: dwsInstance.version()
-      }
+    self.postMessage({
+      type: 'ready',
+      version: dwsAPI.version ? dwsAPI.version() : { version: 'unknown' }
     });
 
   } catch (error) {
-    postError('Initialization failed', error);
+    self.postMessage({
+      type: 'init-error',
+      error: {
+        message: error.message,
+        stack: error.stack
+      }
+    });
   }
 }
 
 /**
- * Execute DWScript code
+ * Execute DWScript code (compile + run)
+ * @param {Object} params - Execution parameters
  */
-async function executeCode(data) {
-  if (!initialized || !dwsInstance) {
-    throw new Error('Worker not initialized');
+async function executeCode(params) {
+  if (!isInitialized || !dwsAPI) {
+    throw new Error('DWScript not initialized');
   }
 
-  const { code, timeout } = data;
+  const { code, timeout } = params;
   const startTime = performance.now();
 
+  // Set up timeout if specified
+  if (timeout && timeout > 0) {
+    executionTimeoutId = setTimeout(() => {
+      self.postMessage({
+        type: 'timeout',
+        message: 'Execution timed out'
+      });
+      // In a real scenario, we'd need to terminate execution
+      // For now, we just notify
+    }, timeout);
+  }
+
   try {
-    let result;
-
-    if (timeout && timeout > 0) {
-      // Execute with timeout
-      result = await executeWithTimeout(
-        () => dwsInstance.eval(code),
-        timeout
-      );
-    } else {
-      // Execute without timeout
-      result = dwsInstance.eval(code);
-    }
-
+    const result = dwsAPI.eval(code);
     const executionTime = performance.now() - startTime;
 
-    postMessage({
+    // Clear timeout
+    if (executionTimeoutId) {
+      clearTimeout(executionTimeoutId);
+      executionTimeoutId = null;
+    }
+
+    // Normalize and send result
+    self.postMessage({
       type: 'result',
-      data: {
+      result: {
         success: result.success,
         output: result.output || '',
         errors: result.error ? [normalizeError(result.error)] : [],
         warnings: result.warnings || [],
-        executionTime: result.executionTime || executionTime
+        executionTime: executionTime,
+        wasmExecutionTime: result.executionTime || 0
       }
     });
 
   } catch (error) {
-    const executionTime = performance.now() - startTime;
+    // Clear timeout
+    if (executionTimeoutId) {
+      clearTimeout(executionTimeoutId);
+      executionTimeoutId = null;
+    }
 
-    postMessage({
+    self.postMessage({
       type: 'result',
-      data: {
+      result: {
         success: false,
         output: '',
-        errors: [normalizeError(error)],
+        errors: [{
+          type: 'ExecutionError',
+          message: error.message,
+          line: 0,
+          column: 0
+        }],
         warnings: [],
-        executionTime
+        executionTime: performance.now() - startTime,
+        wasmExecutionTime: 0
       }
     });
   }
 }
 
 /**
- * Compile DWScript code
+ * Compile code without executing
+ * @param {Object} params - Compilation parameters
  */
-async function compileCode(data) {
-  if (!initialized || !dwsInstance) {
-    throw new Error('Worker not initialized');
+async function compileCode(params) {
+  if (!isInitialized || !dwsAPI) {
+    throw new Error('DWScript not initialized');
   }
 
-  const { code } = data;
+  const { code, cacheKey } = params;
+  const startTime = performance.now();
 
   try {
-    const program = dwsInstance.compile(code);
+    const program = dwsAPI.compile(code, cacheKey);
+    const compilationTime = performance.now() - startTime;
 
-    postMessage({
-      type: 'compileResult',
-      data: {
+    self.postMessage({
+      type: 'compile-result',
+      result: {
         success: program.success,
-        programId: program.id
+        programId: program.programId,
+        compilationTime: compilationTime
       }
     });
 
   } catch (error) {
-    postMessage({
-      type: 'compileResult',
-      data: {
+    self.postMessage({
+      type: 'compile-result',
+      result: {
         success: false,
-        error: normalizeError(error)
+        error: normalizeError(error),
+        compilationTime: performance.now() - startTime
       }
     });
   }
 }
 
 /**
- * Execute with timeout
+ * Run a previously compiled program
+ * @param {Object} params - Run parameters
  */
-function executeWithTimeout(fn, timeout) {
-  return Promise.race([
-    Promise.resolve(fn()),
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error(`Execution timeout after ${timeout}ms`)), timeout)
-    )
-  ]);
+async function runProgram(params) {
+  if (!isInitialized || !dwsAPI) {
+    throw new Error('DWScript not initialized');
+  }
+
+  const { programRef, timeout } = params;
+  const startTime = performance.now();
+
+  // Set up timeout if specified
+  if (timeout && timeout > 0) {
+    executionTimeoutId = setTimeout(() => {
+      self.postMessage({
+        type: 'timeout',
+        message: 'Execution timed out'
+      });
+    }, timeout);
+  }
+
+  try {
+    const result = dwsAPI.run(programRef);
+    const executionTime = performance.now() - startTime;
+
+    // Clear timeout
+    if (executionTimeoutId) {
+      clearTimeout(executionTimeoutId);
+      executionTimeoutId = null;
+    }
+
+    self.postMessage({
+      type: 'result',
+      result: {
+        success: result.success,
+        output: result.output || '',
+        errors: result.error ? [normalizeError(result.error)] : [],
+        warnings: result.warnings || [],
+        executionTime: executionTime,
+        wasmExecutionTime: result.executionTime || 0
+      }
+    });
+
+  } catch (error) {
+    // Clear timeout
+    if (executionTimeoutId) {
+      clearTimeout(executionTimeoutId);
+      executionTimeoutId = null;
+    }
+
+    self.postMessage({
+      type: 'result',
+      result: {
+        success: false,
+        output: '',
+        errors: [{
+          type: 'ExecutionError',
+          message: error.message,
+          line: 0,
+          column: 0
+        }],
+        warnings: [],
+        executionTime: performance.now() - startTime,
+        wasmExecutionTime: 0
+      }
+    });
+  }
+}
+
+/**
+ * Dispose of API resources
+ */
+function disposeAPI() {
+  if (dwsAPI) {
+    if (dwsAPI.dispose) {
+      dwsAPI.dispose();
+    }
+    dwsAPI = null;
+  }
+  isInitialized = false;
+
+  self.postMessage({
+    type: 'disposed'
+  });
 }
 
 /**
  * Normalize error object
+ * @param {Object|Error|string} error
+ * @returns {Object} Normalized error
  */
 function normalizeError(error) {
   if (typeof error === 'string') {
@@ -226,8 +344,7 @@ function normalizeError(error) {
       type: 'Error',
       message: error,
       line: 0,
-      column: 0,
-      source: null
+      column: 0
     };
   }
 
@@ -241,33 +358,16 @@ function normalizeError(error) {
   };
 }
 
-/**
- * Dispose of the DWScript instance
- */
-function disposeInstance() {
-  if (dwsInstance) {
-    try {
-      dwsInstance.dispose();
-    } catch (error) {
-      console.error('Error disposing instance:', error);
-    }
-    dwsInstance = null;
-  }
-
-  initialized = false;
-
-  postMessage({ type: 'disposed' });
-}
-
-/**
- * Post error message to main thread
- */
-function postError(message, error = null) {
-  postMessage({
-    type: 'error',
-    data: {
-      message,
-      error: error ? normalizeError(error) : null
+// Handle unhandled errors
+self.onerror = function(message, source, lineno, colno, error) {
+  self.postMessage({
+    type: 'worker-error',
+    error: {
+      message: message,
+      source: source,
+      lineno: lineno,
+      colno: colno,
+      stack: error ? error.stack : null
     }
   });
-}
+};

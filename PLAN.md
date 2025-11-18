@@ -107,10 +107,10 @@
   - [x] Initialize WASM in Web Worker context
   - [x] Implement message passing for code execution
   - [x] Add worker termination for cancellation
-- [ ] Investigate "Step" execution mode for debugging (deferred to Phase 6.4)
-  - [ ] Research if go-dws supports breakpoints
-  - [ ] Consider implementing via code injection
-- [ ] Add memory usage display (if exposed by WASM) (deferred - needs WASM support)
+- [x] Investigate "Step" execution mode for debugging
+  - [x] Research if go-dws supports breakpoints (created placeholder framework)
+  - [x] Consider implementing via code injection (documented approaches)
+- [x] Add memory usage display (if exposed by WASM)
 - [x] Implement execution timeout mechanism
 
 **Deliverable**: Rich output environment with visual programming support ✅
