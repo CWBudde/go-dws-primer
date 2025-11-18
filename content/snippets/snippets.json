@@ -1,0 +1,228 @@
+{
+  "categories": [
+    {
+      "id": "basics",
+      "name": "Basics",
+      "icon": "📝",
+      "snippets": [
+        {
+          "id": "hello-world",
+          "title": "Hello World",
+          "description": "Basic program structure with output",
+          "code": "program HelloWorld;\n\nbegin\n  WriteLn('Hello, World!');\nend.",
+          "tags": ["beginner", "output"]
+        },
+        {
+          "id": "program-template",
+          "title": "Program Template",
+          "description": "Empty program template",
+          "code": "program MyProgram;\n\n{$APPTYPE CONSOLE}\n\nbegin\n  // Your code here\nend.",
+          "tags": ["template"]
+        },
+        {
+          "id": "variables",
+          "title": "Variable Declaration",
+          "description": "Declare variables of different types",
+          "code": "var\n  myInteger: Integer;\n  myFloat: Float;\n  myString: String;\n  myBoolean: Boolean;",
+          "tags": ["variables", "types"]
+        }
+      ]
+    },
+    {
+      "id": "control-flow",
+      "name": "Control Flow",
+      "icon": "🔀",
+      "snippets": [
+        {
+          "id": "if-statement",
+          "title": "If Statement",
+          "description": "Basic if-else structure",
+          "code": "if condition then\nbegin\n  // Code if true\nend\nelse\nbegin\n  // Code if false\nend;",
+          "tags": ["if", "conditional"]
+        },
+        {
+          "id": "for-loop",
+          "title": "For Loop",
+          "description": "For loop with counter",
+          "code": "for i := 1 to 10 do\nbegin\n  WriteLn(i);\nend;",
+          "tags": ["loop", "for"]
+        },
+        {
+          "id": "while-loop",
+          "title": "While Loop",
+          "description": "While loop structure",
+          "code": "while condition do\nbegin\n  // Loop body\nend;",
+          "tags": ["loop", "while"]
+        },
+        {
+          "id": "repeat-until",
+          "title": "Repeat-Until Loop",
+          "description": "Repeat-until loop (executes at least once)",
+          "code": "repeat\n  // Loop body\nuntil condition;",
+          "tags": ["loop", "repeat"]
+        },
+        {
+          "id": "case-statement",
+          "title": "Case Statement",
+          "description": "Switch/case structure",
+          "code": "case variable of\n  1: WriteLn('One');\n  2: WriteLn('Two');\n  3: WriteLn('Three');\nelse\n  WriteLn('Other');\nend;",
+          "tags": ["case", "switch"]
+        }
+      ]
+    },
+    {
+      "id": "functions",
+      "name": "Functions & Procedures",
+      "icon": "⚙️",
+      "snippets": [
+        {
+          "id": "procedure",
+          "title": "Procedure",
+          "description": "Procedure without return value",
+          "code": "procedure MyProcedure(param: Integer);\nbegin\n  // Procedure code\nend;",
+          "tags": ["procedure", "function"]
+        },
+        {
+          "id": "function",
+          "title": "Function",
+          "description": "Function with return value",
+          "code": "function MyFunction(param: Integer): Integer;\nbegin\n  Result := param * 2;\nend;",
+          "tags": ["function"]
+        },
+        {
+          "id": "function-var-param",
+          "title": "Function with Var Parameter",
+          "description": "Function with reference parameter",
+          "code": "procedure Swap(var a, b: Integer);\nvar\n  temp: Integer;\nbegin\n  temp := a;\n  a := b;\n  b := temp;\nend;",
+          "tags": ["function", "var", "reference"]
+        }
+      ]
+    },
+    {
+      "id": "data-structures",
+      "name": "Data Structures",
+      "icon": "📦",
+      "snippets": [
+        {
+          "id": "array-static",
+          "title": "Static Array",
+          "description": "Fixed-size array declaration",
+          "code": "var\n  numbers: array[1..10] of Integer;\nbegin\n  numbers[1] := 42;\n  WriteLn(numbers[1]);\nend;",
+          "tags": ["array"]
+        },
+        {
+          "id": "array-dynamic",
+          "title": "Dynamic Array",
+          "description": "Dynamic array with SetLength",
+          "code": "var\n  numbers: array of Integer;\nbegin\n  SetLength(numbers, 10);\n  numbers[0] := 42;\n  WriteLn(numbers[0]);\nend;",
+          "tags": ["array", "dynamic"]
+        },
+        {
+          "id": "record",
+          "title": "Record",
+          "description": "Record type definition",
+          "code": "type\n  TPerson = record\n    name: String;\n    age: Integer;\n  end;\n\nvar\n  person: TPerson;\nbegin\n  person.name := 'Alice';\n  person.age := 30;\nend;",
+          "tags": ["record", "struct"]
+        },
+        {
+          "id": "string-operations",
+          "title": "String Operations",
+          "description": "Common string functions",
+          "code": "var\n  s: String;\nbegin\n  s := 'Hello World';\n  WriteLn(Length(s));        // Length\n  WriteLn(Copy(s, 1, 5));    // Substring\n  WriteLn(Pos('World', s));  // Find position\n  WriteLn(UpperCase(s));     // To uppercase\n  WriteLn(LowerCase(s));     // To lowercase\nend;",
+          "tags": ["string"]
+        }
+      ]
+    },
+    {
+      "id": "oop",
+      "name": "Object-Oriented",
+      "icon": "🎯",
+      "snippets": [
+        {
+          "id": "class-basic",
+          "title": "Basic Class",
+          "description": "Simple class definition",
+          "code": "type\n  TMyClass = class\n  private\n    FValue: Integer;\n  public\n    constructor Create(aValue: Integer);\n    property Value: Integer read FValue write FValue;\n  end;\n\nconstructor TMyClass.Create(aValue: Integer);\nbegin\n  FValue := aValue;\nend;",
+          "tags": ["class", "oop"]
+        },
+        {
+          "id": "class-methods",
+          "title": "Class with Methods",
+          "description": "Class with methods and properties",
+          "code": "type\n  TCounter = class\n  private\n    FCount: Integer;\n  public\n    procedure Increment;\n    procedure Decrement;\n    function GetCount: Integer;\n    property Count: Integer read FCount;\n  end;\n\nprocedure TCounter.Increment;\nbegin\n  Inc(FCount);\nend;\n\nprocedure TCounter.Decrement;\nbegin\n  Dec(FCount);\nend;\n\nfunction TCounter.GetCount: Integer;\nbegin\n  Result := FCount;\nend;",
+          "tags": ["class", "methods", "oop"]
+        }
+      ]
+    },
+    {
+      "id": "turtle",
+      "name": "Turtle Graphics",
+      "icon": "🐢",
+      "snippets": [
+        {
+          "id": "turtle-square",
+          "title": "Draw Square",
+          "description": "Draw a square using turtle graphics",
+          "code": "var i: Integer;\nbegin\n  for i := 1 to 4 do\n  begin\n    Forward(100);\n    TurnRight(90);\n  end;\nend;",
+          "tags": ["turtle", "graphics"]
+        },
+        {
+          "id": "turtle-polygon",
+          "title": "Draw Polygon",
+          "description": "Draw a regular polygon",
+          "code": "procedure DrawPolygon(sides, length: Integer);\nvar\n  i: Integer;\n  angle: Float;\nbegin\n  angle := 360.0 / sides;\n  for i := 1 to sides do\n  begin\n    Forward(length);\n    TurnRight(angle);\n  end;\nend;",
+          "tags": ["turtle", "graphics", "polygon"]
+        },
+        {
+          "id": "turtle-spiral",
+          "title": "Draw Spiral",
+          "description": "Draw a spiral pattern",
+          "code": "var\n  i: Integer;\n  distance: Float;\nbegin\n  distance := 5;\n  for i := 1 to 50 do\n  begin\n    Forward(distance);\n    TurnRight(90);\n    distance := distance + 3;\n  end;\nend;",
+          "tags": ["turtle", "graphics", "spiral"]
+        },
+        {
+          "id": "turtle-setup",
+          "title": "Turtle Setup",
+          "description": "Setup turtle with pen and position",
+          "code": "begin\n  PenUp;\n  SetPosition(0, 0);\n  SetHeading(0);\n  PenDown;\n  SetPenColor(255, 0, 0);  // Red\n  SetPenWidth(2);\nend;",
+          "tags": ["turtle", "setup"]
+        }
+      ]
+    },
+    {
+      "id": "algorithms",
+      "name": "Common Algorithms",
+      "icon": "🧮",
+      "snippets": [
+        {
+          "id": "bubble-sort",
+          "title": "Bubble Sort",
+          "description": "Simple bubble sort algorithm",
+          "code": "procedure BubbleSort(var arr: array of Integer);\nvar\n  i, j, temp: Integer;\nbegin\n  for i := 0 to Length(arr) - 1 do\n    for j := 0 to Length(arr) - i - 2 do\n      if arr[j] > arr[j + 1] then\n      begin\n        temp := arr[j];\n        arr[j] := arr[j + 1];\n        arr[j + 1] := temp;\n      end;\nend;",
+          "tags": ["algorithm", "sort"]
+        },
+        {
+          "id": "linear-search",
+          "title": "Linear Search",
+          "description": "Search for value in array",
+          "code": "function LinearSearch(arr: array of Integer; value: Integer): Integer;\nvar\n  i: Integer;\nbegin\n  Result := -1;\n  for i := 0 to Length(arr) - 1 do\n    if arr[i] = value then\n    begin\n      Result := i;\n      Break;\n    end;\nend;",
+          "tags": ["algorithm", "search"]
+        },
+        {
+          "id": "factorial",
+          "title": "Factorial (Recursive)",
+          "description": "Calculate factorial recursively",
+          "code": "function Factorial(n: Integer): Integer;\nbegin\n  if n <= 1 then\n    Result := 1\n  else\n    Result := n * Factorial(n - 1);\nend;",
+          "tags": ["algorithm", "recursion", "math"]
+        },
+        {
+          "id": "fibonacci",
+          "title": "Fibonacci",
+          "description": "Calculate nth Fibonacci number",
+          "code": "function Fibonacci(n: Integer): Integer;\nbegin\n  if n <= 1 then\n    Result := n\n  else\n    Result := Fibonacci(n - 1) + Fibonacci(n - 2);\nend;",
+          "tags": ["algorithm", "recursion", "math"]
+        }
+      ]
+    }
+  ]
+}
