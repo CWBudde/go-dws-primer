@@ -1,22 +1,38 @@
 /**
- * Web Worker Manager
- * Manages communication with the DWScript Web Worker
+ * DWScript Worker Manager
+ * Manages Web Worker lifecycle and communication for non-blocking code execution
  */
 
 let worker = null;
-let workerReady = false;
+let isWorkerReady = false;
+let workerInitPromise = null;
 let messageHandlers = new Map();
 let messageIdCounter = 0;
 
+// Configuration
+const WORKER_CONFIG = {
+  wasmPath: '/wasm/dwscript.wasm',
+  defaultTimeout: 30000 // 30 seconds default timeout
+};
+
 /**
  * Initialize the Web Worker
- * @param {Object} config - Configuration options
- * @returns {Promise<boolean>} True if initialization was successful
+ * @returns {Promise<Object>} Version information when ready
  */
-export async function initWorker(config = {}) {
-  return new Promise((resolve, reject) => {
+export async function initWorker() {
+  // Return existing promise if initialization is in progress
+  if (workerInitPromise) {
+    return workerInitPromise;
+  }
+
+  // Return immediately if already initialized
+  if (isWorkerReady && worker) {
+    return Promise.resolve({ status: 'already-ready' });
+  }
+
+  workerInitPromise = new Promise((resolve, reject) => {
     try {
-      // Create the worker
+      // Create worker
       worker = new Worker(
         new URL('./dwscript-worker.js', import.meta.url),
         { type: 'module' }
@@ -28,48 +44,38 @@ export async function initWorker(config = {}) {
       // Set up error handler
       worker.onerror = (error) => {
         console.error('Worker error:', error);
-        workerReady = false;
-        reject(error);
+        reject(new Error(`Worker error: ${error.message}`));
       };
 
-      // Listen for initialization complete
-      const initHandler = (message) => {
-        if (message.type === 'initialized') {
-          workerReady = true;
-          console.log('Worker initialized:', message.data);
-          resolve(true);
-        } else if (message.type === 'error') {
-          workerReady = false;
-          reject(new Error(message.data.message));
+      // Set up one-time ready handler
+      const readyHandler = (event) => {
+        if (event.data.type === 'ready') {
+          isWorkerReady = true;
+          resolve(event.data.version);
+        } else if (event.data.type === 'init-error') {
+          reject(new Error(event.data.error.message));
         }
       };
 
-      // Temporarily add init handler
-      const tempId = addMessageHandler(initHandler);
+      // Temporarily add ready handler
+      const originalHandler = worker.onmessage;
+      worker.onmessage = (event) => {
+        readyHandler(event);
+        originalHandler(event);
+      };
 
-      // Initialize the worker
+      // Initialize worker
       worker.postMessage({
         type: 'init',
-        data: {
-          wasmExecURL: config.wasmExecURL || '/wasm/wasm_exec.js',
-          wasmURL: config.wasmURL || '/wasm/dwscript.wasm'
-        }
+        data: WORKER_CONFIG
       });
 
-      // Timeout after 10 seconds
-      setTimeout(() => {
-        if (!workerReady) {
-          removeMessageHandler(tempId);
-          terminateWorker();
-          reject(new Error('Worker initialization timeout'));
-        }
-      }, 10000);
-
     } catch (error) {
-      console.error('Failed to create worker:', error);
       reject(error);
     }
   });
+
+  return workerInitPromise;
 }
 
 /**
@@ -79,180 +85,234 @@ export async function initWorker(config = {}) {
  * @returns {Promise<Object>} Execution result
  */
 export async function executeInWorker(code, options = {}) {
-  if (!workerReady) {
-    throw new Error('Worker not initialized');
+  if (!isWorkerReady) {
+    await initWorker();
   }
 
   return new Promise((resolve, reject) => {
     const messageId = messageIdCounter++;
-    let outputCallback = options.onOutput;
-    let errorCallback = options.onError;
+    let outputBuffer = '';
 
     // Create handler for this execution
-    const handler = (message) => {
-      switch (message.type) {
-        case 'output':
-          if (outputCallback) {
-            outputCallback(message.data.text);
-          }
-          break;
+    const handler = {
+      onOutput: options.onOutput || null,
+      onError: options.onError || null,
+      resolve,
+      reject
+    };
 
-        case 'error':
-          if (errorCallback) {
-            errorCallback(message.data.error);
-          }
-          break;
+    messageHandlers.set(messageId, handler);
 
-        case 'result':
-          removeMessageHandler(messageId);
-          resolve(message.data);
-          break;
+    // Set up result handler
+    const resultHandler = (event) => {
+      const { type, result, output, error } = event.data;
 
-        case 'inputRequest':
-          // Handle input request - could be extended to show a modal
-          const input = options.onInput ? options.onInput() : '';
-          worker.postMessage({
-            type: 'inputResponse',
-            data: { input }
-          });
-          break;
+      if (type === 'output' && handler.onOutput) {
+        handler.onOutput(output);
+        outputBuffer += output;
+      } else if (type === 'runtime-error' && handler.onError) {
+        handler.onError(error);
+      } else if (type === 'result') {
+        messageHandlers.delete(messageId);
+        resolve({
+          ...result,
+          output: outputBuffer || result.output
+        });
+      } else if (type === 'timeout') {
+        messageHandlers.delete(messageId);
+        reject(new Error('Execution timeout'));
+      } else if (type === 'error') {
+        messageHandlers.delete(messageId);
+        reject(new Error(error.message || error));
       }
     };
 
-    addMessageHandler(handler, messageId);
+    // Store original handler and set up temporary one
+    const originalOnMessage = worker.onmessage;
+    worker.onmessage = (event) => {
+      resultHandler(event);
+      if (originalOnMessage) {
+        originalOnMessage(event);
+      }
+    };
 
-    // Send execution request to worker
+    // Send execution request
     worker.postMessage({
       type: 'execute',
       data: {
         code,
-        timeout: options.timeout || 0,
-        messageId
-      }
+        timeout: options.timeout || WORKER_CONFIG.defaultTimeout
+      },
+      messageId
     });
-
-    // Set timeout for the promise
-    if (options.timeout && options.timeout > 0) {
-      setTimeout(() => {
-        removeMessageHandler(messageId);
-        reject(new Error(`Worker execution timeout after ${options.timeout}ms`));
-      }, options.timeout + 1000); // Add buffer to worker timeout
-    }
   });
 }
 
 /**
  * Compile code in the worker
  * @param {string} code - DWScript code to compile
+ * @param {string} cacheKey - Optional cache key
  * @returns {Promise<Object>} Compilation result
  */
-export async function compileInWorker(code) {
-  if (!workerReady) {
-    throw new Error('Worker not initialized');
+export async function compileInWorker(code, cacheKey = null) {
+  if (!isWorkerReady) {
+    await initWorker();
   }
 
   return new Promise((resolve, reject) => {
     const messageId = messageIdCounter++;
 
-    const handler = (message) => {
-      if (message.type === 'compileResult') {
-        removeMessageHandler(messageId);
-        resolve(message.data);
+    const handler = {
+      resolve,
+      reject
+    };
+
+    messageHandlers.set(messageId, handler);
+
+    // Set up result handler
+    const resultHandler = (event) => {
+      const { type, result, error } = event.data;
+
+      if (type === 'compile-result') {
+        messageHandlers.delete(messageId);
+        resolve(result);
+      } else if (type === 'error') {
+        messageHandlers.delete(messageId);
+        reject(new Error(error.message || error));
       }
     };
 
-    addMessageHandler(handler, messageId);
+    // Store original handler and set up temporary one
+    const originalOnMessage = worker.onmessage;
+    worker.onmessage = (event) => {
+      resultHandler(event);
+      if (originalOnMessage) {
+        originalOnMessage(event);
+      }
+    };
 
+    // Send compilation request
     worker.postMessage({
       type: 'compile',
-      data: { code, messageId }
+      data: { code, cacheKey },
+      messageId
     });
-
-    // Timeout after 5 seconds
-    setTimeout(() => {
-      removeMessageHandler(messageId);
-      reject(new Error('Compilation timeout'));
-    }, 5000);
   });
+}
+
+/**
+ * Stop the current execution by terminating and recreating the worker
+ * This is the only reliable way to stop execution in a worker
+ */
+export async function stopWorkerExecution() {
+  if (!worker) {
+    return;
+  }
+
+  // Terminate the worker
+  worker.terminate();
+  worker = null;
+  isWorkerReady = false;
+  workerInitPromise = null;
+
+  // Reject all pending handlers
+  for (const [id, handler] of messageHandlers.entries()) {
+    handler.reject(new Error('Execution stopped by user'));
+  }
+  messageHandlers.clear();
+
+  // Reinitialize the worker for next execution
+  try {
+    await initWorker();
+  } catch (error) {
+    console.error('Failed to reinitialize worker:', error);
+  }
+}
+
+/**
+ * Handle messages from the worker
+ * @param {MessageEvent} event
+ */
+function handleWorkerMessage(event) {
+  const { type, messageId } = event.data;
+
+  // Handle messages with specific IDs
+  if (messageId !== undefined && messageHandlers.has(messageId)) {
+    const handler = messageHandlers.get(messageId);
+
+    switch (type) {
+      case 'output':
+        if (handler.onOutput) {
+          handler.onOutput(event.data.output);
+        }
+        break;
+
+      case 'runtime-error':
+        if (handler.onError) {
+          handler.onError(event.data.error);
+        }
+        break;
+
+      case 'result':
+      case 'compile-result':
+        handler.resolve(event.data.result);
+        messageHandlers.delete(messageId);
+        break;
+
+      case 'error':
+      case 'timeout':
+        handler.reject(new Error(event.data.error?.message || event.data.message));
+        messageHandlers.delete(messageId);
+        break;
+    }
+  }
+
+  // Handle global messages
+  switch (type) {
+    case 'ready':
+      console.log('Worker ready:', event.data.version);
+      break;
+
+    case 'worker-error':
+      console.error('Worker internal error:', event.data.error);
+      break;
+  }
 }
 
 /**
  * Check if worker is ready
  * @returns {boolean}
  */
-export function isWorkerReady() {
-  return workerReady;
+export function isWorkerInitialized() {
+  return isWorkerReady;
 }
 
 /**
- * Terminate the worker
+ * Dispose of the worker
  */
-export function terminateWorker() {
+export function disposeWorker() {
   if (worker) {
-    // Notify worker to dispose
-    try {
-      worker.postMessage({ type: 'dispose' });
-    } catch (error) {
-      console.error('Error sending dispose message:', error);
-    }
-
-    // Terminate after a short delay
-    setTimeout(() => {
-      if (worker) {
-        worker.terminate();
-        worker = null;
-      }
-    }, 100);
-
-    workerReady = false;
+    worker.postMessage({ type: 'dispose' });
+    worker.terminate();
+    worker = null;
+    isWorkerReady = false;
+    workerInitPromise = null;
     messageHandlers.clear();
   }
 }
 
 /**
- * Handle messages from the worker
+ * Get worker configuration
+ * @returns {Object}
  */
-function handleWorkerMessage(event) {
-  const message = event.data;
-
-  // Call all registered handlers
-  messageHandlers.forEach((handler) => {
-    try {
-      handler(message);
-    } catch (error) {
-      console.error('Error in message handler:', error);
-    }
-  });
+export function getWorkerConfig() {
+  return { ...WORKER_CONFIG };
 }
 
 /**
- * Add a message handler
- * @param {Function} handler - Handler function
- * @param {number} id - Optional handler ID
- * @returns {number} Handler ID
+ * Update worker configuration
+ * @param {Object} config - Configuration updates
  */
-function addMessageHandler(handler, id = null) {
-  const handlerId = id !== null ? id : messageIdCounter++;
-  messageHandlers.set(handlerId, handler);
-  return handlerId;
-}
-
-/**
- * Remove a message handler
- * @param {number} id - Handler ID
- */
-function removeMessageHandler(id) {
-  messageHandlers.delete(id);
-}
-
-/**
- * Get worker status
- * @returns {Object} Worker status
- */
-export function getWorkerStatus() {
-  return {
-    ready: workerReady,
-    active: worker !== null,
-    handlersCount: messageHandlers.size
-  };
+export function updateWorkerConfig(config) {
+  Object.assign(WORKER_CONFIG, config);
 }
