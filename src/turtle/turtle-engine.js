@@ -6,16 +6,16 @@
 export class TurtleEngine {
   constructor(canvas) {
     this.canvas = canvas;
-    this.ctx = canvas.getContext('2d');
+    this.ctx = canvas.getContext("2d");
 
     // Turtle state
     this.x = canvas.width / 2;
     this.y = canvas.height / 2;
     this.heading = 0; // degrees, 0 = north (up)
     this.penDown = true;
-    this.penColor = '#000000';
+    this.penColor = "#000000";
     this.penWidth = 1;
-    this.fillColor = '#000000';
+    this.fillColor = "#000000";
     this.visible = true;
     this.speed = 5; // 1-10, affects animation speed
 
@@ -25,7 +25,7 @@ export class TurtleEngine {
     this.animationId = null;
 
     // Background
-    this.backgroundColor = '#FFFFFF';
+    this.backgroundColor = "#FFFFFF";
 
     // History for undo/redo
     this.history = [];
@@ -41,9 +41,9 @@ export class TurtleEngine {
     this.y = this.canvas.height / 2;
     this.heading = 0;
     this.penDown = true;
-    this.penColor = '#000000';
+    this.penColor = "#000000";
     this.penWidth = 1;
-    this.fillColor = '#000000';
+    this.fillColor = "#000000";
     this.visible = true;
     this.commandQueue = [];
     this.history = [];
@@ -69,15 +69,15 @@ export class TurtleEngine {
    * @param {number} distance - Distance to move
    */
   forward(distance) {
-    const radians = (this.heading - 90) * Math.PI / 180;
+    const radians = ((this.heading - 90) * Math.PI) / 180;
     const newX = this.x + distance * Math.cos(radians);
     const newY = this.y + distance * Math.sin(radians);
 
     if (this.penDown) {
       this.ctx.strokeStyle = this.penColor;
       this.ctx.lineWidth = this.penWidth;
-      this.ctx.lineCap = 'round';
-      this.ctx.lineJoin = 'round';
+      this.ctx.lineCap = "round";
+      this.ctx.lineJoin = "round";
       this.ctx.beginPath();
       this.ctx.moveTo(this.x, this.y);
       this.ctx.lineTo(newX, newY);
@@ -237,8 +237,8 @@ export class TurtleEngine {
    * @param {number} extent - Arc angle in degrees
    */
   arc(radius, extent) {
-    const radians = extent * Math.PI / 180;
-    const startAngle = (this.heading - 90) * Math.PI / 180;
+    const radians = (extent * Math.PI) / 180;
+    const startAngle = ((this.heading - 90) * Math.PI) / 180;
     const endAngle = startAngle + radians;
 
     this.ctx.strokeStyle = this.penColor;
@@ -316,11 +316,11 @@ export class TurtleEngine {
 
     ctx.save();
     ctx.translate(this.x, this.y);
-    ctx.rotate((this.heading - 90) * Math.PI / 180);
+    ctx.rotate(((this.heading - 90) * Math.PI) / 180);
 
     // Draw turtle as a triangle
-    ctx.fillStyle = '#00AA00';
-    ctx.strokeStyle = '#006600';
+    ctx.fillStyle = "#00AA00";
+    ctx.strokeStyle = "#006600";
     ctx.lineWidth = 2;
 
     ctx.beginPath();
@@ -348,7 +348,7 @@ export class TurtleEngine {
    * @param {string} text - Text to write
    * @param {string} font - CSS font string (optional)
    */
-  write(text, font = '14px sans-serif') {
+  write(text, font = "14px sans-serif") {
     this.ctx.font = font;
     this.ctx.fillStyle = this.penColor;
     this.ctx.fillText(text, this.x, this.y);

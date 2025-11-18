@@ -18,13 +18,10 @@ export function encodeCode(code) {
     const base64 = btoa(String.fromCharCode(...data));
 
     // Make URL-safe by replacing characters
-    return base64
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=/g, '');
+    return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
   } catch (error) {
-    console.error('Failed to encode code:', error);
-    return '';
+    console.error("Failed to encode code:", error);
+    return "";
   }
 }
 
@@ -36,13 +33,11 @@ export function encodeCode(code) {
 export function decodeCode(encoded) {
   try {
     // Restore base64 characters
-    let base64 = encoded
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
+    let base64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
 
     // Add padding if needed
     while (base64.length % 4) {
-      base64 += '=';
+      base64 += "=";
     }
 
     // Decode from base64
@@ -57,8 +52,8 @@ export function decodeCode(encoded) {
     const decoder = new TextDecoder();
     return decoder.decode(bytes);
   } catch (error) {
-    console.error('Failed to decode code:', error);
-    return '';
+    console.error("Failed to decode code:", error);
+    return "";
   }
 }
 
@@ -72,19 +67,19 @@ export function decodeCode(encoded) {
  */
 export function createShareURL(code, options = {}) {
   const url = new URL(window.location.href);
-  url.searchParams.delete('code'); // Remove existing code param
+  url.searchParams.delete("code"); // Remove existing code param
 
   if (code && code.trim()) {
     const encoded = encodeCode(code);
-    url.searchParams.set('code', encoded);
+    url.searchParams.set("code", encoded);
   }
 
   if (options.lessonId) {
-    url.searchParams.set('lesson', options.lessonId);
+    url.searchParams.set("lesson", options.lessonId);
   }
 
   if (options.title) {
-    url.searchParams.set('title', options.title);
+    url.searchParams.set("title", options.title);
   }
 
   return url.toString();
@@ -96,7 +91,7 @@ export function createShareURL(code, options = {}) {
  */
 export function loadFromURL() {
   const params = new URLSearchParams(window.location.search);
-  const encoded = params.get('code');
+  const encoded = params.get("code");
 
   if (!encoded) {
     return null;
@@ -106,8 +101,8 @@ export function loadFromURL() {
 
   return {
     code,
-    lessonId: params.get('lesson') || null,
-    title: params.get('title') || null
+    lessonId: params.get("lesson") || null,
+    title: params.get("title") || null,
   };
 }
 
@@ -123,18 +118,18 @@ export async function copyToClipboard(text) {
       return true;
     } else {
       // Fallback for older browsers
-      const textarea = document.createElement('textarea');
+      const textarea = document.createElement("textarea");
       textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
       document.body.appendChild(textarea);
       textarea.select();
-      const success = document.execCommand('copy');
+      const success = document.execCommand("copy");
       document.body.removeChild(textarea);
       return success;
     }
   } catch (error) {
-    console.error('Failed to copy to clipboard:', error);
+    console.error("Failed to copy to clipboard:", error);
     return false;
   }
 }
@@ -152,7 +147,7 @@ export async function shareCode(code, options = {}) {
   return {
     url,
     success,
-    message: success ? 'Link copied to clipboard!' : 'Failed to copy link'
+    message: success ? "Link copied to clipboard!" : "Failed to copy link",
   };
 }
 
@@ -175,7 +170,7 @@ export async function generateQRCode(url) {
  */
 export function updateURLWithoutReload(code, options = {}) {
   const url = createShareURL(code, options);
-  window.history.replaceState({}, '', url);
+  window.history.replaceState({}, "", url);
 }
 
 /**
@@ -183,9 +178,9 @@ export function updateURLWithoutReload(code, options = {}) {
  */
 export function clearCodeFromURL() {
   const url = new URL(window.location.href);
-  url.searchParams.delete('code');
-  url.searchParams.delete('title');
-  window.history.replaceState({}, '', url);
+  url.searchParams.delete("code");
+  url.searchParams.delete("title");
+  window.history.replaceState({}, "", url);
 }
 
 /**

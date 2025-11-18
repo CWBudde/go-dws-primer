@@ -4,8 +4,8 @@
  */
 
 const DEFAULT_STATE = {
-  theme: 'light',
-  currentView: 'lessons',
+  theme: "light",
+  currentView: "lessons",
   currentLesson: null,
   fontSize: 14,
   showMinimap: true,
@@ -16,8 +16,8 @@ const DEFAULT_STATE = {
   preferences: {
     tabSize: 2,
     insertSpaces: true,
-    wordWrap: false
-  }
+    wordWrap: false,
+  },
 };
 
 let state = { ...DEFAULT_STATE };
@@ -27,7 +27,7 @@ let state = { ...DEFAULT_STATE };
  */
 export function initState() {
   try {
-    const saved = localStorage.getItem('dwscript-primer-state');
+    const saved = localStorage.getItem("dwscript-primer-state");
     if (saved) {
       const parsed = JSON.parse(saved);
       state = { ...DEFAULT_STATE, ...parsed };
@@ -36,9 +36,9 @@ export function initState() {
     // Apply theme immediately
     applyTheme(state.theme);
 
-    console.log('State initialized:', state);
+    console.log("State initialized:", state);
   } catch (error) {
-    console.error('Failed to load state:', error);
+    console.error("Failed to load state:", error);
     state = { ...DEFAULT_STATE };
   }
 }
@@ -48,9 +48,9 @@ export function initState() {
  */
 export function saveState() {
   try {
-    localStorage.setItem('dwscript-primer-state', JSON.stringify(state));
+    localStorage.setItem("dwscript-primer-state", JSON.stringify(state));
   } catch (error) {
-    console.error('Failed to save state:', error);
+    console.error("Failed to save state:", error);
   }
 }
 
@@ -71,7 +71,7 @@ export function updateState(updates) {
   saveState();
 
   // Dispatch state change event
-  window.dispatchEvent(new CustomEvent('statechange', { detail: state }));
+  window.dispatchEvent(new CustomEvent("statechange", { detail: state }));
 }
 
 /**
@@ -92,17 +92,19 @@ export function setValue(key, value) {
   state[key] = value;
   saveState();
 
-  window.dispatchEvent(new CustomEvent('statechange', {
-    detail: { key, value, state }
-  }));
+  window.dispatchEvent(
+    new CustomEvent("statechange", {
+      detail: { key, value, state },
+    }),
+  );
 }
 
 /**
  * Toggle theme between light and dark
  */
 export function toggleTheme() {
-  const newTheme = state.theme === 'light' ? 'dark' : 'light';
-  setValue('theme', newTheme);
+  const newTheme = state.theme === "light" ? "dark" : "light";
+  setValue("theme", newTheme);
   applyTheme(newTheme);
 }
 
@@ -111,8 +113,8 @@ export function toggleTheme() {
  * @param {string} theme
  */
 function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  document.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
+  document.documentElement.setAttribute("data-theme", theme);
+  document.dispatchEvent(new CustomEvent("themechange", { detail: { theme } }));
 }
 
 /**
@@ -124,9 +126,11 @@ export function markLessonCompleted(lessonId) {
     state.completedLessons.push(lessonId);
     saveState();
 
-    window.dispatchEvent(new CustomEvent('lessoncompleted', {
-      detail: { lessonId }
-    }));
+    window.dispatchEvent(
+      new CustomEvent("lessoncompleted", {
+        detail: { lessonId },
+      }),
+    );
   }
 }
 
@@ -166,7 +170,7 @@ export function resetState() {
   saveState();
   applyTheme(state.theme);
 
-  window.dispatchEvent(new CustomEvent('statereset'));
+  window.dispatchEvent(new CustomEvent("statereset"));
 }
 
 /**
@@ -190,7 +194,7 @@ export function importState(json) {
     applyTheme(state.theme);
     return true;
   } catch (error) {
-    console.error('Failed to import state:', error);
+    console.error("Failed to import state:", error);
     return false;
   }
 }

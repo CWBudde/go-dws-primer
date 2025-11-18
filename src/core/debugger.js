@@ -19,9 +19,9 @@ const debuggerState = {
   isPaused: false,
   currentLine: 0,
   breakpoints: new Set(),
-  stepMode: 'none', // 'none', 'into', 'over', 'out'
+  stepMode: "none", // 'none', 'into', 'over', 'out'
   callStack: [],
-  variables: new Map()
+  variables: new Map(),
 };
 
 /**
@@ -35,8 +35,8 @@ export function initDebugger(options = {}) {
   debuggerState.callStack = [];
   debuggerState.variables.clear();
 
-  console.log('Debugger initialized (placeholder implementation)');
-  return { success: true, message: 'Debugger ready' };
+  console.log("Debugger initialized (placeholder implementation)");
+  return { success: true, message: "Debugger ready" };
 }
 
 /**
@@ -45,7 +45,7 @@ export function initDebugger(options = {}) {
  */
 export function setBreakpoint(line) {
   debuggerState.breakpoints.add(line);
-  dispatchDebuggerEvent('breakpoint-set', { line });
+  dispatchDebuggerEvent("breakpoint-set", { line });
   return { success: true, line };
 }
 
@@ -55,7 +55,7 @@ export function setBreakpoint(line) {
  */
 export function removeBreakpoint(line) {
   debuggerState.breakpoints.delete(line);
-  dispatchDebuggerEvent('breakpoint-removed', { line });
+  dispatchDebuggerEvent("breakpoint-removed", { line });
   return { success: true, line };
 }
 
@@ -85,7 +85,7 @@ export function getBreakpoints() {
  */
 export function clearBreakpoints() {
   debuggerState.breakpoints.clear();
-  dispatchDebuggerEvent('breakpoints-cleared');
+  dispatchDebuggerEvent("breakpoints-cleared");
   return { success: true };
 }
 
@@ -95,11 +95,11 @@ export function clearBreakpoints() {
  * @param {string} stepType - 'into', 'over', or 'out'
  * @returns {Promise<Object>} Step result
  */
-export async function stepExecute(code, stepType = 'into') {
+export async function stepExecute(code, stepType = "into") {
   if (!debuggerState.enabled) {
     return {
       success: false,
-      message: 'Debugger not enabled'
+      message: "Debugger not enabled",
     };
   }
 
@@ -111,13 +111,15 @@ export async function stepExecute(code, stepType = 'into') {
   // 2. Code transformation to inject breakpoints
   // 3. AST-based execution control
 
-  console.warn('Step execution not yet implemented - requires go-dws debugging API');
+  console.warn(
+    "Step execution not yet implemented - requires go-dws debugging API",
+  );
 
   return {
     success: false,
-    message: 'Step execution requires go-dws debugging support',
+    message: "Step execution requires go-dws debugging support",
     currentLine: 0,
-    variables: {}
+    variables: {},
   };
 }
 
@@ -129,19 +131,19 @@ export async function continueExecution() {
   if (!debuggerState.isPaused) {
     return {
       success: false,
-      message: 'Not paused at breakpoint'
+      message: "Not paused at breakpoint",
     };
   }
 
   debuggerState.isPaused = false;
-  debuggerState.stepMode = 'none';
+  debuggerState.stepMode = "none";
 
   // TODO: Resume execution
-  console.warn('Continue execution not yet implemented');
+  console.warn("Continue execution not yet implemented");
 
   return {
     success: false,
-    message: 'Continue execution requires go-dws debugging support'
+    message: "Continue execution requires go-dws debugging support",
   };
 }
 
@@ -153,13 +155,13 @@ export function pauseExecution() {
   if (!debuggerState.enabled) {
     return {
       success: false,
-      message: 'Debugger not enabled'
+      message: "Debugger not enabled",
     };
   }
 
   debuggerState.isPaused = true;
-  dispatchDebuggerEvent('execution-paused', {
-    line: debuggerState.currentLine
+  dispatchDebuggerEvent("execution-paused", {
+    line: debuggerState.currentLine,
   });
 
   return { success: true };
@@ -172,7 +174,7 @@ export function pauseExecution() {
 export function getDebuggerState() {
   return {
     ...debuggerState,
-    breakpoints: Array.from(debuggerState.breakpoints)
+    breakpoints: Array.from(debuggerState.breakpoints),
   };
 }
 
@@ -192,12 +194,12 @@ export function getVariables() {
  */
 export async function evaluateExpression(expression) {
   // TODO: Implement expression evaluation
-  console.warn('Expression evaluation not yet implemented');
+  console.warn("Expression evaluation not yet implemented");
 
   return {
     success: false,
-    message: 'Expression evaluation requires go-dws debugging support',
-    value: null
+    message: "Expression evaluation requires go-dws debugging support",
+    value: null,
   };
 }
 
@@ -215,12 +217,12 @@ export function getCallStack() {
 export function disableDebugger() {
   debuggerState.enabled = false;
   debuggerState.isPaused = false;
-  debuggerState.stepMode = 'none';
+  debuggerState.stepMode = "none";
   debuggerState.breakpoints.clear();
   debuggerState.callStack = [];
   debuggerState.variables.clear();
 
-  dispatchDebuggerEvent('debugger-disabled');
+  dispatchDebuggerEvent("debugger-disabled");
   return { success: true };
 }
 
@@ -246,13 +248,15 @@ export function isExecutionPaused() {
  * @param {Object} detail - Event detail
  */
 function dispatchDebuggerEvent(eventType, detail = {}) {
-  window.dispatchEvent(new CustomEvent('debugger', {
-    detail: {
-      type: eventType,
-      ...detail,
-      timestamp: Date.now()
-    }
-  }));
+  window.dispatchEvent(
+    new CustomEvent("debugger", {
+      detail: {
+        type: eventType,
+        ...detail,
+        timestamp: Date.now(),
+      },
+    }),
+  );
 }
 
 /**
@@ -264,13 +268,13 @@ function dispatchDebuggerEvent(eventType, detail = {}) {
  */
 export function instrumentCodeForStepping(code) {
   // This is a simple approach that could work without go-dws changes
-  const lines = code.split('\n');
+  const lines = code.split("\n");
   const instrumented = [];
 
   let lineNumber = 1;
   for (const line of lines) {
     // Skip empty lines and comments
-    if (line.trim() === '' || line.trim().startsWith('//')) {
+    if (line.trim() === "" || line.trim().startsWith("//")) {
       instrumented.push(line);
       lineNumber++;
       continue;
@@ -285,7 +289,7 @@ export function instrumentCodeForStepping(code) {
     lineNumber++;
   }
 
-  return instrumented.join('\n');
+  return instrumented.join("\n");
 }
 
 /**

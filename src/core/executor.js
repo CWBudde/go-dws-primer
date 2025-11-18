@@ -3,12 +3,26 @@
  * Handles running DWScript code and managing execution state
  */
 
-import { executeDWScript, isWASMReady, getDWScriptAPI } from './wasm-loader.js';
-import { clearOutput, appendConsoleOutput, appendCompilerOutput, showOutput } from '../output/output-manager.js';
-import { clearTurtle } from '../turtle/turtle-api.js';
-import { executeInWorker, stopWorkerExecution, isWorkerInitialized, initWorker } from '../workers/worker-manager.js';
-import { announceOutput, announceError, announceStatus } from '../utils/accessibility.js';
-import { addErrorMarkers, clearErrorMarkers } from '../editor/monaco-setup.js';
+import { executeDWScript, isWASMReady, getDWScriptAPI } from "./wasm-loader.js";
+import {
+  clearOutput,
+  appendConsoleOutput,
+  appendCompilerOutput,
+  showOutput,
+} from "../output/output-manager.js";
+import { clearTurtle } from "../turtle/turtle-api.js";
+import {
+  executeInWorker,
+  stopWorkerExecution,
+  isWorkerInitialized,
+  initWorker,
+} from "../workers/worker-manager.js";
+import {
+  announceOutput,
+  announceError,
+  announceStatus,
+} from "../utils/accessibility.js";
+import { addErrorMarkers, clearErrorMarkers } from "../editor/monaco-setup.js";
 
 let isExecuting = false;
 let executionStartTime = 0;
@@ -22,7 +36,7 @@ let useWorkerExecution = false; // Disabled by default, can be enabled in settin
 const executionConfig = {
   defaultTimeout: 30000, // 30 seconds
   enableTimeout: true,
-  maxExecutionTime: 120000 // 2 minutes max
+  maxExecutionTime: 120000, // 2 minutes max
 };
 
 // Performance metrics
@@ -38,8 +52,8 @@ let executionMetrics = {
   memoryUsage: {
     current: 0,
     peak: 0,
-    wasmMemory: 0
-  }
+    wasmMemory: 0,
+  },
 };
 
 /**
@@ -50,16 +64,17 @@ let executionMetrics = {
  */
 export async function executeCode(code, options = {}) {
   if (isExecuting) {
-    console.warn('Code is already executing');
-    return { success: false, message: 'Already executing' };
+    console.warn("Code is already executing");
+    return { success: false, message: "Already executing" };
   }
 
   // Check if we should use worker execution
-  const useWorker = options.useWorker !== undefined ? options.useWorker : useWorkerExecution;
+  const useWorker =
+    options.useWorker !== undefined ? options.useWorker : useWorkerExecution;
 
   if (!useWorker && !isWASMReady()) {
-    appendCompilerOutput('Error: DWScript runtime not ready', 'error');
-    return { success: false, message: 'WASM not ready' };
+    appendCompilerOutput("Error: DWScript runtime not ready", "error");
+    return { success: false, message: "WASM not ready" };
   }
 
   try {
@@ -73,19 +88,20 @@ export async function executeCode(code, options = {}) {
     clearErrorMarkers();
 
     // Clear turtle canvas if graphics tab is visible
-    const graphicsTab = document.getElementById('output-graphics');
+    const graphicsTab = document.getElementById("output-graphics");
     if (graphicsTab) {
       clearTurtle();
     }
 
-    appendCompilerOutput('Compiling and executing...', 'info');
+    appendCompilerOutput("Compiling and executing...", "info");
 
     // Start execution timer
     startExecutionTimer();
 
     // Determine timeout
-    const timeout = options.timeout ||
-                   (executionConfig.enableTimeout ? executionConfig.defaultTimeout : 0);
+    const timeout =
+      options.timeout ||
+      (executionConfig.enableTimeout ? executionConfig.defaultTimeout : 0);
 
     // Execute the code (using worker or direct)
     let result;
@@ -97,22 +113,24 @@ export async function executeCode(code, options = {}) {
           onOutput: (text) => {
             appendConsoleOutput(text);
           },
-          timeout: timeout
+          timeout: timeout,
         });
       } catch (error) {
-        if (error.message === 'Execution timeout') {
+        if (error.message === "Execution timeout") {
           timedOut = true;
           result = {
             success: false,
-            output: '',
-            errors: [{
-              type: 'TimeoutError',
-              message: `Execution timed out after ${timeout}ms`,
-              line: 0,
-              column: 0
-            }],
+            output: "",
+            errors: [
+              {
+                type: "TimeoutError",
+                message: `Execution timed out after ${timeout}ms`,
+                line: 0,
+                column: 0,
+              },
+            ],
             warnings: [],
-            executionTime: timeout
+            executionTime: timeout,
           };
         } else {
           throw error;
@@ -122,25 +140,27 @@ export async function executeCode(code, options = {}) {
       // For non-worker execution, implement timeout using Promise.race
       if (timeout > 0) {
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Execution timeout')), timeout);
+          setTimeout(() => reject(new Error("Execution timeout")), timeout);
         });
 
         try {
           result = await Promise.race([executeDWScript(code), timeoutPromise]);
         } catch (error) {
-          if (error.message === 'Execution timeout') {
+          if (error.message === "Execution timeout") {
             timedOut = true;
             result = {
               success: false,
-              output: '',
-              errors: [{
-                type: 'TimeoutError',
-                message: `Execution timed out after ${timeout}ms`,
-                line: 0,
-                column: 0
-              }],
+              output: "",
+              errors: [
+                {
+                  type: "TimeoutError",
+                  message: `Execution timed out after ${timeout}ms`,
+                  line: 0,
+                  column: 0,
+                },
+              ],
               warnings: [],
-              executionTime: timeout
+              executionTime: timeout,
             };
           } else {
             throw error;
@@ -166,11 +186,11 @@ export async function executeCode(code, options = {}) {
     if (result.success) {
       // Show compiler messages if any
       if (result.warnings && result.warnings.length > 0) {
-        result.warnings.forEach(warning => {
-          appendCompilerOutput(`Warning: ${warning}`, 'warning');
+        result.warnings.forEach((warning) => {
+          appendCompilerOutput(`Warning: ${warning}`, "warning");
         });
       } else {
-        appendCompilerOutput('Compilation successful', 'success');
+        appendCompilerOutput("Compilation successful", "success");
       }
 
       // Show output
@@ -190,30 +210,31 @@ export async function executeCode(code, options = {}) {
       announceStatus(statusMsg);
     } else {
       // Show errors
-      appendCompilerOutput('Compilation failed:', 'error');
+      appendCompilerOutput("Compilation failed:", "error");
       if (result.errors && result.errors.length > 0) {
         // Add error markers to the editor
         addErrorMarkers(result.errors);
 
         // Display errors in compiler output
-        result.errors.forEach(error => {
-          const errorMsg = error.line > 0
-            ? `Line ${error.line}: ${error.message}`
-            : error.message;
-          appendCompilerOutput(errorMsg, 'error');
+        result.errors.forEach((error) => {
+          const errorMsg =
+            error.line > 0
+              ? `Line ${error.line}: ${error.message}`
+              : error.message;
+          appendCompilerOutput(errorMsg, "error");
           announceError(error.message, error.line);
         });
       }
 
-      updateStatus('Compilation failed');
-      announceStatus('Compilation failed');
+      updateStatus("Compilation failed");
+      announceStatus("Compilation failed");
     }
 
     return result;
   } catch (error) {
-    console.error('Execution error:', error);
-    appendCompilerOutput(`Runtime error: ${error.message}`, 'error');
-    updateStatus('Execution failed');
+    console.error("Execution error:", error);
+    appendCompilerOutput(`Runtime error: ${error.message}`, "error");
+    updateStatus("Execution failed");
 
     return { success: false, error: error.message };
   } finally {
@@ -229,26 +250,29 @@ export async function executeCode(code, options = {}) {
  */
 export async function stopExecution() {
   if (isExecuting) {
-    console.log('Stop requested');
+    console.log("Stop requested");
 
     // If using worker execution, terminate the worker
     if (useWorkerExecution && isWorkerInitialized()) {
       try {
         await stopWorkerExecution();
-        appendCompilerOutput('Execution stopped (worker terminated)', 'warning');
+        appendCompilerOutput(
+          "Execution stopped (worker terminated)",
+          "warning",
+        );
       } catch (error) {
-        console.error('Error stopping worker:', error);
-        appendCompilerOutput('Error stopping execution', 'error');
+        console.error("Error stopping worker:", error);
+        appendCompilerOutput("Error stopping execution", "error");
       }
     } else {
       // Abort execution if possible (for non-worker execution)
       if (currentExecutionAbortController) {
         currentExecutionAbortController.abort();
       }
-      appendCompilerOutput('Execution stopped by user', 'warning');
+      appendCompilerOutput("Execution stopped by user", "warning");
     }
 
-    updateStatus('Execution stopped');
+    updateStatus("Execution stopped");
     isExecuting = false;
     stopExecutionTimer();
     updateExecutionUI(false);
@@ -268,8 +292,8 @@ export function isCodeExecuting() {
  * @param {boolean} executing
  */
 function updateExecutionUI(executing) {
-  const runBtn = document.getElementById('btn-run');
-  const stopBtn = document.getElementById('btn-stop');
+  const runBtn = document.getElementById("btn-run");
+  const stopBtn = document.getElementById("btn-stop");
 
   if (runBtn) {
     runBtn.disabled = executing;
@@ -280,9 +304,11 @@ function updateExecutionUI(executing) {
   }
 
   // Dispatch event
-  window.dispatchEvent(new CustomEvent('executionstate', {
-    detail: { executing }
-  }));
+  window.dispatchEvent(
+    new CustomEvent("executionstate", {
+      detail: { executing },
+    }),
+  );
 }
 
 /**
@@ -290,7 +316,7 @@ function updateExecutionUI(executing) {
  * @param {string} message
  */
 function updateStatus(message) {
-  const statusEl = document.getElementById('status-message');
+  const statusEl = document.getElementById("status-message");
   if (statusEl) {
     statusEl.textContent = message;
   }
@@ -301,7 +327,7 @@ function updateStatus(message) {
  * @param {number} timeMs
  */
 function updateExecutionTime(timeMs) {
-  const timeEl = document.getElementById('execution-time');
+  const timeEl = document.getElementById("execution-time");
   if (timeEl) {
     if (timeMs < 1000) {
       timeEl.textContent = `⏱️ ${timeMs.toFixed(2)}ms`;
@@ -318,7 +344,7 @@ function updateExecutionTime(timeMs) {
  * Update performance metrics display
  */
 function updatePerformanceMetrics() {
-  const metricsEl = document.getElementById('performance-metrics');
+  const metricsEl = document.getElementById("performance-metrics");
   if (!metricsEl) return;
 
   const api = getDWScriptAPI();
@@ -328,9 +354,10 @@ function updatePerformanceMetrics() {
 
   // Display summary in status bar
   const avgTime = metrics.averageExecutionTime.toFixed(1);
-  const errorRate = metrics.totalExecutions > 0
-    ? ((metrics.errorCount / metrics.totalExecutions) * 100).toFixed(0)
-    : 0;
+  const errorRate =
+    metrics.totalExecutions > 0
+      ? ((metrics.errorCount / metrics.totalExecutions) * 100).toFixed(0)
+      : 0;
 
   metricsEl.textContent = `📊 ${metrics.totalExecutions} runs | avg ${avgTime}ms | ${errorRate}% errors`;
 
@@ -362,24 +389,26 @@ Success Rate: ${(((metrics.totalExecutions - metrics.errorCount) / metrics.total
  * Update memory usage display
  */
 function updateMemoryDisplay() {
-  const memoryEl = document.getElementById('memory-usage');
+  const memoryEl = document.getElementById("memory-usage");
   if (!memoryEl) return;
 
   const memoryInfo = getMemoryUsage();
 
   if (!memoryInfo.available) {
-    memoryEl.textContent = '';
+    memoryEl.textContent = "";
     return;
   }
 
-  let displayText = '';
+  let displayText = "";
 
   if (memoryInfo.jsHeapSize > 0) {
     displayText = `💾 ${formatMemorySize(memoryInfo.jsHeapSize)}`;
   }
 
   if (memoryInfo.wasmMemory > 0) {
-    displayText += displayText ? ` / WASM: ${formatMemorySize(memoryInfo.wasmMemory)}` : `💾 WASM: ${formatMemorySize(memoryInfo.wasmMemory)}`;
+    displayText += displayText
+      ? ` / WASM: ${formatMemorySize(memoryInfo.wasmMemory)}`
+      : `💾 WASM: ${formatMemorySize(memoryInfo.wasmMemory)}`;
   }
 
   memoryEl.textContent = displayText;
@@ -417,7 +446,8 @@ function updateMetrics(success, executionTime, memoryInfo = null) {
   executionMetrics.totalExecutions++;
   executionMetrics.lastExecutionTime = executionTime;
   executionMetrics.totalExecutionTime += executionTime;
-  executionMetrics.averageExecutionTime = executionMetrics.totalExecutionTime / executionMetrics.totalExecutions;
+  executionMetrics.averageExecutionTime =
+    executionMetrics.totalExecutionTime / executionMetrics.totalExecutions;
 
   if (executionTime > executionMetrics.peakExecutionTime) {
     executionMetrics.peakExecutionTime = executionTime;
@@ -440,9 +470,11 @@ function updateMetrics(success, executionTime, memoryInfo = null) {
   }
 
   // Dispatch metrics update event
-  window.dispatchEvent(new CustomEvent('metricsUpdate', {
-    detail: { metrics: executionMetrics }
-  }));
+  window.dispatchEvent(
+    new CustomEvent("metricsUpdate", {
+      detail: { metrics: executionMetrics },
+    }),
+  );
 }
 
 /**
@@ -451,13 +483,15 @@ function updateMetrics(success, executionTime, memoryInfo = null) {
  * @returns {string} Formatted metrics string
  */
 function formatExecutionMetrics(currentTime) {
-  const timeStr = currentTime < 1000
-    ? `${currentTime.toFixed(2)}ms`
-    : `${(currentTime / 1000).toFixed(2)}s`;
+  const timeStr =
+    currentTime < 1000
+      ? `${currentTime.toFixed(2)}ms`
+      : `${(currentTime / 1000).toFixed(2)}s`;
 
-  const avgStr = executionMetrics.averageExecutionTime < 1000
-    ? `${executionMetrics.averageExecutionTime.toFixed(2)}ms`
-    : `${(executionMetrics.averageExecutionTime / 1000).toFixed(2)}s`;
+  const avgStr =
+    executionMetrics.averageExecutionTime < 1000
+      ? `${executionMetrics.averageExecutionTime.toFixed(2)}ms`
+      : `${(executionMetrics.averageExecutionTime / 1000).toFixed(2)}s`;
 
   return `Completed in ${timeStr} (avg: ${avgStr}, runs: ${executionMetrics.totalExecutions})`;
 }
@@ -486,11 +520,11 @@ export function resetExecutionMetrics() {
     memoryUsage: {
       current: 0,
       peak: 0,
-      wasmMemory: 0
-    }
+      wasmMemory: 0,
+    },
   };
 
-  window.dispatchEvent(new CustomEvent('metricsReset'));
+  window.dispatchEvent(new CustomEvent("metricsReset"));
 }
 
 /**
@@ -503,7 +537,7 @@ export function getMemoryUsage() {
     jsHeapLimit: 0,
     wasmMemory: 0,
     wasmMemoryPages: 0,
-    available: false
+    available: false,
   };
 
   // Try to get JavaScript heap information (Chrome only)
@@ -526,7 +560,7 @@ export function getMemoryUsage() {
     }
   } catch (error) {
     // WASM memory not accessible
-    console.debug('WASM memory not accessible:', error.message);
+    console.debug("WASM memory not accessible:", error.message);
   }
 
   return memoryInfo;
@@ -538,9 +572,9 @@ export function getMemoryUsage() {
  * @returns {string} Formatted string
  */
 export function formatMemorySize(bytes) {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) return "0 B";
 
-  const units = ['B', 'KB', 'MB', 'GB'];
+  const units = ["B", "KB", "MB", "GB"];
   const k = 1024;
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
@@ -553,7 +587,10 @@ export function formatMemorySize(bytes) {
  */
 export function configureTimeout(config) {
   if (config.defaultTimeout !== undefined) {
-    executionConfig.defaultTimeout = Math.min(config.defaultTimeout, executionConfig.maxExecutionTime);
+    executionConfig.defaultTimeout = Math.min(
+      config.defaultTimeout,
+      executionConfig.maxExecutionTime,
+    );
   }
   if (config.enableTimeout !== undefined) {
     executionConfig.enableTimeout = config.enableTimeout;
@@ -613,8 +650,8 @@ export function parseCompilerMessage(message) {
  */
 export function highlightErrorInEditor(line, column = null) {
   // This will be called from output-manager when error messages are clicked
-  const event = new CustomEvent('highlightError', {
-    detail: { line, column }
+  const event = new CustomEvent("highlightError", {
+    detail: { line, column },
   });
   window.dispatchEvent(event);
 }
@@ -625,12 +662,12 @@ export function highlightErrorInEditor(line, column = null) {
  */
 export function setWorkerExecutionMode(enabled) {
   useWorkerExecution = enabled;
-  console.log(`Worker execution mode ${enabled ? 'enabled' : 'disabled'}`);
+  console.log(`Worker execution mode ${enabled ? "enabled" : "disabled"}`);
 
   // Pre-initialize worker if enabling
   if (enabled && !isWorkerInitialized()) {
-    initWorker().catch(error => {
-      console.error('Failed to initialize worker:', error);
+    initWorker().catch((error) => {
+      console.error("Failed to initialize worker:", error);
       useWorkerExecution = false;
     });
   }
@@ -651,9 +688,9 @@ export function isWorkerExecutionMode() {
 export async function initializeWorker() {
   try {
     await initWorker();
-    console.log('Worker initialized successfully');
+    console.log("Worker initialized successfully");
   } catch (error) {
-    console.error('Worker initialization failed:', error);
+    console.error("Worker initialization failed:", error);
     throw error;
   }
 }

@@ -3,7 +3,7 @@
  * Manages user progress through lessons
  */
 
-const STORAGE_KEY = 'dwscript-primer-progress';
+const STORAGE_KEY = "dwscript-primer-progress";
 
 /**
  * Progress data structure
@@ -38,21 +38,23 @@ export function getProgress() {
       if (progress.lastAccessed) {
         progress.lastAccessed = new Date(progress.lastAccessed);
       }
-      Object.values(progress.lessons || {}).forEach(lesson => {
-        if (lesson.completedAt) lesson.completedAt = new Date(lesson.completedAt);
-        if (lesson.lastVisited) lesson.lastVisited = new Date(lesson.lastVisited);
+      Object.values(progress.lessons || {}).forEach((lesson) => {
+        if (lesson.completedAt)
+          lesson.completedAt = new Date(lesson.completedAt);
+        if (lesson.lastVisited)
+          lesson.lastVisited = new Date(lesson.lastVisited);
       });
       return progress;
     }
   } catch (error) {
-    console.error('Failed to load progress:', error);
+    console.error("Failed to load progress:", error);
   }
 
   return {
     lessons: {},
     currentLesson: null,
     totalTime: 0,
-    lastAccessed: new Date()
+    lastAccessed: new Date(),
   };
 }
 
@@ -66,11 +68,13 @@ export function saveProgress(progress) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
 
     // Dispatch event for UI updates
-    window.dispatchEvent(new CustomEvent('progressUpdated', {
-      detail: progress
-    }));
+    window.dispatchEvent(
+      new CustomEvent("progressUpdated", {
+        detail: progress,
+      }),
+    );
   } catch (error) {
-    console.error('Failed to save progress:', error);
+    console.error("Failed to save progress:", error);
   }
 }
 
@@ -85,7 +89,7 @@ export function markLessonVisited(lessonId) {
     progress.lessons[lessonId] = {
       completed: false,
       timeSpent: 0,
-      exercisesCompleted: []
+      exercisesCompleted: [],
     };
   }
 
@@ -106,7 +110,7 @@ export function markLessonCompleted(lessonId, score = null) {
   if (!progress.lessons[lessonId]) {
     progress.lessons[lessonId] = {
       timeSpent: 0,
-      exercisesCompleted: []
+      exercisesCompleted: [],
     };
   }
 
@@ -132,7 +136,7 @@ export function markExerciseCompleted(lessonId, exerciseIndex) {
     progress.lessons[lessonId] = {
       completed: false,
       timeSpent: 0,
-      exercisesCompleted: []
+      exercisesCompleted: [],
     };
   }
 
@@ -153,7 +157,7 @@ export function addLessonTime(lessonId, minutes) {
     progress.lessons[lessonId] = {
       completed: false,
       timeSpent: 0,
-      exercisesCompleted: []
+      exercisesCompleted: [],
     };
   }
 
@@ -192,7 +196,9 @@ export function getCompletionPercentage(totalLessons) {
   if (totalLessons === 0) return 0;
 
   const progress = getProgress();
-  const completed = Object.values(progress.lessons).filter(l => l.completed).length;
+  const completed = Object.values(progress.lessons).filter(
+    (l) => l.completed,
+  ).length;
 
   return Math.round((completed / totalLessons) * 100);
 }
@@ -207,11 +213,11 @@ export function getStatistics() {
 
   return {
     totalLessons: lessons.length,
-    completedLessons: lessons.filter(l => l.completed).length,
+    completedLessons: lessons.filter((l) => l.completed).length,
     totalTime: progress.totalTime,
     lastAccessed: progress.lastAccessed,
     currentLesson: progress.currentLesson,
-    averageScore: calculateAverageScore(lessons)
+    averageScore: calculateAverageScore(lessons),
   };
 }
 
@@ -221,7 +227,9 @@ export function getStatistics() {
  * @returns {number|null} Average score or null
  */
 function calculateAverageScore(lessons) {
-  const scored = lessons.filter(l => l.score !== undefined && l.score !== null);
+  const scored = lessons.filter(
+    (l) => l.score !== undefined && l.score !== null,
+  );
   if (scored.length === 0) return null;
 
   const sum = scored.reduce((acc, l) => acc + l.score, 0);
@@ -232,9 +240,13 @@ function calculateAverageScore(lessons) {
  * Reset all progress
  */
 export function resetProgress() {
-  if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+  if (
+    confirm(
+      "Are you sure you want to reset all progress? This cannot be undone.",
+    )
+  ) {
     localStorage.removeItem(STORAGE_KEY);
-    window.dispatchEvent(new CustomEvent('progressReset'));
+    window.dispatchEvent(new CustomEvent("progressReset"));
   }
 }
 
@@ -258,7 +270,7 @@ export function importProgress(json) {
     saveProgress(progress);
     return true;
   } catch (error) {
-    console.error('Failed to import progress:', error);
+    console.error("Failed to import progress:", error);
     return false;
   }
 }

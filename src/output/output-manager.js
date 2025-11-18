@@ -3,25 +3,28 @@
  * Handles displaying output in console, compiler, and graphics panels
  */
 
-import { parseCompilerMessage, highlightErrorInEditor } from '../core/executor.js';
+import {
+  parseCompilerMessage,
+  highlightErrorInEditor,
+} from "../core/executor.js";
 
-let currentTab = 'console';
+let currentTab = "console";
 
 /**
  * Initialize output panel functionality
  */
 export function initOutputPanels() {
   // Setup tab switching
-  const tabs = document.querySelectorAll('.tab');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      const tabName = tab.getAttribute('data-tab');
+  const tabs = document.querySelectorAll(".tab");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const tabName = tab.getAttribute("data-tab");
       switchTab(tabName);
     });
   });
 
   // Set initial tab
-  switchTab('console');
+  switchTab("console");
 }
 
 /**
@@ -32,22 +35,22 @@ export function switchTab(tabName) {
   currentTab = tabName;
 
   // Update tab buttons
-  const tabs = document.querySelectorAll('.tab');
-  tabs.forEach(tab => {
-    if (tab.getAttribute('data-tab') === tabName) {
-      tab.classList.add('active');
+  const tabs = document.querySelectorAll(".tab");
+  tabs.forEach((tab) => {
+    if (tab.getAttribute("data-tab") === tabName) {
+      tab.classList.add("active");
     } else {
-      tab.classList.remove('active');
+      tab.classList.remove("active");
     }
   });
 
   // Update panels
-  const panels = document.querySelectorAll('.output-panel');
-  panels.forEach(panel => {
+  const panels = document.querySelectorAll(".output-panel");
+  panels.forEach((panel) => {
     if (panel.id === `output-${tabName}`) {
-      panel.classList.add('active');
+      panel.classList.add("active");
     } else {
-      panel.classList.remove('active');
+      panel.classList.remove("active");
     }
   });
 }
@@ -65,9 +68,9 @@ export function clearOutput() {
  * @param {string} text
  */
 export function appendConsoleOutput(text) {
-  const console = document.querySelector('#output-console .output-content');
+  const console = document.querySelector("#output-console .output-content");
   if (console) {
-    const line = document.createElement('div');
+    const line = document.createElement("div");
     line.textContent = text;
     console.appendChild(line);
 
@@ -76,16 +79,16 @@ export function appendConsoleOutput(text) {
   }
 
   // Ensure console tab is visible
-  showOutput('console');
+  showOutput("console");
 }
 
 /**
  * Clear console output
  */
 export function clearConsoleOutput() {
-  const console = document.querySelector('#output-console .output-content');
+  const console = document.querySelector("#output-console .output-content");
   if (console) {
-    console.innerHTML = '';
+    console.innerHTML = "";
   }
 }
 
@@ -94,10 +97,10 @@ export function clearConsoleOutput() {
  * @param {string} message
  * @param {string} type - Type of message: info, success, warning, error
  */
-export function appendCompilerOutput(message, type = 'info') {
-  const compiler = document.querySelector('#output-compiler .output-content');
+export function appendCompilerOutput(message, type = "info") {
+  const compiler = document.querySelector("#output-compiler .output-content");
   if (compiler) {
-    const line = document.createElement('div');
+    const line = document.createElement("div");
     line.className = `compiler-message compiler-${type}`;
 
     // Parse message to extract line numbers
@@ -105,20 +108,20 @@ export function appendCompilerOutput(message, type = 'info') {
 
     if (parsed.line !== null) {
       // Create clickable error message
-      const lineSpan = document.createElement('span');
-      lineSpan.className = 'error-line-number';
-      lineSpan.textContent = `Line ${parsed.line}${parsed.column ? `:${parsed.column}` : ''}: `;
-      lineSpan.style.cursor = 'pointer';
-      lineSpan.style.textDecoration = 'underline';
-      lineSpan.title = 'Click to jump to line';
+      const lineSpan = document.createElement("span");
+      lineSpan.className = "error-line-number";
+      lineSpan.textContent = `Line ${parsed.line}${parsed.column ? `:${parsed.column}` : ""}: `;
+      lineSpan.style.cursor = "pointer";
+      lineSpan.style.textDecoration = "underline";
+      lineSpan.title = "Click to jump to line";
 
-      lineSpan.addEventListener('click', () => {
+      lineSpan.addEventListener("click", () => {
         highlightErrorInEditor(parsed.line, parsed.column);
       });
 
       line.appendChild(lineSpan);
 
-      const msgSpan = document.createElement('span');
+      const msgSpan = document.createElement("span");
       msgSpan.textContent = parsed.message;
       line.appendChild(msgSpan);
     } else {
@@ -132,8 +135,8 @@ export function appendCompilerOutput(message, type = 'info') {
   }
 
   // Show compiler tab if there are errors or warnings
-  if (type === 'error' || type === 'warning') {
-    showOutput('compiler');
+  if (type === "error" || type === "warning") {
+    showOutput("compiler");
   }
 }
 
@@ -141,9 +144,9 @@ export function appendCompilerOutput(message, type = 'info') {
  * Clear compiler output
  */
 export function clearCompilerOutput() {
-  const compiler = document.querySelector('#output-compiler .output-content');
+  const compiler = document.querySelector("#output-compiler .output-content");
   if (compiler) {
-    compiler.innerHTML = '';
+    compiler.innerHTML = "";
   }
 }
 

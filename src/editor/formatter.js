@@ -14,32 +14,40 @@ export function formatDWScript(code, options = {}) {
     indentSize = 2,
     useTabs = false,
     insertSpaces = true,
-    maxLineLength = 120
+    maxLineLength = 120,
   } = options;
 
-  const indent = useTabs ? '\t' : ' '.repeat(indentSize);
-  let formatted = '';
+  const indent = useTabs ? "\t" : " ".repeat(indentSize);
+  let formatted = "";
   let indentLevel = 0;
-  let lines = code.split('\n');
+  let lines = code.split("\n");
 
   // Keywords that increase indentation
   const increaseIndent = [
-    'begin', 'class', 'record', 'try', 'case', 'repeat',
-    'private', 'protected', 'public', 'published'
+    "begin",
+    "class",
+    "record",
+    "try",
+    "case",
+    "repeat",
+    "private",
+    "protected",
+    "public",
+    "published",
   ];
 
   // Keywords that decrease indentation
-  const decreaseIndent = ['end', 'until'];
+  const decreaseIndent = ["end", "until"];
 
   // Keywords that both decrease and increase (for else, except, finally)
-  const decreaseIncreaseIndent = ['else', 'except', 'finally'];
+  const decreaseIncreaseIndent = ["else", "except", "finally"];
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i].trim();
 
     // Skip empty lines
     if (line.length === 0) {
-      formatted += '\n';
+      formatted += "\n";
       continue;
     }
 
@@ -47,15 +55,15 @@ export function formatDWScript(code, options = {}) {
     let shouldDecreaseBeforeLine = false;
     let shouldDecreaseIncreaseBeforeLine = false;
 
-    decreaseIndent.forEach(keyword => {
-      const regex = new RegExp(`^${keyword}\\b`, 'i');
+    decreaseIndent.forEach((keyword) => {
+      const regex = new RegExp(`^${keyword}\\b`, "i");
       if (regex.test(line)) {
         shouldDecreaseBeforeLine = true;
       }
     });
 
-    decreaseIncreaseIndent.forEach(keyword => {
-      const regex = new RegExp(`^${keyword}\\b`, 'i');
+    decreaseIncreaseIndent.forEach((keyword) => {
+      const regex = new RegExp(`^${keyword}\\b`, "i");
       if (regex.test(line)) {
         shouldDecreaseIncreaseBeforeLine = true;
       }
@@ -69,14 +77,14 @@ export function formatDWScript(code, options = {}) {
     }
 
     // Add indentation
-    formatted += indent.repeat(indentLevel) + line + '\n';
+    formatted += indent.repeat(indentLevel) + line + "\n";
 
     // Check for keywords that increase indentation after the line
     let shouldIncreaseAfterLine = false;
 
-    increaseIndent.forEach(keyword => {
-      const regex = new RegExp(`\\b${keyword}\\b`, 'i');
-      if (regex.test(line) && !line.endsWith(';')) {
+    increaseIndent.forEach((keyword) => {
+      const regex = new RegExp(`\\b${keyword}\\b`, "i");
+      if (regex.test(line) && !line.endsWith(";")) {
         shouldIncreaseAfterLine = true;
       }
     });
@@ -118,26 +126,26 @@ export function formatDWScript(code, options = {}) {
  * @param {monaco.languages} languages - Monaco languages API
  */
 export function registerFormatter(languages) {
-  languages.registerDocumentFormattingEditProvider('dwscript', {
+  languages.registerDocumentFormattingEditProvider("dwscript", {
     provideDocumentFormattingEdits: (model, options) => {
       const code = model.getValue();
       const formatted = formatDWScript(code, {
         indentSize: options.tabSize,
         useTabs: !options.insertSpaces,
-        insertSpaces: options.insertSpaces
+        insertSpaces: options.insertSpaces,
       });
 
       return [
         {
           range: model.getFullModelRange(),
-          text: formatted
-        }
+          text: formatted,
+        },
       ];
-    }
+    },
   });
 
   // Also register range formatting
-  languages.registerDocumentRangeFormattingEditProvider('dwscript', {
+  languages.registerDocumentRangeFormattingEditProvider("dwscript", {
     provideDocumentRangeFormattingEdits: (model, range, options) => {
       // For simplicity, format the entire document
       // A more sophisticated implementation would format only the selected range
@@ -145,16 +153,16 @@ export function registerFormatter(languages) {
       const formatted = formatDWScript(code, {
         indentSize: options.tabSize,
         useTabs: !options.insertSpaces,
-        insertSpaces: options.insertSpaces
+        insertSpaces: options.insertSpaces,
       });
 
       return [
         {
           range: model.getFullModelRange(),
-          text: formatted
-        }
+          text: formatted,
+        },
       ];
-    }
+    },
   });
 }
 
@@ -163,8 +171,8 @@ export function registerFormatter(languages) {
  * @param {monaco.languages} languages - Monaco languages API
  */
 export function registerOnTypeFormatter(languages) {
-  languages.registerOnTypeFormattingEditProvider('dwscript', {
-    autoFormatTriggerCharacters: [';', '\n'],
+  languages.registerOnTypeFormattingEditProvider("dwscript", {
+    autoFormatTriggerCharacters: [";", "\n"],
     provideOnTypeFormattingEdits: (model, position, ch, options) => {
       // Auto-format the current line when ; is typed
       const lineNumber = position.lineNumber;
@@ -176,12 +184,12 @@ export function registerOnTypeFormatter(languages) {
         return [
           {
             range: new monaco.Range(lineNumber, 1, lineNumber, line.length + 1),
-            text: trimmed
-          }
+            text: trimmed,
+          },
         ];
       }
 
       return [];
-    }
+    },
   });
 }
