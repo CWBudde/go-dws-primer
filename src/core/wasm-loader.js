@@ -3,15 +3,19 @@
  * Handles loading and initializing the Go-compiled WASM module
  */
 
+import { dwsAPI } from './dwscript-api.js';
+
 let wasmInstance = null;
 let wasmReady = false;
 let wasmError = null;
+let dwsAPIInstance = null;
 
 /**
  * Initialize the WebAssembly module
+ * @param {Object} handlers - Event handlers for output, errors, etc.
  * @returns {Promise<boolean>} True if initialization was successful
  */
-export async function initWASM() {
+export async function initWASM(handlers = {}) {
   try {
     // Check if Go WASM support is available
     if (!window.Go) {
@@ -43,6 +47,10 @@ export async function initWASM() {
     if (!window.DWScript) {
       throw new Error('DWScript API not available after initialization');
     }
+
+    // Initialize the DWScript API wrapper
+    await dwsAPI.init(handlers);
+    dwsAPIInstance = dwsAPI;
 
     wasmReady = true;
     console.log('DWScript WASM runtime initialized successfully');
@@ -76,17 +84,21 @@ export function getWASMError() {
  * Execute DWScript code
  * This function will call the Go-exported function once WASM is ready
  * @param {string} code - The DWScript code to execute
+ * @param {Object} options - Execution options
  * @returns {Promise<Object>} Result object with output, errors, etc.
  */
-export async function executeDWScript(code) {
+export async function executeDWScript(code, options = {}) {
   if (!wasmReady) {
     throw new Error('WASM runtime not initialized');
   }
 
   try {
-    // Check if the global execute function is available
-    // This should be exported from the Go WASM module
-    if (typeof window.executeDWScript === 'function') {
+    // Use the DWScript API wrapper if available
+    if (dwsAPIInstance && dwsAPIInstance.isReady()) {
+      const result = await dwsAPIInstance.eval(code, options);
+      return result;
+    } else if (typeof window.executeDWScript === 'function') {
+      // Direct call to WASM function
       const result = await window.executeDWScript(code);
       return result;
     } else {
@@ -129,6 +141,15 @@ export function getWASMInfo() {
   return {
     ready: wasmReady,
     error: wasmError,
-    instance: wasmInstance
+    instance: wasmInstance,
+    api: dwsAPIInstance
   };
+}
+
+/**
+ * Get the DWScript API instance
+ * @returns {DWScriptAPI}
+ */
+export function getDWScriptAPI() {
+  return dwsAPIInstance;
 }
