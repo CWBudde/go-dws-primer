@@ -14,9 +14,11 @@ The WASM files (`dwscript.wasm` and `wasm_exec.js`) are **not committed to git**
 
 ### Build Steps
 
+> **Directory Structure Note**: These instructions assume you clone `go-dws` and `go-dws-primer` as sibling directories (both in the same parent folder). If you prefer a different structure, adjust the paths in step 3 accordingly.
+
 1. **Clone the go-dws repository** (if not already done):
    ```bash
-   cd /home/user  # or your preferred location
+   cd ~/projects  # or your preferred location
    git clone https://github.com/CWBudde/go-dws.git
    ```
 
@@ -31,9 +33,18 @@ The WASM files (`dwscript.wasm` and `wasm_exec.js`) are **not committed to git**
    - `build/wasm/dist/wasm_exec.js` (~17KB)
 
 3. **Copy files to go-dws-primer**:
+
+   If using sibling directories (recommended):
    ```bash
    cp build/wasm/dist/dwscript.wasm ../go-dws-primer/wasm/
    cp build/wasm/dist/wasm_exec.js ../go-dws-primer/wasm/
+   ```
+
+   If using a different directory structure, adjust the destination path:
+   ```bash
+   # Example for custom location:
+   cp build/wasm/dist/dwscript.wasm /path/to/your/go-dws-primer/wasm/
+   cp build/wasm/dist/wasm_exec.js /path/to/your/go-dws-primer/wasm/
    ```
 
 4. **Restart the development server** (if running):
@@ -92,9 +103,13 @@ After setup, you should see:
 
 ## File Locations
 
-- **WASM source**: `/home/user/go-dws` (or wherever you cloned it)
-- **WASM build output**: `/home/user/go-dws/build/wasm/dist/`
-- **go-dws-primer wasm directory**: `/home/user/go-dws-primer/wasm/`
+Assuming sibling directory structure (e.g., `~/projects/go-dws` and `~/projects/go-dws-primer`):
+
+- **WASM source**: `<workspace>/go-dws` (wherever you cloned it)
+- **WASM build output**: `<workspace>/go-dws/build/wasm/dist/`
+- **go-dws-primer wasm directory**: `<workspace>/go-dws-primer/wasm/`
+
+Replace `<workspace>` with your actual parent directory (e.g., `~/projects`, `~/dev`, `/opt/projects`, etc.).
 
 ## Why are WASM files gitignored?
 
