@@ -1,0 +1,101 @@
+{
+  "id": "records",
+  "title": "Records - Grouping Related Data",
+  "category": "data-structures",
+  "difficulty": "intermediate",
+  "order": 2,
+  "description": "Learn how to group different types of data together using records",
+  "estimatedTime": 20,
+  "tags": ["records", "data-structures", "structures", "intermediate"],
+  "content": {
+    "introduction": "Records allow you to group different types of data together under a single name. Unlike arrays (which store multiple values of the same type), records can store different types of data as a logical unit.\n\nThink of a record as a custom data type that represents a real-world entity (like a person, product, or book) with various attributes.\n\n### What You'll Learn\n- Declaring record types\n- Creating record variables\n- Accessing record fields\n- Using records with arrays\n- Nested records",
+    "concepts": [
+      {
+        "title": "Record Declaration",
+        "description": "Define a new record type in the 'type' section, specifying the fields and their types"
+      },
+      {
+        "title": "Record Fields",
+        "description": "Individual data elements within a record. Access using dot notation: recordVar.fieldName"
+      },
+      {
+        "title": "Record Variables",
+        "description": "Declare variables using your record type, just like any other type"
+      },
+      {
+        "title": "Arrays of Records",
+        "description": "Combine arrays and records to store collections of structured data"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Simple Record",
+        "description": "Create a record to represent a person",
+        "code": "program SimpleRecord;\n\ntype\n  TPerson = record\n    Name: String;\n    Age: Integer;\n    City: String;\n  end;\n\nvar\n  person: TPerson;\n\nbegin\n  // Assign values to record fields\n  person.Name := 'Alice';\n  person.Age := 25;\n  person.City := 'New York';\n  \n  // Display record data\n  WriteLn('Person Information:');\n  WriteLn('Name: ', person.Name);\n  WriteLn('Age: ', person.Age);\n  WriteLn('City: ', person.City);\nend.",
+        "expectedOutput": "Person Information:\nName: Alice\nAge: 25\nCity: New York"
+      },
+      {
+        "title": "Product Record",
+        "description": "Use a record to store product information",
+        "code": "program ProductRecord;\n\ntype\n  TProduct = record\n    Name: String;\n    Price: Real;\n    InStock: Boolean;\n    Quantity: Integer;\n  end;\n\nvar\n  product: TProduct;\n\nbegin\n  product.Name := 'Laptop';\n  product.Price := 899.99;\n  product.InStock := True;\n  product.Quantity := 15;\n  \n  WriteLn('Product: ', product.Name);\n  WriteLn('Price: $', product.Price:0:2);\n  WriteLn('In Stock: ', product.InStock);\n  WriteLn('Quantity: ', product.Quantity, ' units');\n  \n  // Calculate total value\n  var totalValue := product.Price * product.Quantity;\n  WriteLn('Total Inventory Value: $', totalValue:0:2);\nend.",
+        "expectedOutput": "Product: Laptop\nPrice: $899.99\nIn Stock: True\nQuantity: 15 units\nTotal Inventory Value: $13499.85"
+      },
+      {
+        "title": "Array of Records",
+        "description": "Store multiple students in an array of records",
+        "code": "program StudentRecords;\n\ntype\n  TStudent = record\n    Name: String;\n    Grade: Integer;\n    Score: Real;\n  end;\n\nvar\n  students: array[1..3] of TStudent;\n  i: Integer;\n  totalScore: Real;\n\nbegin\n  // Initialize student data\n  students[1].Name := 'Bob';\n  students[1].Grade := 10;\n  students[1].Score := 85.5;\n  \n  students[2].Name := 'Carol';\n  students[2].Grade := 10;\n  students[2].Score := 92.0;\n  \n  students[3].Name := 'David';\n  students[3].Grade := 10;\n  students[3].Score := 78.5;\n  \n  // Display all students\n  WriteLn('Student Roster:');\n  WriteLn('-----------------------------------');\n  totalScore := 0;\n  for i := 1 to 3 do\n  begin\n    WriteLn(students[i].Name, ' (Grade ', students[i].Grade, '): ', \n            students[i].Score:0:1);\n    totalScore := totalScore + students[i].Score;\n  end;\n  \n  WriteLn('-----------------------------------');\n  WriteLn('Class Average: ', (totalScore / 3):0:2);\nend.",
+        "expectedOutput": "Student Roster:\n-----------------------------------\nBob (Grade 10): 85.5\nCarol (Grade 10): 92.0\nDavid (Grade 10): 78.5\n-----------------------------------\nClass Average: 85.33"
+      },
+      {
+        "title": "Nested Records",
+        "description": "Use records within records for more complex data",
+        "code": "program NestedRecords;\n\ntype\n  TAddress = record\n    Street: String;\n    City: String;\n    ZipCode: String;\n  end;\n  \n  TEmployee = record\n    Name: String;\n    ID: Integer;\n    Salary: Real;\n    Address: TAddress;\n  end;\n\nvar\n  employee: TEmployee;\n\nbegin\n  employee.Name := 'John Smith';\n  employee.ID := 1001;\n  employee.Salary := 55000.00;\n  \n  employee.Address.Street := '123 Main St';\n  employee.Address.City := 'Boston';\n  employee.Address.ZipCode := '02101';\n  \n  WriteLn('Employee Information:');\n  WriteLn('Name: ', employee.Name);\n  WriteLn('ID: ', employee.ID);\n  WriteLn('Salary: $', employee.Salary:0:2);\n  WriteLn('Address: ', employee.Address.Street);\n  WriteLn('         ', employee.Address.City, ', ', employee.Address.ZipCode);\nend.",
+        "expectedOutput": "Employee Information:\nName: John Smith\nID: 1001\nSalary: $55000.00\nAddress: 123 Main St\n         Boston, 02101"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Book Record",
+        "description": "Create a record type for a book with fields for Title, Author, Year, and Pages. Create a variable and display the book information.",
+        "starterCode": "program BookRecord;\n\ntype\n  TBook = record\n    // Define your fields here\n  end;\n\nvar\n  book: TBook;\n\nbegin\n  // Assign values and display\n  \nend.",
+        "solution": "program BookRecord;\n\ntype\n  TBook = record\n    Title: String;\n    Author: String;\n    Year: Integer;\n    Pages: Integer;\n  end;\n\nvar\n  book: TBook;\n\nbegin\n  book.Title := 'The Great Gatsby';\n  book.Author := 'F. Scott Fitzgerald';\n  book.Year := 1925;\n  book.Pages := 180;\n  \n  WriteLn('Book Information:');\n  WriteLn('Title: ', book.Title);\n  WriteLn('Author: ', book.Author);\n  WriteLn('Published: ', book.Year);\n  WriteLn('Pages: ', book.Pages);\nend.",
+        "hints": [
+          "Define the record type in the 'type' section",
+          "Use String for text fields (Title, Author)",
+          "Use Integer for numeric fields (Year, Pages)",
+          "Access fields using dot notation: book.Title",
+          "Assign values before displaying them"
+        ]
+      },
+      {
+        "title": "Point Distance",
+        "description": "Create a record for a 2D point with X and Y coordinates. Create two points and calculate the distance between them using the formula: √((x2-x1)² + (y2-y1)²)",
+        "starterCode": "program PointDistance;\n\ntype\n  TPoint = record\n    X: Real;\n    Y: Real;\n  end;\n\nvar\n  point1, point2: TPoint;\n  \nbegin\n  point1.X := 0;\n  point1.Y := 0;\n  point2.X := 3;\n  point2.Y := 4;\n  \n  // Calculate and display distance\n  \nend.",
+        "solution": "program PointDistance;\n\ntype\n  TPoint = record\n    X: Real;\n    Y: Real;\n  end;\n\nvar\n  point1, point2: TPoint;\n  distance: Real;\n  \nbegin\n  point1.X := 0;\n  point1.Y := 0;\n  point2.X := 3;\n  point2.Y := 4;\n  \n  WriteLn('Point 1: (', point1.X:0:0, ', ', point1.Y:0:0, ')');\n  WriteLn('Point 2: (', point2.X:0:0, ', ', point2.Y:0:0, ')');\n  \n  // Calculate distance\n  var dx := point2.X - point1.X;\n  var dy := point2.Y - point1.Y;\n  distance := Sqrt(dx * dx + dy * dy);\n  \n  WriteLn('Distance: ', distance:0:2);\nend.",
+        "hints": [
+          "Calculate the difference in X coordinates (dx)",
+          "Calculate the difference in Y coordinates (dy)",
+          "Square both differences and add them",
+          "Use Sqrt() function to get the square root",
+          "The distance from (0,0) to (3,4) should be 5.00"
+        ]
+      },
+      {
+        "title": "Movie Collection",
+        "description": "Create a TMovie record and an array to store 3 movies. Display all movies with their ratings and find the highest-rated movie.",
+        "starterCode": "program MovieCollection;\n\ntype\n  TMovie = record\n    // Define fields: Title, Director, Year, Rating\n  end;\n\nvar\n  movies: array[1..3] of TMovie;\n  \nbegin\n  // Initialize movies and find highest rated\n  \nend.",
+        "solution": "program MovieCollection;\n\ntype\n  TMovie = record\n    Title: String;\n    Director: String;\n    Year: Integer;\n    Rating: Real;\n  end;\n\nvar\n  movies: array[1..3] of TMovie;\n  i, bestIndex: Integer;\n  \nbegin\n  movies[1].Title := 'Inception';\n  movies[1].Director := 'Christopher Nolan';\n  movies[1].Year := 2010;\n  movies[1].Rating := 8.8;\n  \n  movies[2].Title := 'The Matrix';\n  movies[2].Director := 'Wachowski Brothers';\n  movies[2].Year := 1999;\n  movies[2].Rating := 8.7;\n  \n  movies[3].Title := 'Interstellar';\n  movies[3].Director := 'Christopher Nolan';\n  movies[3].Year := 2014;\n  movies[3].Rating := 8.6;\n  \n  WriteLn('Movie Collection:');\n  WriteLn;\n  \n  bestIndex := 1;\n  for i := 1 to 3 do\n  begin\n    WriteLn(movies[i].Title, ' (', movies[i].Year, ')');\n    WriteLn('Director: ', movies[i].Director);\n    WriteLn('Rating: ', movies[i].Rating:0:1, '/10');\n    WriteLn;\n    \n    if movies[i].Rating > movies[bestIndex].Rating then\n      bestIndex := i;\n  end;\n  \n  WriteLn('Highest Rated: ', movies[bestIndex].Title);\nend.",
+        "hints": [
+          "Define fields for Title (String), Director (String), Year (Integer), and Rating (Real)",
+          "Use an array of TMovie to store 3 movies",
+          "Track the index of the highest-rated movie",
+          "Compare ratings in a loop to find the best one"
+        ]
+      }
+    ],
+    "summary": "Great work! You've mastered records:\n\n- Defining record types in the `type` section\n- Creating record variables\n- Accessing fields with dot notation: `record.field`\n- Combining records with arrays\n- Creating nested records for complex data\n\nRecords are perfect for organizing related data of different types into logical units, making your code more readable and maintainable!",
+    "nextSteps": "Next, you'll learn about **Sets** - a special data type for working with groups of related values, perfect for membership testing and set operations."
+  },
+  "prerequisites": ["variables-and-types", "arrays"],
+  "relatedLessons": ["arrays", "oop"]
+}
