@@ -389,7 +389,7 @@ body {
 }
 
 /* Graphics Output */
-#output-graphics {
+#output-graphics.active {
   display: flex;
   flex-direction: column;
   align-items: center;
