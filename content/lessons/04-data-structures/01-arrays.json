@@ -1,0 +1,99 @@
+{
+  "id": "arrays",
+  "title": "Arrays - Static and Dynamic",
+  "category": "data-structures",
+  "difficulty": "intermediate",
+  "order": 1,
+  "description": "Learn how to store and manage collections of data using arrays",
+  "estimatedTime": 20,
+  "tags": ["arrays", "data-structures", "collections", "intermediate"],
+  "content": {
+    "introduction": "Arrays allow you to store multiple values of the same type in a single variable. Think of an array as a numbered list of items, where each item can be accessed by its position (index).\n\nIn this lesson, you'll learn about both static arrays (fixed size) and dynamic arrays (variable size).\n\n### What You'll Learn\n- Declaring static and dynamic arrays\n- Accessing array elements using indices\n- Iterating through arrays with loops\n- Common array operations\n- Working with multi-dimensional arrays",
+    "concepts": [
+      {
+        "title": "Static Arrays",
+        "description": "Fixed-size arrays declared with a specific size. The size cannot change during program execution. Syntax: array[start..end] of Type"
+      },
+      {
+        "title": "Dynamic Arrays",
+        "description": "Variable-size arrays that can grow or shrink. Declared without size specification. Use SetLength to resize. Syntax: array of Type"
+      },
+      {
+        "title": "Array Indexing",
+        "description": "Access elements using square brackets and an index. Static arrays can have any starting index, dynamic arrays always start at 0"
+      },
+      {
+        "title": "Array Length",
+        "description": "Use Length() function to get the number of elements. For dynamic arrays, use SetLength() to change size"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Static Array Basics",
+        "description": "Declare and use a fixed-size array",
+        "code": "program StaticArrayExample;\n\nvar\n  numbers: array[1..5] of Integer;\n  i: Integer;\n\nbegin\n  // Assign values to array elements\n  numbers[1] := 10;\n  numbers[2] := 20;\n  numbers[3] := 30;\n  numbers[4] := 40;\n  numbers[5] := 50;\n  \n  // Display array elements\n  for i := 1 to 5 do\n    WriteLn('numbers[', i, '] = ', numbers[i]);\nend.",
+        "expectedOutput": "numbers[1] = 10\nnumbers[2] = 20\nnumbers[3] = 30\nnumbers[4] = 40\nnumbers[5] = 50"
+      },
+      {
+        "title": "Dynamic Array",
+        "description": "Create and use a dynamic array with SetLength",
+        "code": "program DynamicArrayExample;\n\nvar\n  scores: array of Integer;\n  i: Integer;\n\nbegin\n  // Set the size of the dynamic array\n  SetLength(scores, 3);\n  \n  // Assign values (indices start at 0)\n  scores[0] := 85;\n  scores[1] := 92;\n  scores[2] := 78;\n  \n  // Display all elements\n  WriteLn('Number of scores: ', Length(scores));\n  for i := 0 to Length(scores) - 1 do\n    WriteLn('Score ', i + 1, ': ', scores[i]);\n  \n  // Calculate average\n  var sum := 0;\n  for i := 0 to Length(scores) - 1 do\n    sum := sum + scores[i];\n  WriteLn('Average: ', sum / Length(scores):0:2);\nend.",
+        "expectedOutput": "Number of scores: 3\nScore 1: 85\nScore 2: 92\nScore 3: 78\nAverage: 85.00"
+      },
+      {
+        "title": "String Array",
+        "description": "Store multiple strings in an array",
+        "code": "program StringArrayExample;\n\nvar\n  days: array[0..6] of String;\n  i: Integer;\n\nbegin\n  // Initialize days of the week\n  days[0] := 'Monday';\n  days[1] := 'Tuesday';\n  days[2] := 'Wednesday';\n  days[3] := 'Thursday';\n  days[4] := 'Friday';\n  days[5] := 'Saturday';\n  days[6] := 'Sunday';\n  \n  WriteLn('Days of the week:');\n  for i := 0 to 6 do\n    WriteLn((i + 1), '. ', days[i]);\nend.",
+        "expectedOutput": "Days of the week:\n1. Monday\n2. Tuesday\n3. Wednesday\n4. Thursday\n5. Friday\n6. Saturday\n7. Sunday"
+      },
+      {
+        "title": "Multi-Dimensional Array",
+        "description": "Work with 2D arrays (like a table or grid)",
+        "code": "program MultiDimensionalArray;\n\nvar\n  grid: array[1..3, 1..3] of Integer;\n  row, col: Integer;\n  value: Integer;\n\nbegin\n  // Fill the grid\n  value := 1;\n  for row := 1 to 3 do\n    for col := 1 to 3 do\n    begin\n      grid[row, col] := value;\n      value := value + 1;\n    end;\n  \n  // Display the grid\n  WriteLn('3x3 Grid:');\n  for row := 1 to 3 do\n  begin\n    for col := 1 to 3 do\n      Write(grid[row, col]:3);\n    WriteLn;\n  end;\nend.",
+        "expectedOutput": "3x3 Grid:\n  1  2  3\n  4  5  6\n  7  8  9"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Temperature Tracker",
+        "description": "Create a program that stores 7 daily temperatures in an array and calculates the highest, lowest, and average temperature.",
+        "starterCode": "program TemperatureTracker;\n\nvar\n  temps: array[1..7] of Real;\n  // Add more variables as needed\n\nbegin\n  // Assign temperature values\n  temps[1] := 22.5;\n  temps[2] := 24.0;\n  temps[3] := 21.5;\n  temps[4] := 23.5;\n  temps[5] := 25.0;\n  temps[6] := 26.5;\n  temps[7] := 24.5;\n  \n  // Calculate and display highest, lowest, and average\n  \nend.",
+        "solution": "program TemperatureTracker;\n\nvar\n  temps: array[1..7] of Real;\n  i: Integer;\n  highest, lowest, sum, average: Real;\n\nbegin\n  // Assign temperature values\n  temps[1] := 22.5;\n  temps[2] := 24.0;\n  temps[3] := 21.5;\n  temps[4] := 23.5;\n  temps[5] := 25.0;\n  temps[6] := 26.5;\n  temps[7] := 24.5;\n  \n  // Initialize with first value\n  highest := temps[1];\n  lowest := temps[1];\n  sum := 0;\n  \n  // Find highest, lowest, and sum\n  for i := 1 to 7 do\n  begin\n    if temps[i] > highest then\n      highest := temps[i];\n    if temps[i] < lowest then\n      lowest := temps[i];\n    sum := sum + temps[i];\n  end;\n  \n  average := sum / 7;\n  \n  WriteLn('Week Temperature Summary:');\n  WriteLn('Highest: ', highest:0:1, '°C');\n  WriteLn('Lowest: ', lowest:0:1, '°C');\n  WriteLn('Average: ', average:0:1, '°C');\nend.",
+        "hints": [
+          "Use variables to track the highest and lowest temperatures",
+          "Initialize highest and lowest with the first array element",
+          "Use a for loop to iterate through all temperatures",
+          "Compare each temperature with current highest/lowest",
+          "Calculate sum while iterating, then divide by 7 for average"
+        ]
+      },
+      {
+        "title": "Dynamic Shopping List",
+        "description": "Create a shopping list using a dynamic array that stores 5 items and displays them in a numbered list.",
+        "starterCode": "program ShoppingList;\n\nvar\n  items: array of String;\n  // Add more variables as needed\n\nbegin\n  // Set array size and add items\n  \n  // Display the shopping list\n  \nend.",
+        "solution": "program ShoppingList;\n\nvar\n  items: array of String;\n  i: Integer;\n\nbegin\n  // Set array size\n  SetLength(items, 5);\n  \n  // Add items\n  items[0] := 'Milk';\n  items[1] := 'Bread';\n  items[2] := 'Eggs';\n  items[3] := 'Butter';\n  items[4] := 'Cheese';\n  \n  // Display the shopping list\n  WriteLn('Shopping List:');\n  for i := 0 to Length(items) - 1 do\n    WriteLn((i + 1), '. ', items[i]);\n  \n  WriteLn;\n  WriteLn('Total items: ', Length(items));\nend.",
+        "hints": [
+          "Use SetLength to set the array size to 5",
+          "Remember that dynamic arrays start at index 0",
+          "Use Length(items) - 1 as the upper bound in your loop",
+          "Add 1 to the index when displaying to show numbers 1-5 instead of 0-4"
+        ]
+      },
+      {
+        "title": "Reverse Array",
+        "description": "Create a program that stores numbers in an array and displays them in reverse order.",
+        "starterCode": "program ReverseArray;\n\nvar\n  numbers: array[1..5] of Integer;\n  \nbegin\n  numbers[1] := 10;\n  numbers[2] := 20;\n  numbers[3] := 30;\n  numbers[4] := 40;\n  numbers[5] := 50;\n  \n  // Display in reverse order\n  \nend.",
+        "solution": "program ReverseArray;\n\nvar\n  numbers: array[1..5] of Integer;\n  i: Integer;\n  \nbegin\n  numbers[1] := 10;\n  numbers[2] := 20;\n  numbers[3] := 30;\n  numbers[4] := 40;\n  numbers[5] := 50;\n  \n  WriteLn('Original order:');\n  for i := 1 to 5 do\n    Write(numbers[i], ' ');\n  WriteLn;\n  \n  WriteLn('Reverse order:');\n  for i := 5 downto 1 do\n    Write(numbers[i], ' ');\n  WriteLn;\nend.",
+        "hints": [
+          "Use a for loop with 'downto' instead of 'to'",
+          "Start from the highest index (5) and go down to 1",
+          "You can use Write instead of WriteLn to print on the same line"
+        ]
+      }
+    ],
+    "summary": "Excellent! You've learned about arrays:\n\n- **Static arrays** with fixed size: `array[1..5] of Integer`\n- **Dynamic arrays** with variable size: `array of Integer`\n- Using `SetLength()` to resize dynamic arrays\n- Accessing elements with indices: `myArray[i]`\n- Getting array length with `Length()`\n- Iterating through arrays with for loops\n- Working with multi-dimensional arrays\n\nArrays are essential for managing collections of related data efficiently!",
+    "nextSteps": "Next, you'll learn about **Records** - a way to group different types of data together into a single structure, perfect for representing real-world entities like a person, product, or student."
+  },
+  "prerequisites": ["variables-and-types", "for-loops"],
+  "relatedLessons": ["for-loops", "while-loops"]
+}
