@@ -11,15 +11,59 @@ let wasmError = null;
 let dwsAPIInstance = null;
 
 /**
+ * Dynamically load the Go WASM runtime (wasm_exec.js)
+ * @returns {Promise<boolean>} True if loaded successfully
+ */
+async function loadGoWASMRuntime() {
+  if (window.Go) {
+    return true; // Already loaded
+  }
+
+  try {
+    // Check if wasm_exec.js exists
+    const checkResponse = await fetch("/wasm/wasm_exec.js", { method: "HEAD" });
+    if (!checkResponse.ok) {
+      return false; // File doesn't exist, gracefully continue in mock mode
+    }
+
+    // Load the script dynamically
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "/wasm/wasm_exec.js";
+      script.onload = () => {
+        if (window.Go) {
+          resolve(true);
+        } else {
+          reject(new Error("wasm_exec.js loaded but Go is not defined"));
+        }
+      };
+      script.onerror = () => reject(new Error("Failed to load wasm_exec.js"));
+      document.head.appendChild(script);
+    });
+  } catch (error) {
+    console.log("Go WASM runtime not available:", error.message);
+    return false;
+  }
+}
+
+/**
  * Initialize the WebAssembly module
  * @param {Object} handlers - Event handlers for output, errors, etc.
  * @returns {Promise<boolean>} True if initialization was successful
  */
 export async function initWASM(handlers = {}) {
   try {
-    // Check if Go WASM support is available
-    if (!window.Go) {
-      throw new Error("Go WASM runtime (wasm_exec.js) not loaded");
+    // Try to load the Go WASM runtime
+    const goLoaded = await loadGoWASMRuntime();
+    if (!goLoaded) {
+      // Gracefully handle missing WASM files (expected for development)
+      console.log(
+        "WASM files not available. Running in mock mode for development.",
+      );
+      wasmError = new Error(
+        "WASM files not found. Build and copy dwscript.wasm and wasm_exec.js to /wasm directory.",
+      );
+      return false;
     }
 
     // Create a new Go instance
