@@ -46,5 +46,20 @@ export default defineConfig({
     alias: {
       '@': '/src'
     }
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: [],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'dist/',
+        '**/*.config.js',
+        '**/wasm/**'
+      ]
+    }
   }
 });
