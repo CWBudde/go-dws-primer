@@ -8,38 +8,44 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Current Phase**: Educational Content System (Phase 3) - Complete lesson system with interactive content, progress tracking, and structured learning paths.
 
+## Package Manager
+
+**CRITICAL**: This project uses **Yarn Berry (v4.x)**, NOT npm. Always use `yarn` commands.
+
+⚠️ **Never use npm commands** - they will corrupt the `yarn.lock` file and cause CI failures.
+
 ## Development Commands
 
 ### Running the Application
 
 ```bash
 # Install dependencies
-npm install
+yarn install
 
 # Start development server (http://localhost:3000)
-npm run dev
+yarn dev
 
 # Build for production
-npm run build
+yarn build
 
 # Preview production build
-npm run preview
+yarn preview
 ```
 
 ### Testing and Quality
 
 ```bash
 # Run unit tests
-npm run test
+yarn test
 
 # Run end-to-end tests
-npm run test:e2e
+yarn test:e2e
 
 # Lint code
-npm run lint
+yarn lint
 
 # Format code
-npm run format
+yarn format
 ```
 
 ### Building the WASM Module
