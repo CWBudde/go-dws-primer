@@ -63,12 +63,12 @@
   - [x] Recursion
   - [x] Function overloading
 
-- [ ] **Data Structures**
-  - [ ] Arrays (static and dynamic)
-  - [ ] Records
-  - [ ] Sets
-  - [ ] Strings and string manipulation
-  - [ ] Enumerations
+- [x] **Data Structures** (Complete - 5/5 lessons) ✅
+  - [x] Arrays (static and dynamic)
+  - [x] Records
+  - [x] Sets
+  - [x] Strings and string manipulation
+  - [x] Enumerations
 
 - [ ] **Object-Oriented Programming**
   - [ ] Classes and objects
