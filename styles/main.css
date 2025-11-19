@@ -1,6 +1,11 @@
-/* Import Component Styles */
+/* Import Component Styles - must come before Tailwind directives */
 @import './lessons.css';
 @import './modals.css';
+
+/* Tailwind CSS Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* CSS Variables for Theming */
 :root {
