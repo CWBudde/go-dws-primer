@@ -1,0 +1,99 @@
+{
+  "id": "sets",
+  "title": "Sets - Collections of Unique Values",
+  "category": "data-structures",
+  "difficulty": "intermediate",
+  "order": 3,
+  "description": "Learn how to work with sets for efficient membership testing and set operations",
+  "estimatedTime": 18,
+  "tags": ["sets", "data-structures", "collections", "intermediate"],
+  "content": {
+    "introduction": "Sets are collections of unique values of the same ordinal type (like integers, characters, or enumeration values). Unlike arrays, sets are unordered and automatically prevent duplicates.\n\nSets are perfect for checking membership, tracking options, and performing mathematical set operations.\n\n### What You'll Learn\n- Declaring and initializing sets\n- Adding and removing elements\n- Checking membership with the `in` operator\n- Set operations (union, intersection, difference)\n- Practical uses of sets",
+    "concepts": [
+      {
+        "title": "Set Declaration",
+        "description": "Declare sets using 'set of' followed by an ordinal type. Sets can contain integers, characters, or enumeration values within a specific range"
+      },
+      {
+        "title": "Set Literals",
+        "description": "Initialize sets using square brackets with comma-separated values: [1, 2, 3] or ['a', 'b', 'c']"
+      },
+      {
+        "title": "Membership Testing",
+        "description": "Use the 'in' operator to check if a value is in a set: if x in mySet then..."
+      },
+      {
+        "title": "Set Operations",
+        "description": "Combine sets with + (union), * (intersection), - (difference). These create new sets based on set theory"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Basic Set Operations",
+        "description": "Create sets and check membership",
+        "code": "program BasicSets;\n\nvar\n  numbers: set of 1..10;\n  digit: Integer;\n\nbegin\n  // Initialize a set\n  numbers := [2, 4, 6, 8, 10];\n  \n  WriteLn('Even numbers from 1-10: [2, 4, 6, 8, 10]');\n  WriteLn;\n  \n  // Check membership\n  digit := 4;\n  if digit in numbers then\n    WriteLn(digit, ' is in the set')\n  else\n    WriteLn(digit, ' is not in the set');\n  \n  digit := 5;\n  if digit in numbers then\n    WriteLn(digit, ' is in the set')\n  else\n    WriteLn(digit, ' is not in the set');\nend.",
+        "expectedOutput": "Even numbers from 1-10: [2, 4, 6, 8, 10]\n\n4 is in the set\n5 is not in the set"
+      },
+      {
+        "title": "Set Union and Intersection",
+        "description": "Combine sets using union (+) and intersection (*)",
+        "code": "program SetOperations;\n\nvar\n  setA, setB, unionSet, intersectionSet: set of 1..10;\n\nbegin\n  setA := [1, 2, 3, 4, 5];\n  setB := [4, 5, 6, 7, 8];\n  \n  WriteLn('Set A: [1, 2, 3, 4, 5]');\n  WriteLn('Set B: [4, 5, 6, 7, 8]');\n  WriteLn;\n  \n  // Union: all elements from both sets\n  unionSet := setA + setB;\n  WriteLn('Union (A + B): [1, 2, 3, 4, 5, 6, 7, 8]');\n  \n  // Intersection: elements in both sets\n  intersectionSet := setA * setB;\n  WriteLn('Intersection (A * B): [4, 5]');\n  \n  // Check results\n  if 1 in unionSet then\n    WriteLn('1 is in the union');\n  if 4 in intersectionSet then\n    WriteLn('4 is in the intersection');\nend.",
+        "expectedOutput": "Set A: [1, 2, 3, 4, 5]\nSet B: [4, 5, 6, 7, 8]\n\nUnion (A + B): [1, 2, 3, 4, 5, 6, 7, 8]\nIntersection (A * B): [4, 5]\n1 is in the union\n4 is in the intersection"
+      },
+      {
+        "title": "Character Sets",
+        "description": "Use sets with characters for validation",
+        "code": "program CharacterSets;\n\nvar\n  vowels: set of Char;\n  consonants: set of Char;\n  testChar: Char;\n\nbegin\n  vowels := ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];\n  \n  WriteLn('Vowel Checker');\n  WriteLn('-------------');\n  \n  testChar := 'a';\n  if testChar in vowels then\n    WriteLn(testChar, ' is a vowel')\n  else\n    WriteLn(testChar, ' is not a vowel');\n  \n  testChar := 'b';\n  if testChar in vowels then\n    WriteLn(testChar, ' is a vowel')\n  else\n    WriteLn(testChar, ' is not a vowel');\n  \n  testChar := 'E';\n  if testChar in vowels then\n    WriteLn(testChar, ' is a vowel')\n  else\n    WriteLn(testChar, ' is not a vowel');\nend.",
+        "expectedOutput": "Vowel Checker\n-------------\na is a vowel\nb is not a vowel\nE is a vowel"
+      },
+      {
+        "title": "Set Difference and Inclusion",
+        "description": "Use set difference and inclusion operators",
+        "code": "program SetDifference;\n\nvar\n  allDigits, evens, odds: set of 0..9;\n  i: Integer;\n\nbegin\n  // Initialize sets\n  allDigits := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];\n  evens := [0, 2, 4, 6, 8];\n  \n  // Set difference: elements in first set but not in second\n  odds := allDigits - evens;\n  \n  WriteLn('All digits: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]');\n  WriteLn('Even digits: [0, 2, 4, 6, 8]');\n  WriteLn('Odd digits (all - evens): [1, 3, 5, 7, 9]');\n  WriteLn;\n  \n  // Check subset relationship\n  if evens <= allDigits then\n    WriteLn('Evens is a subset of all digits');\n  \n  // Test membership in odds\n  WriteLn;\n  for i := 0 to 4 do\n    if i in odds then\n      WriteLn(i, ' is odd');\nend.",
+        "expectedOutput": "All digits: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\nEven digits: [0, 2, 4, 6, 8]\nOdd digits (all - evens): [1, 3, 5, 7, 9]\n\nEvens is a subset of all digits\n\n1 is odd\n3 is odd"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Prime Checker",
+        "description": "Create a set of prime numbers from 1 to 20 and check if given numbers are prime.",
+        "starterCode": "program PrimeChecker;\n\nvar\n  primes: set of 1..20;\n  testNum: Integer;\n\nbegin\n  // Initialize the set with prime numbers\n  primes := []; // Fill this with primes: 2, 3, 5, 7, 11, 13, 17, 19\n  \n  // Test some numbers\n  \nend.",
+        "solution": "program PrimeChecker;\n\nvar\n  primes: set of 1..20;\n  testNum: Integer;\n\nbegin\n  // Initialize the set with prime numbers\n  primes := [2, 3, 5, 7, 11, 13, 17, 19];\n  \n  WriteLn('Prime numbers from 1-20:');\n  WriteLn('[2, 3, 5, 7, 11, 13, 17, 19]');\n  WriteLn;\n  \n  // Test some numbers\n  testNum := 7;\n  if testNum in primes then\n    WriteLn(testNum, ' is prime')\n  else\n    WriteLn(testNum, ' is not prime');\n  \n  testNum := 10;\n  if testNum in primes then\n    WriteLn(testNum, ' is prime')\n  else\n    WriteLn(testNum, ' is not prime');\n  \n  testNum := 13;\n  if testNum in primes then\n    WriteLn(testNum, ' is prime')\n  else\n    WriteLn(testNum, ' is not prime');\nend.",
+        "hints": [
+          "Prime numbers less than 20 are: 2, 3, 5, 7, 11, 13, 17, 19",
+          "Initialize the set using square brackets",
+          "Use the 'in' operator to check membership",
+          "Test with both prime and non-prime numbers"
+        ]
+      },
+      {
+        "title": "Days of Operation",
+        "description": "A store is open Monday, Wednesday, Friday, and Saturday. Check if it's open on different days using sets.",
+        "starterCode": "program StoreHours;\n\ntype\n  TDay = (Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday);\n\nvar\n  openDays: set of TDay;\n  today: TDay;\n\nbegin\n  // Set the open days\n  \n  // Check different days\n  \nend.",
+        "solution": "program StoreHours;\n\ntype\n  TDay = (Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday);\n\nvar\n  openDays: set of TDay;\n  today: TDay;\n\nbegin\n  // Set the open days\n  openDays := [Monday, Wednesday, Friday, Saturday];\n  \n  WriteLn('Store Hours Checker');\n  WriteLn('-------------------');\n  WriteLn('Open: Monday, Wednesday, Friday, Saturday');\n  WriteLn;\n  \n  // Check different days\n  today := Monday;\n  if today in openDays then\n    WriteLn('Monday: OPEN')\n  else\n    WriteLn('Monday: CLOSED');\n  \n  today := Tuesday;\n  if today in openDays then\n    WriteLn('Tuesday: OPEN')\n  else\n    WriteLn('Tuesday: CLOSED');\n  \n  today := Friday;\n  if today in openDays then\n    WriteLn('Friday: OPEN')\n  else\n    WriteLn('Friday: CLOSED');\nend.",
+        "hints": [
+          "Use the enumeration type TDay for day names",
+          "Create a set containing Monday, Wednesday, Friday, Saturday",
+          "Use the 'in' operator to check if a day is in openDays",
+          "Test with both open and closed days"
+        ]
+      },
+      {
+        "title": "Permission System",
+        "description": "Create a simple permission system using sets. A user can have Read, Write, and Execute permissions.",
+        "starterCode": "program Permissions;\n\ntype\n  TPermission = (Read, Write, Execute);\n\nvar\n  userPerms, adminPerms: set of TPermission;\n\nbegin\n  // Set permissions for user and admin\n  \n  // Check and display permissions\n  \nend.",
+        "solution": "program Permissions;\n\ntype\n  TPermission = (Read, Write, Execute);\n\nvar\n  userPerms, adminPerms, commonPerms: set of TPermission;\n\nbegin\n  // Set permissions\n  userPerms := [Read, Execute];\n  adminPerms := [Read, Write, Execute];\n  \n  WriteLn('Permission System');\n  WriteLn('----------------');\n  \n  // Check user permissions\n  WriteLn('User permissions:');\n  if Read in userPerms then WriteLn('  - Read: YES');\n  if Write in userPerms then \n    WriteLn('  - Write: YES')\n  else\n    WriteLn('  - Write: NO');\n  if Execute in userPerms then WriteLn('  - Execute: YES');\n  \n  WriteLn;\n  WriteLn('Admin permissions:');\n  if Read in adminPerms then WriteLn('  - Read: YES');\n  if Write in adminPerms then WriteLn('  - Write: YES');\n  if Execute in adminPerms then WriteLn('  - Execute: YES');\n  \n  WriteLn;\n  // Find common permissions\n  commonPerms := userPerms * adminPerms;\n  if Read in commonPerms then\n    WriteLn('Both have Read permission');\nend.",
+        "hints": [
+          "Define an enumeration for permission types",
+          "Create separate sets for user and admin permissions",
+          "Use 'in' to check individual permissions",
+          "Use set intersection (*) to find common permissions"
+        ]
+      }
+    ],
+    "summary": "Excellent work on sets! You've learned:\n\n- Declaring sets: `set of 1..10` or `set of Char`\n- Set literals: `[1, 2, 3]` or `['a', 'b', 'c']`\n- Membership testing: `if x in mySet then`\n- Union (+): combines elements from both sets\n- Intersection (*): elements in both sets\n- Difference (-): elements in first set but not second\n- Subset testing: `setA <= setB`\n\nSets are powerful for membership testing, permissions, options, and mathematical set operations!",
+    "nextSteps": "Next, you'll explore **String Manipulation** - learning how to work with text, including concatenation, searching, and transforming strings."
+  },
+  "prerequisites": ["variables-and-types", "operators"],
+  "relatedLessons": ["enumerations", "if-statements"]
+}

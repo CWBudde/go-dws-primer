@@ -1,0 +1,127 @@
+{
+  "id": "strings",
+  "title": "String Manipulation",
+  "category": "data-structures",
+  "difficulty": "intermediate",
+  "order": 4,
+  "description": "Master string operations including concatenation, searching, and transformation",
+  "estimatedTime": 25,
+  "tags": ["strings", "text", "manipulation", "intermediate"],
+  "content": {
+    "introduction": "Strings are sequences of characters used to store and manipulate text. DWScript provides many powerful functions for working with strings.\n\nIn this lesson, you'll learn how to manipulate strings effectively for text processing tasks.\n\n### What You'll Learn\n- String concatenation and formatting\n- String length and character access\n- Searching within strings\n- Extracting substrings\n- Case conversion\n- String comparison",
+    "concepts": [
+      {
+        "title": "String Concatenation",
+        "description": "Combine strings using the + operator: 'Hello' + ' ' + 'World'"
+      },
+      {
+        "title": "String Functions",
+        "description": "Built-in functions like Length(), Copy(), Pos(), UpperCase(), LowerCase(), Trim()"
+      },
+      {
+        "title": "Character Access",
+        "description": "Access individual characters using brackets: str[1] (note: strings are 1-indexed in Pascal)"
+      },
+      {
+        "title": "String Comparison",
+        "description": "Compare strings using =, <>, <, >, <=, >= operators (case-sensitive by default)"
+      }
+    ],
+    "examples": [
+      {
+        "title": "String Basics",
+        "description": "Basic string operations and concatenation",
+        "code": "program StringBasics;\n\nvar\n  firstName, lastName, fullName: String;\n  len: Integer;\n\nbegin\n  firstName := 'John';\n  lastName := 'Doe';\n  \n  // Concatenation\n  fullName := firstName + ' ' + lastName;\n  \n  WriteLn('First Name: ', firstName);\n  WriteLn('Last Name: ', lastName);\n  WriteLn('Full Name: ', fullName);\n  \n  // String length\n  len := Length(fullName);\n  WriteLn('Length: ', len, ' characters');\n  \n  // Character access\n  WriteLn('First character: ', fullName[1]);\nend.",
+        "expectedOutput": "First Name: John\nLast Name: Doe\nFull Name: John Doe\nLength: 8 characters\nFirst character: J"
+      },
+      {
+        "title": "Substring Operations",
+        "description": "Extract parts of strings using Copy()",
+        "code": "program SubstringExample;\n\nvar\n  text: String;\n  part1, part2: String;\n\nbegin\n  text := 'Hello, World!';\n  \n  WriteLn('Original: ', text);\n  \n  // Copy(source, start, length)\n  // Note: strings are 1-indexed\n  part1 := Copy(text, 1, 5);   // First 5 characters\n  part2 := Copy(text, 8, 5);   // 5 characters starting at position 8\n  \n  WriteLn('First 5 chars: ', part1);\n  WriteLn('Chars 8-12: ', part2);\n  \n  // Extract file extension\n  var filename := 'document.pdf';\n  var ext := Copy(filename, 10, 3);\n  WriteLn('File extension: .', ext);\nend.",
+        "expectedOutput": "Original: Hello, World!\nFirst 5 chars: Hello\nChars 8-12: World\nFile extension: .pdf"
+      },
+      {
+        "title": "Searching in Strings",
+        "description": "Find substrings using Pos()",
+        "code": "program StringSearch;\n\nvar\n  text: String;\n  position: Integer;\n\nbegin\n  text := 'The quick brown fox jumps over the lazy dog';\n  \n  WriteLn('Text: ', text);\n  WriteLn;\n  \n  // Pos(substring, string) returns position (1-based) or 0 if not found\n  position := Pos('fox', text);\n  if position > 0 then\n    WriteLn('\"fox\" found at position ', position)\n  else\n    WriteLn('\"fox\" not found');\n  \n  position := Pos('cat', text);\n  if position > 0 then\n    WriteLn('\"cat\" found at position ', position)\n  else\n    WriteLn('\"cat\" not found');\n  \n  // Check if string contains a word\n  if Pos('quick', text) > 0 then\n    WriteLn('Text contains \"quick\"');\nend.",
+        "expectedOutput": "Text: The quick brown fox jumps over the lazy dog\n\n\"fox\" found at position 17\n\"cat\" not found\nText contains \"quick\""
+      },
+      {
+        "title": "Case Conversion",
+        "description": "Convert between uppercase and lowercase",
+        "code": "program CaseConversion;\n\nvar\n  original, upper, lower: String;\n\nbegin\n  original := 'Hello World';\n  \n  upper := UpperCase(original);\n  lower := LowerCase(original);\n  \n  WriteLn('Original: ', original);\n  WriteLn('Uppercase: ', upper);\n  WriteLn('Lowercase: ', lower);\n  WriteLn;\n  \n  // Case-insensitive comparison\n  var str1 := 'HELLO';\n  var str2 := 'hello';\n  \n  if str1 = str2 then\n    WriteLn('Strings are equal (case-sensitive)')\n  else\n    WriteLn('Strings are NOT equal (case-sensitive)');\n  \n  if LowerCase(str1) = LowerCase(str2) then\n    WriteLn('Strings are equal (case-insensitive)');\nend.",
+        "expectedOutput": "Original: Hello World\nUppercase: HELLO WORLD\nLowercase: hello world\n\nStrings are NOT equal (case-sensitive)\nStrings are equal (case-insensitive)"
+      },
+      {
+        "title": "String Trimming and Formatting",
+        "description": "Remove whitespace and format strings",
+        "code": "program StringFormatting;\n\nvar\n  text: String;\n  trimmed: String;\n  padded: String;\n\nbegin\n  // Trim removes leading and trailing spaces\n  text := '   Hello World   ';\n  trimmed := Trim(text);\n  \n  WriteLn('Original: \"', text, '\"');\n  WriteLn('Trimmed: \"', trimmed, '\"');\n  WriteLn;\n  \n  // String repetition and building\n  var line := '=';\n  var i: Integer;\n  var separator := '';\n  for i := 1 to 20 do\n    separator := separator + line;\n  \n  WriteLn(separator);\n  WriteLn('      TITLE      ');\n  WriteLn(separator);\nend.",
+        "expectedOutput": "Original: \"   Hello World   \"\nTrimmed: \"Hello World\"\n\n====================\n      TITLE      \n===================="
+      },
+      {
+        "title": "String Building and Manipulation",
+        "description": "Build strings dynamically and reverse text",
+        "code": "program StringBuilding;\n\nvar\n  original, reversed: String;\n  i: Integer;\n\nbegin\n  original := 'DWScript';\n  reversed := '';\n  \n  // Build reversed string\n  for i := Length(original) downto 1 do\n    reversed := reversed + original[i];\n  \n  WriteLn('Original: ', original);\n  WriteLn('Reversed: ', reversed);\n  WriteLn;\n  \n  // Count vowels\n  var text := 'Hello World';\n  var vowelCount := 0;\n  for i := 1 to Length(text) do\n  begin\n    var ch := LowerCase(text[i]);\n    if (ch = 'a') or (ch = 'e') or (ch = 'i') or \n       (ch = 'o') or (ch = 'u') then\n      vowelCount := vowelCount + 1;\n  end;\n  \n  WriteLn('Text: ', text);\n  WriteLn('Vowel count: ', vowelCount);\nend.",
+        "expectedOutput": "Original: DWScript\nReversed: tpircSWD\n\nText: Hello World\nVowel count: 3"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Email Validator",
+        "description": "Check if an email address contains '@' and a domain. Display whether it's valid.",
+        "starterCode": "program EmailValidator;\n\nvar\n  email: String;\n  \nbegin\n  email := 'user@example.com';\n  \n  // Check if email contains '@' and has a domain\n  \nend.",
+        "solution": "program EmailValidator;\n\nvar\n  email: String;\n  atPosition, dotPosition: Integer;\n  isValid: Boolean;\n  \nbegin\n  email := 'user@example.com';\n  \n  WriteLn('Email: ', email);\n  \n  // Find positions\n  atPosition := Pos('@', email);\n  dotPosition := Pos('.', email);\n  \n  // Valid if has @ and . after @\n  isValid := (atPosition > 0) and (dotPosition > atPosition);\n  \n  if isValid then\n    WriteLn('Status: Valid email format')\n  else\n    WriteLn('Status: Invalid email format');\n  \n  // Test with invalid email\n  email := 'invalid.email';\n  WriteLn;\n  WriteLn('Email: ', email);\n  atPosition := Pos('@', email);\n  dotPosition := Pos('.', email);\n  isValid := (atPosition > 0) and (dotPosition > atPosition);\n  \n  if isValid then\n    WriteLn('Status: Valid email format')\n  else\n    WriteLn('Status: Invalid email format');\nend.",
+        "hints": [
+          "Use Pos() to find the position of '@' in the email",
+          "Use Pos() to find the position of '.' in the email",
+          "The email is valid if @ is found and . appears after @",
+          "Position > 0 means the character was found",
+          "Test with both valid and invalid emails"
+        ]
+      },
+      {
+        "title": "Name Formatter",
+        "description": "Convert a name to proper case (first letter uppercase, rest lowercase).",
+        "starterCode": "program NameFormatter;\n\nvar\n  name: String;\n  \nbegin\n  name := 'jOHN dOE';\n  \n  // Format to proper case: \"John Doe\"\n  \nend.",
+        "solution": "program NameFormatter;\n\nvar\n  name, formatted: String;\n  i: Integer;\n  makeUpper: Boolean;\n  \nbegin\n  name := 'jOHN dOE';\n  \n  WriteLn('Original: ', name);\n  \n  // Convert to lowercase first\n  formatted := LowerCase(name);\n  \n  // Capitalize first letter\n  if Length(formatted) > 0 then\n    formatted[1] := UpperCase(formatted[1])[1];\n  \n  // Capitalize letter after space\n  for i := 2 to Length(formatted) do\n  begin\n    if formatted[i - 1] = ' ' then\n      formatted[i] := UpperCase(formatted[i])[1];\n  end;\n  \n  WriteLn('Formatted: ', formatted);\nend.",
+        "hints": [
+          "First convert the entire string to lowercase using LowerCase()",
+          "Capitalize the first character (position 1)",
+          "Loop through the string to find spaces",
+          "Capitalize the character after each space",
+          "Use UpperCase() on individual characters"
+        ]
+      },
+      {
+        "title": "Word Counter",
+        "description": "Count the number of words in a sentence (words are separated by spaces).",
+        "starterCode": "program WordCounter;\n\nvar\n  sentence: String;\n  \nbegin\n  sentence := 'The quick brown fox jumps';\n  \n  // Count words\n  \nend.",
+        "solution": "program WordCounter;\n\nvar\n  sentence: String;\n  i, wordCount: Integer;\n  inWord: Boolean;\n  \nbegin\n  sentence := 'The quick brown fox jumps';\n  \n  WriteLn('Sentence: ', sentence);\n  \n  wordCount := 0;\n  inWord := False;\n  \n  for i := 1 to Length(sentence) do\n  begin\n    if sentence[i] = ' ' then\n      inWord := False\n    else if not inWord then\n    begin\n      wordCount := wordCount + 1;\n      inWord := True;\n    end;\n  end;\n  \n  WriteLn('Word count: ', wordCount);\n  WriteLn;\n  \n  // Alternative: count spaces and add 1\n  var spaceCount := 0;\n  for i := 1 to Length(sentence) do\n    if sentence[i] = ' ' then\n      spaceCount := spaceCount + 1;\n  \n  WriteLn('Alternative method: ', spaceCount + 1, ' words');\nend.",
+        "hints": [
+          "One approach: count the number of spaces and add 1",
+          "Better approach: track when you enter/exit words",
+          "Use a boolean flag to know if you're inside a word",
+          "When you hit a non-space after a space, that's a new word",
+          "The sentence 'The quick brown fox jumps' has 5 words"
+        ]
+      },
+      {
+        "title": "Initials Extractor",
+        "description": "Extract initials from a full name (e.g., 'John Doe' becomes 'J.D.').",
+        "starterCode": "program InitialsExtractor;\n\nvar\n  fullName: String;\n  \nbegin\n  fullName := 'John Doe';\n  \n  // Extract initials\n  \nend.",
+        "solution": "program InitialsExtractor;\n\nvar\n  fullName, initials: String;\n  i: Integer;\n  \nbegin\n  fullName := 'John Doe';\n  \n  WriteLn('Full Name: ', fullName);\n  \n  initials := '';\n  \n  // First character is always an initial\n  if Length(fullName) > 0 then\n    initials := UpperCase(fullName[1]) + '.';\n  \n  // Find characters after spaces\n  for i := 2 to Length(fullName) do\n  begin\n    if (fullName[i - 1] = ' ') and (fullName[i] <> ' ') then\n      initials := initials + UpperCase(fullName[i]) + '.';\n  end;\n  \n  WriteLn('Initials: ', initials);\n  \n  // Test with three names\n  fullName := 'John Paul Jones';\n  WriteLn;\n  WriteLn('Full Name: ', fullName);\n  \n  initials := '';\n  if Length(fullName) > 0 then\n    initials := UpperCase(fullName[1]) + '.';\n  \n  for i := 2 to Length(fullName) do\n  begin\n    if (fullName[i - 1] = ' ') and (fullName[i] <> ' ') then\n      initials := initials + UpperCase(fullName[i]) + '.';\n  end;\n  \n  WriteLn('Initials: ', initials);\nend.",
+        "hints": [
+          "Take the first character of the string",
+          "Find all characters that come after a space",
+          "Convert each initial to uppercase",
+          "Add a period after each initial",
+          "Build the initials string as you find each one"
+        ]
+      }
+    ],
+    "summary": "Great job mastering strings! You've learned:\n\n- String concatenation with `+`\n- `Length(str)` to get string length\n- `Copy(str, start, len)` to extract substrings\n- `Pos(substr, str)` to find text\n- `UpperCase(str)` and `LowerCase(str)` for case conversion\n- `Trim(str)` to remove whitespace\n- Character access with `str[index]` (1-based indexing)\n- String comparison with = and <>\n\nString manipulation is essential for text processing, data validation, and formatting!",
+    "nextSteps": "Next, you'll learn about **Enumerations** - a way to define your own named constants, making your code more readable and type-safe."
+  },
+  "prerequisites": ["variables-and-types", "operators", "for-loops"],
+  "relatedLessons": ["arrays", "if-statements"]
+}

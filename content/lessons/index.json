@@ -16,6 +16,11 @@
     "/content/lessons/03-functions/04-scope.json",
     "/content/lessons/03-functions/05-recursion.json",
     "/content/lessons/03-functions/06-overloading.json",
+    "/content/lessons/04-data-structures/01-arrays.json",
+    "/content/lessons/04-data-structures/02-records.json",
+    "/content/lessons/04-data-structures/03-sets.json",
+    "/content/lessons/04-data-structures/04-strings.json",
+    "/content/lessons/04-data-structures/05-enumerations.json",
     "/content/lessons/06-turtle-graphics/01-turtle-basics.json"
   ]
 }

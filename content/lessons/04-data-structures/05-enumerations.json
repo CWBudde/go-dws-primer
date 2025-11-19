@@ -1,0 +1,114 @@
+{
+  "id": "enumerations",
+  "title": "Enumerations - Named Constants",
+  "category": "data-structures",
+  "difficulty": "intermediate",
+  "order": 5,
+  "description": "Learn how to create custom types with named constant values",
+  "estimatedTime": 18,
+  "tags": ["enumerations", "types", "constants", "intermediate"],
+  "content": {
+    "introduction": "Enumerations (enums) allow you to define a custom type with a fixed set of named values. This makes your code more readable and helps prevent errors by restricting variables to valid values.\n\nInstead of using magic numbers or strings, enumerations give meaningful names to related constants.\n\n### What You'll Learn\n- Declaring enumeration types\n- Using enumeration values\n- Enumeration ordering and comparison\n- Iterating through enumerations\n- Combining enumerations with other types",
+    "concepts": [
+      {
+        "title": "Enumeration Declaration",
+        "description": "Define an enumeration type listing all possible values in parentheses: type TDay = (Monday, Tuesday, Wednesday, ...)"
+      },
+      {
+        "title": "Ordinal Values",
+        "description": "Each enumeration value has an ordinal number starting from 0. Use Ord() to get the number, Succ() for next value, Pred() for previous"
+      },
+      {
+        "title": "Type Safety",
+        "description": "Variables of an enumeration type can only hold values from that enumeration, preventing invalid assignments"
+      },
+      {
+        "title": "Enumeration with Sets",
+        "description": "Enumerations work perfectly with sets for representing collections of options or flags"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Days of the Week",
+        "description": "Define an enumeration for days",
+        "code": "program DaysOfWeek;\n\ntype\n  TDay = (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday);\n\nvar\n  today: TDay;\n  tomorrow: TDay;\n\nbegin\n  today := Wednesday;\n  \n  WriteLn('Today is Wednesday');\n  WriteLn('Ordinal value: ', Ord(today));\n  \n  // Get next day\n  if today <> Sunday then\n    tomorrow := Succ(today)\n  else\n    tomorrow := Monday;\n  \n  WriteLn('Tomorrow is Thursday (ordinal: ', Ord(tomorrow), ')');\n  \n  // Comparison\n  if today < Friday then\n    WriteLn('Still a few days until Friday!');\nend.",
+        "expectedOutput": "Today is Wednesday\nOrdinal value: 2\nTomorrow is Thursday (ordinal: 3)\nStill a few days until Friday!"
+      },
+      {
+        "title": "Traffic Light States",
+        "description": "Model a traffic light with enumerations",
+        "code": "program TrafficLight;\n\ntype\n  TLightColor = (Red, Yellow, Green);\n\nvar\n  light: TLightColor;\n  nextLight: TLightColor;\n\nbegin\n  light := Red;\n  \n  WriteLn('Current light: Red');\n  \n  // Determine action based on light\n  case light of\n    Red:\n    begin\n      WriteLn('Action: STOP');\n      nextLight := Green;\n    end;\n    Yellow:\n    begin\n      WriteLn('Action: Prepare to stop');\n      nextLight := Red;\n    end;\n    Green:\n    begin\n      WriteLn('Action: GO');\n      nextLight := Yellow;\n    end;\n  end;\n  \n  WriteLn('Next light will be: Green');\nend.",
+        "expectedOutput": "Current light: Red\nAction: STOP\nNext light will be: Green"
+      },
+      {
+        "title": "Game Direction",
+        "description": "Use enumerations for player movement",
+        "code": "program GameDirection;\n\ntype\n  TDirection = (North, East, South, West);\n\nvar\n  facing: TDirection;\n  x, y: Integer;\n\nbegin\n  x := 0;\n  y := 0;\n  facing := North;\n  \n  WriteLn('Starting position: (', x, ', ', y, ')');\n  WriteLn('Facing: North');\n  WriteLn;\n  \n  // Move based on direction\n  case facing of\n    North: y := y + 1;\n    South: y := y - 1;\n    East: x := x + 1;\n    West: x := x - 1;\n  end;\n  \n  WriteLn('After moving north:');\n  WriteLn('New position: (', x, ', ', y, ')');\n  \n  // Turn right (clockwise)\n  facing := East;\n  WriteLn('After turning right: Facing East');\n  \n  case facing of\n    North: y := y + 1;\n    South: y := y - 1;\n    East: x := x + 1;\n    West: x := x - 1;\n  end;\n  \n  WriteLn('After moving east:');\n  WriteLn('Final position: (', x, ', ', y, ')');\nend.",
+        "expectedOutput": "Starting position: (0, 0)\nFacing: North\n\nAfter moving north:\nNew position: (0, 1)\nAfter turning right: Facing East\nAfter moving east:\nFinal position: (1, 1)"
+      },
+      {
+        "title": "Priority Levels",
+        "description": "Use enumerations with ordering for priorities",
+        "code": "program PrioritySystem;\n\ntype\n  TPriority = (Low, Medium, High, Critical);\n  \n  TTask = record\n    Name: String;\n    Priority: TPriority;\n  end;\n\nvar\n  task1, task2: TTask;\n\nbegin\n  task1.Name := 'Write documentation';\n  task1.Priority := Medium;\n  \n  task2.Name := 'Fix security bug';\n  task2.Priority := Critical;\n  \n  WriteLn('Task 1: ', task1.Name);\n  WriteLn('Priority: Medium (level ', Ord(task1.Priority), ')');\n  WriteLn;\n  \n  WriteLn('Task 2: ', task2.Name);\n  WriteLn('Priority: Critical (level ', Ord(task2.Priority), ')');\n  WriteLn;\n  \n  // Compare priorities\n  if task2.Priority > task1.Priority then\n    WriteLn('Task 2 has higher priority - do it first!');\nend.",
+        "expectedOutput": "Task 1: Write documentation\nPriority: Medium (level 1)\n\nTask 2: Fix security bug\nPriority: Critical (level 3)\n\nTask 2 has higher priority - do it first!"
+      },
+      {
+        "title": "Enumerations with Sets",
+        "description": "Combine enumerations and sets for flags",
+        "code": "program FilePermissions;\n\ntype\n  TPermission = (Read, Write, Execute, Delete);\n  TPermissionSet = set of TPermission;\n\nvar\n  userPerms, adminPerms: TPermissionSet;\n\nbegin\n  // Set permissions\n  userPerms := [Read, Write];\n  adminPerms := [Read, Write, Execute, Delete];\n  \n  WriteLn('User Permissions:');\n  if Read in userPerms then WriteLn('  - Read');\n  if Write in userPerms then WriteLn('  - Write');\n  if Execute in userPerms then \n    WriteLn('  - Execute')\n  else\n    WriteLn('  - Execute: NO');\n  if Delete in userPerms then \n    WriteLn('  - Delete')\n  else\n    WriteLn('  - Delete: NO');\n  \n  WriteLn;\n  WriteLn('Admin Permissions:');\n  if Read in adminPerms then WriteLn('  - Read');\n  if Write in adminPerms then WriteLn('  - Write');\n  if Execute in adminPerms then WriteLn('  - Execute');\n  if Delete in adminPerms then WriteLn('  - Delete');\nend.",
+        "expectedOutput": "User Permissions:\n  - Read\n  - Write\n  - Execute: NO\n  - Delete: NO\n\nAdmin Permissions:\n  - Read\n  - Write\n  - Execute\n  - Delete"
+      },
+      {
+        "title": "Iterating Enumerations",
+        "description": "Loop through all enumeration values",
+        "code": "program EnumIteration;\n\ntype\n  TSeason = (Spring, Summer, Fall, Winter);\n\nvar\n  season: TSeason;\n  i: Integer;\n\nbegin\n  WriteLn('Seasons of the year:');\n  WriteLn;\n  \n  for i := Ord(Spring) to Ord(Winter) do\n  begin\n    season := TSeason(i);\n    \n    Write('Season ', i + 1, ': ');\n    case season of\n      Spring: WriteLn('Spring (Ordinal: ', Ord(season), ')');\n      Summer: WriteLn('Summer (Ordinal: ', Ord(season), ')');\n      Fall: WriteLn('Fall (Ordinal: ', Ord(season), ')');\n      Winter: WriteLn('Winter (Ordinal: ', Ord(season), ')');\n    end;\n  end;\nend.",
+        "expectedOutput": "Seasons of the year:\n\nSeason 1: Spring (Ordinal: 0)\nSeason 2: Summer (Ordinal: 1)\nSeason 3: Fall (Ordinal: 2)\nSeason 4: Winter (Ordinal: 3)"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Month Enumeration",
+        "description": "Create an enumeration for months and write a program that determines the number of days in a given month.",
+        "starterCode": "program MonthDays;\n\ntype\n  TMonth = (Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec);\n\nvar\n  month: TMonth;\n  days: Integer;\n\nbegin\n  month := Feb;\n  \n  // Determine number of days\n  \nend.",
+        "solution": "program MonthDays;\n\ntype\n  TMonth = (Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec);\n\nvar\n  month: TMonth;\n  days: Integer;\n\nbegin\n  month := Feb;\n  \n  // Determine number of days\n  case month of\n    Jan, Mar, May, Jul, Aug, Oct, Dec: days := 31;\n    Apr, Jun, Sep, Nov: days := 30;\n    Feb: days := 28;  // Not accounting for leap years\n  end;\n  \n  WriteLn('Month: February');\n  WriteLn('Days: ', days);\n  WriteLn;\n  \n  // Test with another month\n  month := Jul;\n  case month of\n    Jan, Mar, May, Jul, Aug, Oct, Dec: days := 31;\n    Apr, Jun, Sep, Nov: days := 30;\n    Feb: days := 28;\n  end;\n  \n  WriteLn('Month: July');\n  WriteLn('Days: ', days);\nend.",
+        "hints": [
+          "Use a case statement to handle different months",
+          "31 days: Jan, Mar, May, Jul, Aug, Oct, Dec",
+          "30 days: Apr, Jun, Sep, Nov",
+          "28 days: Feb (ignoring leap years)",
+          "You can list multiple values in one case: Jan, Mar, May: days := 31"
+        ]
+      },
+      {
+        "title": "Card Suit",
+        "description": "Create enumerations for card suits and ranks. Display a card and its color.",
+        "starterCode": "program PlayingCard;\n\ntype\n  TSuit = (Clubs, Diamonds, Hearts, Spades);\n  TRank = (Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace);\n\nvar\n  suit: TSuit;\n  rank: TRank;\n\nbegin\n  suit := Hearts;\n  rank := Ace;\n  \n  // Display card and determine color\n  \nend.",
+        "solution": "program PlayingCard;\n\ntype\n  TSuit = (Clubs, Diamonds, Hearts, Spades);\n  TRank = (Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace);\n\nvar\n  suit: TSuit;\n  rank: TRank;\n  color: String;\n\nbegin\n  suit := Hearts;\n  rank := Ace;\n  \n  // Determine color\n  case suit of\n    Clubs, Spades: color := 'Black';\n    Diamonds, Hearts: color := 'Red';\n  end;\n  \n  Write('Card: ');\n  case rank of\n    Two: Write('2');\n    Three: Write('3');\n    Four: Write('4');\n    Five: Write('5');\n    Six: Write('6');\n    Seven: Write('7');\n    Eight: Write('8');\n    Nine: Write('9');\n    Ten: Write('10');\n    Jack: Write('Jack');\n    Queen: Write('Queen');\n    King: Write('King');\n    Ace: Write('Ace');\n  end;\n  \n  Write(' of ');\n  case suit of\n    Clubs: Write('Clubs');\n    Diamonds: Write('Diamonds');\n    Hearts: Write('Hearts');\n    Spades: Write('Spades');\n  end;\n  \n  WriteLn;\n  WriteLn('Color: ', color);\nend.",
+        "hints": [
+          "Create two enumeration types: TSuit and TRank",
+          "Clubs and Spades are black suits",
+          "Diamonds and Hearts are red suits",
+          "Use case statements to display the card name",
+          "Display format: 'Ace of Hearts, Color: Red'"
+        ]
+      },
+      {
+        "title": "Order Status Tracker",
+        "description": "Create an order status system that tracks progression through states: Pending, Processing, Shipped, Delivered.",
+        "starterCode": "program OrderTracker;\n\ntype\n  TOrderStatus = (Pending, Processing, Shipped, Delivered);\n\nvar\n  status: TOrderStatus;\n\nbegin\n  status := Pending;\n  \n  // Display status and advance through states\n  \nend.",
+        "solution": "program OrderTracker;\n\ntype\n  TOrderStatus = (Pending, Processing, Shipped, Delivered);\n\nvar\n  status: TOrderStatus;\n  stepNum: Integer;\n\nbegin\n  status := Pending;\n  \n  WriteLn('Order Status Tracker');\n  WriteLn('===================');\n  WriteLn;\n  \n  // Process through all states\n  stepNum := 1;\n  while status <= Delivered do\n  begin\n    Write('Step ', stepNum, ': ');\n    \n    case status of\n      Pending:\n      begin\n        WriteLn('Order Pending');\n        WriteLn('  Waiting for confirmation...');\n      end;\n      Processing:\n      begin\n        WriteLn('Order Processing');\n        WriteLn('  Preparing your order...');\n      end;\n      Shipped:\n      begin\n        WriteLn('Order Shipped');\n        WriteLn('  On the way to you...');\n      end;\n      Delivered:\n      begin\n        WriteLn('Order Delivered');\n        WriteLn('  Enjoy your purchase!');\n      end;\n    end;\n    \n    WriteLn;\n    \n    if status < Delivered then\n      status := Succ(status)\n    else\n      break;\n    \n    stepNum := stepNum + 1;\n  end;\nend.",
+        "hints": [
+          "Use a loop to progress through all states",
+          "Use Succ() to get the next status",
+          "Use a case statement to display messages for each status",
+          "Check if status < Delivered before calling Succ()",
+          "Display appropriate messages for each stage"
+        ]
+      }
+    ],
+    "summary": "Excellent work on enumerations! You've learned:\n\n- Defining enumeration types: `type TDay = (Mon, Tue, Wed, ...)`\n- Using enumeration values as constants\n- Ordinal values with `Ord()`, `Succ()`, and `Pred()`\n- Comparing enumerations with <, >, =, etc.\n- Using enumerations in case statements\n- Combining enumerations with sets\n- Type safety benefits of enumerations\n\nEnumerations make your code more readable, maintainable, and less error-prone by giving meaningful names to related values!",
+    "nextSteps": "You've completed the Data Structures category! Next, explore **Object-Oriented Programming** to learn about classes, objects, inheritance, and more advanced programming concepts."
+  },
+  "prerequisites": ["variables-and-types", "case-statements"],
+  "relatedLessons": ["sets", "case-statements", "records"]
+}
