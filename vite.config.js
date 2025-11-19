@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
+  base: process.env.VITE_BASE_PATH || '/',
   root: '.',
   publicDir: 'public',
   build: {
@@ -10,7 +11,7 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       input: {
-        main: './public/index.html'
+        main: './index.html'
       },
       output: {
         manualChunks: {
