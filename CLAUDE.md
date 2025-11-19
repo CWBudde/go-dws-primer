@@ -165,6 +165,24 @@ The WASM API supports **real-time streaming output** via callbacks:
 3. **Lessons**: Add JSON files to `content/lessons/` following the schema
 4. **Examples**: Add to `content/examples/` with appropriate metadata
 
+### Tracking Progress in PLAN.md
+
+**CRITICAL**: When working on tasks outlined in `PLAN.md`, you **MUST** mark them as done upon completion:
+
+1. **Before Starting**: Check `PLAN.md` to understand what phase/section you're working on
+2. **During Development**: Keep track of which specific tasks from PLAN.md you're completing
+3. **After Completion**: Update `PLAN.md` immediately by:
+   - Changing `- [ ]` to `- [x]` for completed tasks
+   - Adding completion counts (e.g., "Complete - 6/6 lessons")
+   - Adding checkmarks (✅) to completed sections
+4. **Example Format**: See sections 3.1, 3.2 (Fundamentals, Control Flow, Functions & Procedures) for proper completion formatting
+
+**Why This Matters**:
+- Provides accurate project status tracking
+- Prevents duplicate work
+- Helps other contributors understand what's done
+- Maintains project momentum visibility
+
 ### Module Dependencies
 
 - Modules communicate via custom events (event-driven architecture)
