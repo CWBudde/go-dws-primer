@@ -30,7 +30,9 @@ An interactive, browser-based educational programming environment for learning D
 ### Prerequisites
 
 - Node.js 18 or higher
-- Yarn 4 (included via Corepack)
+- Yarn Berry (v4.x) - included via Corepack
+
+**Note**: This project uses Yarn Berry, not npm. Using npm commands will cause lockfile conflicts.
 
 ### Installation
 
