@@ -1,0 +1,99 @@
+{
+  "id": "function-basics",
+  "title": "Function Basics - Returning Values",
+  "category": "functions",
+  "difficulty": "beginner",
+  "order": 2,
+  "description": "Learn how to create functions that return values and use them in your programs",
+  "estimatedTime": 20,
+  "tags": ["functions", "return values", "beginner"],
+  "content": {
+    "introduction": "While procedures perform actions, **functions** do something even more powerful - they calculate and return values!\n\nA function is like a procedure, but it produces a result that you can use in expressions, assignments, or other calculations.\n\n### What You'll Learn\n- The difference between procedures and functions\n- How to declare functions with return types\n- Using the `Result` keyword to return values\n- Calling functions and using their return values",
+    "concepts": [
+      {
+        "title": "Function Declaration",
+        "description": "Functions are declared with 'function' keyword, a return type (: Integer, : String, etc.)"
+      },
+      {
+        "title": "Result Keyword",
+        "description": "The 'Result' variable holds the value that the function will return to the caller"
+      },
+      {
+        "title": "Return Types",
+        "description": "Functions can return any data type: Integer, Float, String, Boolean, etc."
+      },
+      {
+        "title": "Using Return Values",
+        "description": "Function return values can be used in expressions, assignments, or printed directly"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Simple Function",
+        "description": "A function that returns a greeting string",
+        "code": "program SimpleFunction;\n\nfunction GetGreeting: String;\nbegin\n  Result := 'Hello from the function!';\nend;\n\nbegin\n  var message := GetGreeting;\n  WriteLn(message);\n  \n  // Or call it directly:\n  WriteLn(GetGreeting);\nend.",
+        "expectedOutput": "Hello from the function!\nHello from the function!"
+      },
+      {
+        "title": "Mathematical Function",
+        "description": "A function that calculates and returns a number",
+        "code": "program MathFunction;\n\nfunction GetPi: Float;\nbegin\n  Result := 3.14159;\nend;\n\nfunction Double(value: Integer): Integer;\nbegin\n  Result := value * 2;\nend;\n\nbegin\n  WriteLn('Pi is approximately: ' + FloatToStr(GetPi));\n  WriteLn('Double of 5 is: ' + IntToStr(Double(5)));\n  WriteLn('Double of 10 is: ' + IntToStr(Double(10)));\nend.",
+        "expectedOutput": "Pi is approximately: 3.14159\nDouble of 5 is: 10\nDouble of 10 is: 20"
+      },
+      {
+        "title": "Boolean Function",
+        "description": "Functions can return Boolean values for decision making",
+        "code": "program BooleanFunction;\n\nfunction IsEven(number: Integer): Boolean;\nbegin\n  Result := (number mod 2) = 0;\nend;\n\nbegin\n  var num := 7;\n  \n  if IsEven(num) then\n    WriteLn(IntToStr(num) + ' is even')\n  else\n    WriteLn(IntToStr(num) + ' is odd');\n    \n  num := 8;\n  if IsEven(num) then\n    WriteLn(IntToStr(num) + ' is even')\n  else\n    WriteLn(IntToStr(num) + ' is odd');\nend.",
+        "expectedOutput": "7 is odd\n8 is even"
+      },
+      {
+        "title": "Using Functions in Calculations",
+        "description": "Function return values can be used in expressions",
+        "code": "program FunctionCalculations;\n\nfunction Square(x: Integer): Integer;\nbegin\n  Result := x * x;\nend;\n\nfunction Add(a, b: Integer): Integer;\nbegin\n  Result := a + b;\nend;\n\nbegin\n  var result := Square(3) + Square(4);\n  WriteLn('3^2 + 4^2 = ' + IntToStr(result));\n  \n  var sum := Add(10, 20);\n  WriteLn('10 + 20 = ' + IntToStr(sum));\n  \n  // Nested function calls\n  WriteLn('Sum of squares: ' + IntToStr(Add(Square(2), Square(3))));\nend.",
+        "expectedOutput": "3^2 + 4^2 = 25\n10 + 20 = 30\nSum of squares: 13"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Create a Triple Function",
+        "description": "Write a function called `Triple` that takes an integer and returns three times that value. Test it with different numbers.",
+        "starterCode": "program TripleFunction;\n\n// Define your Triple function here\n\nbegin\n  // Test your function with different values\n  \nend.",
+        "solution": "program TripleFunction;\n\nfunction Triple(num: Integer): Integer;\nbegin\n  Result := num * 3;\nend;\n\nbegin\n  WriteLn('Triple of 5: ' + IntToStr(Triple(5)));\n  WriteLn('Triple of 10: ' + IntToStr(Triple(10)));\n  WriteLn('Triple of 7: ' + IntToStr(Triple(7)));\nend.",
+        "hints": [
+          "Use 'function' keyword with a return type of Integer",
+          "The function should take one Integer parameter",
+          "Set Result to the parameter multiplied by 3",
+          "Call the function with different numbers to test"
+        ]
+      },
+      {
+        "title": "Temperature Converter",
+        "description": "Create a function `CelsiusToFahrenheit` that converts Celsius to Fahrenheit. Formula: F = C * 9/5 + 32",
+        "starterCode": "program TempConverter;\n\n// Define your CelsiusToFahrenheit function here\n// It should take a Float parameter and return a Float\n\nbegin\n  // Test with 0, 100, and 37 degrees Celsius\n  \nend.",
+        "solution": "program TempConverter;\n\nfunction CelsiusToFahrenheit(celsius: Float): Float;\nbegin\n  Result := celsius * 9.0 / 5.0 + 32.0;\nend;\n\nbegin\n  WriteLn('0°C = ' + FloatToStr(CelsiusToFahrenheit(0)) + '°F');\n  WriteLn('100°C = ' + FloatToStr(CelsiusToFahrenheit(100)) + '°F');\n  WriteLn('37°C = ' + FloatToStr(CelsiusToFahrenheit(37)) + '°F');\nend.",
+        "hints": [
+          "Use Float for both parameter and return type for decimal precision",
+          "Remember the formula: F = C * 9/5 + 32",
+          "Use FloatToStr to display the results",
+          "Test with 0 (should give 32), 100 (should give 212)"
+        ]
+      },
+      {
+        "title": "String Function",
+        "description": "Create a function `MakeExciting` that takes a string and returns it with '!!!' added at the end.",
+        "starterCode": "program StringFunction;\n\n// Define your MakeExciting function here\n\nbegin\n  // Test your function with different strings\n  \nend.",
+        "solution": "program StringFunction;\n\nfunction MakeExciting(text: String): String;\nbegin\n  Result := text + '!!!';\nend;\n\nbegin\n  WriteLn(MakeExciting('Hello'));\n  WriteLn(MakeExciting('DWScript is fun'));\n  WriteLn(MakeExciting('I love programming'));\nend.",
+        "hints": [
+          "The function should take a String parameter",
+          "Return type should also be String",
+          "Use the + operator to concatenate strings",
+          "Add '!!!' to the input string"
+        ]
+      }
+    ],
+    "summary": "Fantastic! You've mastered the basics of functions:\n\n- Declaring functions with return types\n- Using the `Result` keyword to return values\n- Functions can return any data type (Integer, Float, String, Boolean, etc.)\n- Using function return values in expressions and assignments\n- Functions make code more reusable and expressive\n\nFunctions are one of the most powerful tools in programming, allowing you to create your own building blocks!",
+    "nextSteps": "Next, you'll learn about **parameters** - how to pass information into functions and procedures in different ways (by value, by reference, etc.)."
+  },
+  "prerequisites": ["procedure-basics", "variables-and-types", "operators-and-expressions"],
+  "relatedLessons": ["parameters", "local-vs-global-scope"]
+}

@@ -1,0 +1,106 @@
+{
+  "id": "function-overloading",
+  "title": "Function Overloading - Multiple Functions, Same Name",
+  "category": "functions",
+  "difficulty": "advanced",
+  "order": 6,
+  "description": "Learn how to define multiple functions with the same name but different parameters",
+  "estimatedTime": 20,
+  "tags": ["overloading", "functions", "polymorphism", "advanced"],
+  "content": {
+    "introduction": "Sometimes you want to perform the same conceptual operation on different types of data. **Function overloading** lets you define multiple functions with the same name, as long as they have different parameter lists!\n\nThe compiler automatically chooses the right version based on the arguments you pass.\n\n### What You'll Learn\n- What function overloading is\n- How the compiler resolves overloaded functions\n- Rules for overloading (different parameters required)\n- Practical uses of overloading\n- Overloading vs default parameters",
+    "concepts": [
+      {
+        "title": "Overload Resolution",
+        "description": "The compiler chooses which function to call based on the number and types of arguments provided"
+      },
+      {
+        "title": "Signature Difference",
+        "description": "Overloaded functions must differ in parameter count or parameter types. Return type alone is not enough!"
+      },
+      {
+        "title": "Code Clarity",
+        "description": "Overloading makes code more intuitive - you can use the same function name for related operations on different types"
+      },
+      {
+        "title": "Reintroduce Keyword",
+        "description": "In DWScript, use 'reintroduce' keyword when overloading to explicitly declare multiple versions"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Basic Overloading",
+        "description": "Two functions with the same name but different parameter types",
+        "code": "program BasicOverloading;\n\nfunction Max(a, b: Integer): Integer; overload;\nbegin\n  if a > b then\n    Result := a\n  else\n    Result := b;\nend;\n\nfunction Max(a, b: Float): Float; overload;\nbegin\n  if a > b then\n    Result := a\n  else\n    Result := b;\nend;\n\nbegin\n  var intMax := Max(5, 10);        // Calls Integer version\n  var floatMax := Max(3.5, 2.7);   // Calls Float version\n  \n  WriteLn('Max integers: ' + IntToStr(intMax));\n  WriteLn('Max floats: ' + FloatToStr(floatMax));\nend.",
+        "expectedOutput": "Max integers: 10\nMax floats: 3.5"
+      },
+      {
+        "title": "Different Parameter Counts",
+        "description": "Overload based on the number of parameters",
+        "code": "program ParamCountOverload;\n\nfunction Sum(a, b: Integer): Integer; overload;\nbegin\n  Result := a + b;\nend;\n\nfunction Sum(a, b, c: Integer): Integer; overload;\nbegin\n  Result := a + b + c;\nend;\n\nfunction Sum(a, b, c, d: Integer): Integer; overload;\nbegin\n  Result := a + b + c + d;\nend;\n\nbegin\n  WriteLn('Sum(5, 10) = ' + IntToStr(Sum(5, 10)));\n  WriteLn('Sum(5, 10, 15) = ' + IntToStr(Sum(5, 10, 15)));\n  WriteLn('Sum(5, 10, 15, 20) = ' + IntToStr(Sum(5, 10, 15, 20)));\nend.",
+        "expectedOutput": "Sum(5, 10) = 15\nSum(5, 10, 15) = 30\nSum(5, 10, 15, 20) = 50"
+      },
+      {
+        "title": "Print Function Overloading",
+        "description": "Create a flexible Print function that works with different types",
+        "code": "program PrintOverload;\n\nprocedure Print(value: Integer); overload;\nbegin\n  WriteLn('Integer: ' + IntToStr(value));\nend;\n\nprocedure Print(value: Float); overload;\nbegin\n  WriteLn('Float: ' + FloatToStr(value));\nend;\n\nprocedure Print(value: String); overload;\nbegin\n  WriteLn('String: ' + value);\nend;\n\nprocedure Print(value: Boolean); overload;\nbegin\n  if value then\n    WriteLn('Boolean: True')\n  else\n    WriteLn('Boolean: False');\nend;\n\nbegin\n  Print(42);\n  Print(3.14);\n  Print('Hello!');\n  Print(true);\nend.",
+        "expectedOutput": "Integer: 42\nFloat: 3.14\nString: Hello!\nBoolean: True"
+      },
+      {
+        "title": "Distance Calculation",
+        "description": "Calculate distance with different sets of coordinates",
+        "code": "program DistanceOverload;\n\n// Distance from origin to point (x, y)\nfunction Distance(x, y: Float): Float; overload;\nbegin\n  Result := Sqrt(x*x + y*y);\nend;\n\n// Distance between two points\nfunction Distance(x1, y1, x2, y2: Float): Float; overload;\nbegin\n  var dx := x2 - x1;\n  var dy := y2 - y1;\n  Result := Sqrt(dx*dx + dy*dy);\nend;\n\nbegin\n  WriteLn('Distance from origin to (3,4): ' + FloatToStr(Distance(3.0, 4.0)));\n  WriteLn('Distance between (1,2) and (4,6): ' + FloatToStr(Distance(1.0, 2.0, 4.0, 6.0)));\nend.",
+        "expectedOutput": "Distance from origin to (3,4): 5\nDistance between (1,2) and (4,6): 5"
+      },
+      {
+        "title": "Format String Overloading",
+        "description": "Different formatting options for the same operation",
+        "code": "program FormatOverload;\n\nfunction FormatMoney(amount: Float): String; overload;\nbegin\n  Result := '$' + FloatToStr(amount);\nend;\n\nfunction FormatMoney(amount: Float; currency: String): String; overload;\nbegin\n  Result := currency + FloatToStr(amount);\nend;\n\nfunction FormatMoney(amount: Float; currency: String; decimals: Integer): String; overload;\nbegin\n  // Simple formatting - in practice you'd use proper decimal formatting\n  Result := currency + FloatToStr(amount);\nend;\n\nbegin\n  WriteLn(FormatMoney(42.50));\n  WriteLn(FormatMoney(42.50, '€'));\n  WriteLn(FormatMoney(42.50, '£', 2));\nend.",
+        "expectedOutput": "$42.5\n€42.5\n£42.5"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Overloaded Multiply",
+        "description": "Create an overloaded `Multiply` function that works with: (1) two integers, (2) three integers, (3) two floats.",
+        "starterCode": "program MultiplyOverload;\n\n// Define three Multiply functions with overload keyword\n\nbegin\n  WriteLn('2 * 3 = ' + IntToStr(Multiply(2, 3)));\n  WriteLn('2 * 3 * 4 = ' + IntToStr(Multiply(2, 3, 4)));\n  WriteLn('2.5 * 3.2 = ' + FloatToStr(Multiply(2.5, 3.2)));\nend.",
+        "solution": "program MultiplyOverload;\n\nfunction Multiply(a, b: Integer): Integer; overload;\nbegin\n  Result := a * b;\nend;\n\nfunction Multiply(a, b, c: Integer): Integer; overload;\nbegin\n  Result := a * b * c;\nend;\n\nfunction Multiply(a, b: Float): Float; overload;\nbegin\n  Result := a * b;\nend;\n\nbegin\n  WriteLn('2 * 3 = ' + IntToStr(Multiply(2, 3)));\n  WriteLn('2 * 3 * 4 = ' + IntToStr(Multiply(2, 3, 4)));\n  WriteLn('2.5 * 3.2 = ' + FloatToStr(Multiply(2.5, 3.2)));\nend.",
+        "hints": [
+          "Use the 'overload' keyword after each function declaration",
+          "First version: two Integer parameters, returns Integer",
+          "Second version: three Integer parameters, returns Integer",
+          "Third version: two Float parameters, returns Float"
+        ]
+      },
+      {
+        "title": "Area Calculator",
+        "description": "Create overloaded `Area` functions for: (1) square (one side), (2) rectangle (width, height), (3) circle (radius). Use π ≈ 3.14159.",
+        "starterCode": "program AreaCalculator;\n\n// Define three Area functions\n// Square: side * side\n// Rectangle: width * height\n// Circle: π * radius²\n\nbegin\n  WriteLn('Square (5): ' + FloatToStr(Area(5.0)));\n  WriteLn('Rectangle (4,6): ' + FloatToStr(Area(4.0, 6.0)));\n  WriteLn('Circle (3): ' + FloatToStr(AreaCircle(3.0)));\nend.",
+        "solution": "program AreaCalculator;\n\nfunction Area(side: Float): Float; overload;\nbegin\n  Result := side * side;\nend;\n\nfunction Area(width, height: Float): Float; overload;\nbegin\n  Result := width * height;\nend;\n\nfunction AreaCircle(radius: Float): Float;\nbegin\n  const PI = 3.14159;\n  Result := PI * radius * radius;\nend;\n\nbegin\n  WriteLn('Square (5): ' + FloatToStr(Area(5.0)));\n  WriteLn('Rectangle (4,6): ' + FloatToStr(Area(4.0, 6.0)));\n  WriteLn('Circle (3): ' + FloatToStr(AreaCircle(3.0)));\nend.",
+        "hints": [
+          "Square: one parameter (side)",
+          "Rectangle: two parameters (width, height)",
+          "For circle, you might need a different name (AreaCircle) to avoid ambiguity with square",
+          "Use const PI = 3.14159"
+        ]
+      },
+      {
+        "title": "Greeting Generator",
+        "description": "Create overloaded `Greet` procedures: (1) takes name only, (2) takes name and title (Mr., Ms., etc.), (3) takes name, title, and greeting word.",
+        "starterCode": "program GreetingOverload;\n\n// Define three Greet procedures with overload\n\nbegin\n  Greet('Alice');\n  Greet('Bob', 'Mr.');\n  Greet('Carol', 'Dr.', 'Welcome');\nend.",
+        "solution": "program GreetingOverload;\n\nprocedure Greet(name: String); overload;\nbegin\n  WriteLn('Hello, ' + name + '!');\nend;\n\nprocedure Greet(name, title: String); overload;\nbegin\n  WriteLn('Hello, ' + title + ' ' + name + '!');\nend;\n\nprocedure Greet(name, title, greeting: String); overload;\nbegin\n  WriteLn(greeting + ', ' + title + ' ' + name + '!');\nend;\n\nbegin\n  Greet('Alice');\n  Greet('Bob', 'Mr.');\n  Greet('Carol', 'Dr.', 'Welcome');\nend.",
+        "hints": [
+          "All three are procedures (no return value)",
+          "First: just name parameter",
+          "Second: name and title parameters",
+          "Third: name, title, and greeting parameters",
+          "Use string concatenation to build the greeting"
+        ]
+      }
+    ],
+    "summary": "Excellent work mastering function overloading!\n\n- **Overloading**: Multiple functions with the same name but different parameters\n- Use the `overload` keyword in DWScript\n- Functions must differ in parameter count or types\n- The compiler automatically chooses the right version\n- Overloading improves code readability and usability\n- Common in math functions, formatting, and conversions\n\nFunction overloading is a powerful feature that makes your code more flexible and intuitive to use!",
+    "nextSteps": "Congratulations! You've completed the Functions & Procedures category. Next, explore **data structures** like arrays and records, or dive into **object-oriented programming** concepts!"
+  },
+  "prerequisites": ["function-basics", "parameters"],
+  "relatedLessons": ["arrays", "oop-basics"]
+}
