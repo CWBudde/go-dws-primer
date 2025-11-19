@@ -1,0 +1,93 @@
+{
+  "id": "local-vs-global-scope",
+  "title": "Variable Scope - Local vs Global",
+  "category": "functions",
+  "difficulty": "intermediate",
+  "order": 4,
+  "description": "Understand variable scope, lifetime, and the difference between local and global variables",
+  "estimatedTime": 20,
+  "tags": ["scope", "variables", "local", "global", "intermediate"],
+  "content": {
+    "introduction": "Not all variables are created equal! Where you declare a variable determines where it can be used and how long it lives.\n\n**Scope** refers to the region of code where a variable is visible and accessible. Understanding scope is crucial for writing correct, maintainable code.\n\n### What You'll Learn\n- Local variables (declared inside functions/procedures)\n- Global variables (declared at program level)\n- Variable lifetime and visibility\n- Best practices for variable scope\n- Shadowing and name conflicts",
+    "concepts": [
+      {
+        "title": "Local Variables",
+        "description": "Variables declared inside a function/procedure. Only visible within that function. Created when function is called, destroyed when it exits."
+      },
+      {
+        "title": "Global Variables",
+        "description": "Variables declared at program level (before begin). Visible everywhere in the program. Exist for the entire program duration."
+      },
+      {
+        "title": "Variable Shadowing",
+        "description": "When a local variable has the same name as a global variable, the local one 'shadows' (hides) the global one within that function."
+      },
+      {
+        "title": "Best Practice",
+        "description": "Prefer local variables when possible. Use global variables sparingly for truly shared state. Smaller scope = easier to understand and debug."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Local Variables",
+        "description": "Variables declared inside a function are local to that function",
+        "code": "program LocalVariables;\n\nprocedure ShowMessage;\nbegin\n  var message := 'Hello from procedure!';\n  WriteLn(message);  // Works - message is visible here\nend;\n\nbegin\n  ShowMessage;\n  // WriteLn(message);  // ERROR! message doesn't exist here\n  WriteLn('Back in main program');\nend.",
+        "expectedOutput": "Hello from procedure!\nBack in main program"
+      },
+      {
+        "title": "Global Variables",
+        "description": "Variables declared at program level are accessible everywhere",
+        "code": "program GlobalVariables;\n\nvar\n  counter: Integer;  // Global variable\n\nprocedure Increment;\nbegin\n  counter := counter + 1;  // Can access global variable\n  WriteLn('Counter is now: ' + IntToStr(counter));\nend;\n\nbegin\n  counter := 0;  // Initialize global\n  WriteLn('Starting counter: ' + IntToStr(counter));\n  \n  Increment;\n  Increment;\n  Increment;\n  \n  WriteLn('Final counter: ' + IntToStr(counter));\nend.",
+        "expectedOutput": "Starting counter: 0\nCounter is now: 1\nCounter is now: 2\nCounter is now: 3\nFinal counter: 3"
+      },
+      {
+        "title": "Variable Shadowing",
+        "description": "Local variables shadow (hide) global variables with the same name",
+        "code": "program Shadowing;\n\nvar\n  x: Integer;  // Global x\n\nprocedure ShowLocal;\nbegin\n  var x := 100;  // Local x shadows global x\n  WriteLn('Inside procedure, x = ' + IntToStr(x));\nend;\n\nbegin\n  x := 5;  // Set global x\n  WriteLn('In main, x = ' + IntToStr(x));\n  \n  ShowLocal;  // Uses local x (100)\n  \n  WriteLn('Back in main, x = ' + IntToStr(x));  // Global x unchanged\nend.",
+        "expectedOutput": "In main, x = 5\nInside procedure, x = 100\nBack in main, x = 5"
+      },
+      {
+        "title": "Local vs Global Example",
+        "description": "Comparing local and global variable behavior",
+        "code": "program LocalVsGlobal;\n\nvar\n  globalCount: Integer;  // Shared across all functions\n\nfunction IncrementLocal: Integer;\nbegin\n  var localCount := 0;  // New variable each call\n  localCount := localCount + 1;\n  Result := localCount;\nend;\n\nprocedure IncrementGlobal;\nbegin\n  globalCount := globalCount + 1;  // Modifies shared variable\nend;\n\nbegin\n  globalCount := 0;\n  \n  WriteLn('Local variable (resets each call):');\n  WriteLn(IntToStr(IncrementLocal));  // 1\n  WriteLn(IntToStr(IncrementLocal));  // 1 again!\n  WriteLn(IntToStr(IncrementLocal));  // 1 again!\n  \n  WriteLn('');\n  WriteLn('Global variable (persists):');\n  IncrementGlobal;\n  WriteLn(IntToStr(globalCount));  // 1\n  IncrementGlobal;\n  WriteLn(IntToStr(globalCount));  // 2\n  IncrementGlobal;\n  WriteLn(IntToStr(globalCount));  // 3\nend.",
+        "expectedOutput": "Local variable (resets each call):\n1\n1\n1\n\nGlobal variable (persists):\n1\n2\n3"
+      },
+      {
+        "title": "Nested Scopes",
+        "description": "Variables have different scopes at different levels",
+        "code": "program NestedScopes;\n\nvar\n  level := 'global';  // Global scope\n\nprocedure Outer;\nbegin\n  var level := 'outer';  // Shadows global\n  WriteLn('In Outer: ' + level);\n  \n  procedure Inner;  // Nested procedure\n  begin\n    var level := 'inner';  // Shadows outer and global\n    WriteLn('In Inner: ' + level);\n  end;\n  \n  Inner;\n  WriteLn('Back in Outer: ' + level);\nend;\n\nbegin\n  WriteLn('In Main: ' + level);\n  Outer;\n  WriteLn('Back in Main: ' + level);\nend.",
+        "expectedOutput": "In Main: global\nIn Outer: outer\nIn Inner: inner\nBack in Outer: outer\nBack in Main: global"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Counter Functions",
+        "description": "Create two functions: `GetLocalCounter` (uses local variable, always returns 1) and `GetGlobalCounter` (increments and returns a global counter).",
+        "starterCode": "program CounterComparison;\n\n// Declare global counter here\n\n// Define GetLocalCounter function\n\n// Define GetGlobalCounter function\n\nbegin\n  // Initialize global counter\n  \n  WriteLn('Local counter:');\n  WriteLn(IntToStr(GetLocalCounter));\n  WriteLn(IntToStr(GetLocalCounter));\n  WriteLn(IntToStr(GetLocalCounter));\n  \n  WriteLn('Global counter:');\n  WriteLn(IntToStr(GetGlobalCounter));\n  WriteLn(IntToStr(GetGlobalCounter));\n  WriteLn(IntToStr(GetGlobalCounter));\nend.",
+        "solution": "program CounterComparison;\n\nvar\n  globalCounter: Integer;\n\nfunction GetLocalCounter: Integer;\nbegin\n  var localCounter := 0;\n  localCounter := localCounter + 1;\n  Result := localCounter;\nend;\n\nfunction GetGlobalCounter: Integer;\nbegin\n  globalCounter := globalCounter + 1;\n  Result := globalCounter;\nend;\n\nbegin\n  globalCounter := 0;\n  \n  WriteLn('Local counter:');\n  WriteLn(IntToStr(GetLocalCounter));\n  WriteLn(IntToStr(GetLocalCounter));\n  WriteLn(IntToStr(GetLocalCounter));\n  \n  WriteLn('Global counter:');\n  WriteLn(IntToStr(GetGlobalCounter));\n  WriteLn(IntToStr(GetGlobalCounter));\n  WriteLn(IntToStr(GetGlobalCounter));\nend.",
+        "hints": [
+          "Declare globalCounter in the var section before any procedures",
+          "In GetLocalCounter, declare a local variable and set it to 0",
+          "In GetGlobalCounter, increment the global variable",
+          "Local variable resets each call; global persists"
+        ]
+      },
+      {
+        "title": "Temperature Tracker",
+        "description": "Create a global variable `totalTemperature` and `count`. Write a procedure `AddTemperature` that takes a temperature, adds it to the total, and increments count. Write a function `GetAverage` that returns the average.",
+        "starterCode": "program TempTracker;\n\n// Declare global variables here\n\n// Define AddTemperature procedure\n\n// Define GetAverage function\n\nbegin\n  // Initialize globals\n  \n  AddTemperature(20.5);\n  AddTemperature(22.0);\n  AddTemperature(19.5);\n  \n  WriteLn('Average temperature: ' + FloatToStr(GetAverage));\nend.",
+        "solution": "program TempTracker;\n\nvar\n  totalTemperature: Float;\n  count: Integer;\n\nprocedure AddTemperature(temp: Float);\nbegin\n  totalTemperature := totalTemperature + temp;\n  count := count + 1;\nend;\n\nfunction GetAverage: Float;\nbegin\n  if count > 0 then\n    Result := totalTemperature / count\n  else\n    Result := 0.0;\nend;\n\nbegin\n  totalTemperature := 0.0;\n  count := 0;\n  \n  AddTemperature(20.5);\n  AddTemperature(22.0);\n  AddTemperature(19.5);\n  \n  WriteLn('Average temperature: ' + FloatToStr(GetAverage));\nend.",
+        "hints": [
+          "Declare two global variables: totalTemperature (Float) and count (Integer)",
+          "AddTemperature should add to total and increment count",
+          "GetAverage should divide total by count",
+          "Check for count > 0 to avoid division by zero"
+        ]
+      }
+    ],
+    "summary": "Great work! You now understand variable scope:\n\n- **Local variables**: Declared in functions, exist only during function execution\n- **Global variables**: Declared at program level, exist for entire program\n- **Shadowing**: Local variables can hide global variables with the same name\n- **Best practice**: Prefer local scope when possible\n- **Lifetime**: Local variables are created/destroyed; global variables persist\n\nUnderstanding scope helps you write cleaner, more maintainable code with fewer bugs!",
+    "nextSteps": "Next, you'll learn about **recursion** - functions that call themselves! This powerful technique can solve complex problems elegantly."
+  },
+  "prerequisites": ["function-basics", "procedure-basics", "variables-and-types"],
+  "relatedLessons": ["parameters", "recursion"]
+}

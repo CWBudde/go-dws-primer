@@ -1,0 +1,111 @@
+{
+  "id": "recursion",
+  "title": "Recursion - Functions Calling Themselves",
+  "category": "functions",
+  "difficulty": "intermediate",
+  "order": 5,
+  "description": "Master the art of recursion - functions that call themselves to solve complex problems",
+  "estimatedTime": 25,
+  "tags": ["recursion", "advanced", "algorithms", "intermediate"],
+  "content": {
+    "introduction": "**Recursion** is a powerful programming technique where a function calls itself. It might sound strange, but it's incredibly useful for solving certain types of problems!\n\nMany problems have a natural recursive structure - they can be broken down into smaller versions of the same problem.\n\n### What You'll Learn\n- What recursion is and how it works\n- Base cases and recursive cases\n- Classic recursive problems\n- When to use recursion vs loops\n- Avoiding infinite recursion",
+    "concepts": [
+      {
+        "title": "Recursive Case",
+        "description": "The part where the function calls itself with a simpler version of the problem"
+      },
+      {
+        "title": "Base Case",
+        "description": "The stopping condition that prevents infinite recursion. Every recursive function MUST have a base case!"
+      },
+      {
+        "title": "Call Stack",
+        "description": "Each recursive call is placed on the call stack. When the base case is reached, calls return in reverse order."
+      },
+      {
+        "title": "Recursion vs Iteration",
+        "description": "Some problems are naturally recursive (trees, fractals). Others are clearer with loops. Choose based on the problem."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Simple Countdown",
+        "description": "A basic recursive function that counts down to zero",
+        "code": "program Countdown;\n\nprocedure CountDown(n: Integer);\nbegin\n  if n <= 0 then  // Base case\n  begin\n    WriteLn('Blast off!');\n  end\n  else  // Recursive case\n  begin\n    WriteLn(IntToStr(n));\n    CountDown(n - 1);  // Recursive call with smaller value\n  end;\nend;\n\nbegin\n  CountDown(5);\nend.",
+        "expectedOutput": "5\n4\n3\n2\n1\nBlast off!"
+      },
+      {
+        "title": "Factorial",
+        "description": "Calculate factorial recursively. n! = n * (n-1)!",
+        "code": "program Factorial;\n\nfunction Factorial(n: Integer): Integer;\nbegin\n  if n <= 1 then\n    Result := 1  // Base case: 0! = 1, 1! = 1\n  else\n    Result := n * Factorial(n - 1);  // Recursive case\nend;\n\nbegin\n  WriteLn('5! = ' + IntToStr(Factorial(5)));\n  WriteLn('6! = ' + IntToStr(Factorial(6)));\n  WriteLn('7! = ' + IntToStr(Factorial(7)));\nend.",
+        "expectedOutput": "5! = 120\n6! = 720\n7! = 5040"
+      },
+      {
+        "title": "Fibonacci Sequence",
+        "description": "The classic Fibonacci sequence: each number is the sum of the two preceding ones",
+        "code": "program Fibonacci;\n\nfunction Fib(n: Integer): Integer;\nbegin\n  if n <= 1 then\n    Result := n  // Base cases: fib(0) = 0, fib(1) = 1\n  else\n    Result := Fib(n - 1) + Fib(n - 2);  // Recursive case\nend;\n\nbegin\n  WriteLn('First 10 Fibonacci numbers:');\n  for var i := 0 to 9 do\n    WriteLn('Fib(' + IntToStr(i) + ') = ' + IntToStr(Fib(i)));\nend.",
+        "expectedOutput": "First 10 Fibonacci numbers:\nFib(0) = 0\nFib(1) = 1\nFib(2) = 1\nFib(3) = 2\nFib(4) = 3\nFib(5) = 5\nFib(6) = 8\nFib(7) = 13\nFib(8) = 21\nFib(9) = 34"
+      },
+      {
+        "title": "Sum of Digits",
+        "description": "Recursively sum all digits in a number",
+        "code": "program SumDigits;\n\nfunction SumOfDigits(n: Integer): Integer;\nbegin\n  if n < 10 then\n    Result := n  // Base case: single digit\n  else\n    Result := (n mod 10) + SumOfDigits(n div 10);  // Last digit + sum of rest\nend;\n\nbegin\n  WriteLn('Sum of digits in 1234: ' + IntToStr(SumOfDigits(1234)));\n  WriteLn('Sum of digits in 5678: ' + IntToStr(SumOfDigits(5678)));\n  WriteLn('Sum of digits in 999: ' + IntToStr(SumOfDigits(999)));\nend.",
+        "expectedOutput": "Sum of digits in 1234: 10\nSum of digits in 5678: 26\nSum of digits in 999: 27"
+      },
+      {
+        "title": "Power Function",
+        "description": "Calculate x^n recursively. x^n = x * x^(n-1)",
+        "code": "program Power;\n\nfunction Power(x, n: Integer): Integer;\nbegin\n  if n = 0 then\n    Result := 1  // Base case: anything to power 0 is 1\n  else if n = 1 then\n    Result := x  // Base case: x^1 = x\n  else\n    Result := x * Power(x, n - 1);  // Recursive case\nend;\n\nbegin\n  WriteLn('2^5 = ' + IntToStr(Power(2, 5)));\n  WriteLn('3^4 = ' + IntToStr(Power(3, 4)));\n  WriteLn('5^3 = ' + IntToStr(Power(5, 3)));\nend.",
+        "expectedOutput": "2^5 = 32\n3^4 = 81\n5^3 = 125"
+      },
+      {
+        "title": "String Reversal",
+        "description": "Reverse a string recursively",
+        "code": "program ReverseString;\n\nfunction Reverse(s: String): String;\nbegin\n  if Length(s) <= 1 then\n    Result := s  // Base case: empty or single character\n  else\n    // Last char + reverse of remaining string\n    Result := s[Length(s)] + Reverse(Copy(s, 1, Length(s) - 1));\nend;\n\nbegin\n  WriteLn(Reverse('hello'));  // olleh\n  WriteLn(Reverse('DWScript'));  // tpircSWD\n  WriteLn(Reverse('racecar'));  // racecar (palindrome)\nend.",
+        "expectedOutput": "olleh\ntpircSWD\nracecar"
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Recursive Sum",
+        "description": "Write a recursive function `Sum` that calculates the sum of numbers from 1 to n. For example, Sum(5) = 1+2+3+4+5 = 15.",
+        "starterCode": "program RecursiveSum;\n\n// Define recursive Sum function\n// Sum(n) = n + Sum(n-1)\n// Base case: Sum(1) = 1\n\nbegin\n  WriteLn('Sum(5) = ' + IntToStr(Sum(5)));\n  WriteLn('Sum(10) = ' + IntToStr(Sum(10)));\nend.",
+        "solution": "program RecursiveSum;\n\nfunction Sum(n: Integer): Integer;\nbegin\n  if n <= 1 then\n    Result := 1  // Base case\n  else\n    Result := n + Sum(n - 1);  // Recursive case\nend;\n\nbegin\n  WriteLn('Sum(5) = ' + IntToStr(Sum(5)));\n  WriteLn('Sum(10) = ' + IntToStr(Sum(10)));\nend.",
+        "hints": [
+          "Base case: when n is 1, return 1",
+          "Recursive case: return n plus Sum(n-1)",
+          "Think: Sum(5) = 5 + Sum(4)",
+          "The recursion stops when it reaches Sum(1)"
+        ]
+      },
+      {
+        "title": "Count Down and Up",
+        "description": "Write a recursive procedure `CountDownUp` that counts down from n to 1, then counts back up to n. For example, CountDownUp(3) should print: 3, 2, 1, 2, 3.",
+        "starterCode": "program CountDownUp;\n\n// Define CountDownUp procedure\n// Print n, recurse with n-1, then print n again\n\nbegin\n  CountDownUp(4);\nend.",
+        "solution": "program CountDownUp;\n\nprocedure CountDownUp(n: Integer);\nbegin\n  if n > 0 then\n  begin\n    WriteLn(IntToStr(n));  // Print on way down\n    CountDownUp(n - 1);    // Recurse\n    WriteLn(IntToStr(n));  // Print on way back up\n  end;\nend;\n\nbegin\n  CountDownUp(4);\nend.",
+        "hints": [
+          "Print the number before the recursive call (way down)",
+          "Make the recursive call with n-1",
+          "Print the number again after the recursive call (way up)",
+          "Base case: do nothing when n <= 0"
+        ]
+      },
+      {
+        "title": "GCD (Greatest Common Divisor)",
+        "description": "Implement Euclid's algorithm recursively. GCD(a,b) = GCD(b, a mod b). Base case: when b=0, return a.",
+        "starterCode": "program GCDCalculator;\n\n// Define recursive GCD function\n// GCD(a, b) = GCD(b, a mod b)\n// Base case: GCD(a, 0) = a\n\nbegin\n  WriteLn('GCD(48, 18) = ' + IntToStr(GCD(48, 18)));\n  WriteLn('GCD(100, 35) = ' + IntToStr(GCD(100, 35)));\nend.",
+        "solution": "program GCDCalculator;\n\nfunction GCD(a, b: Integer): Integer;\nbegin\n  if b = 0 then\n    Result := a  // Base case\n  else\n    Result := GCD(b, a mod b);  // Recursive case\nend;\n\nbegin\n  WriteLn('GCD(48, 18) = ' + IntToStr(GCD(48, 18)));\n  WriteLn('GCD(100, 35) = ' + IntToStr(GCD(100, 35)));\nend.",
+        "hints": [
+          "Base case: if b equals 0, return a",
+          "Recursive case: call GCD with b and (a mod b)",
+          "This is Euclid's ancient algorithm",
+          "Example: GCD(48,18) → GCD(18,12) → GCD(12,6) → GCD(6,0) → 6"
+        ]
+      }
+    ],
+    "summary": "Excellent work on recursion! You've learned:\n\n- Functions can call themselves (recursion)\n- Every recursive function needs a **base case** to stop\n- The **recursive case** breaks the problem into smaller pieces\n- Recursion creates a call stack that unwinds when base case is reached\n- Classic recursive problems: factorial, Fibonacci, GCD\n- Recursion is elegant for naturally recursive problems\n\nRecursion is a powerful tool in your programming toolkit. With practice, you'll recognize when it's the right approach!",
+    "nextSteps": "Next, you'll learn about **function overloading** - defining multiple functions with the same name but different parameters!"
+  },
+  "prerequisites": ["function-basics", "local-vs-global-scope"],
+  "relatedLessons": ["function-overloading", "for-loops"]
+}
