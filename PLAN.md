@@ -55,13 +55,13 @@
   - [x] Repeat-until loops
   - [x] Break and Continue
 
-- [ ] **Functions & Procedures**
-  - [ ] Procedure basics
-  - [ ] Function basics
-  - [ ] Parameters (value, var, const, out)
-  - [ ] Local vs global scope
-  - [ ] Recursion
-  - [ ] Function overloading
+- [x] **Functions & Procedures** (Complete - 6/6 lessons) ✅
+  - [x] Procedure basics
+  - [x] Function basics
+  - [x] Parameters (value, var, const, out)
+  - [x] Local vs global scope
+  - [x] Recursion
+  - [x] Function overloading
 
 - [ ] **Data Structures**
   - [ ] Arrays (static and dynamic)
