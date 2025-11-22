@@ -7,15 +7,18 @@ import {
   getCategories,
   searchLessons,
   getLessonById,
-} from "./lesson-loader.js";
-import { displayLesson } from "./lesson-ui.js";
+  getNextLesson,
+  getPreviousLesson,
+} from "./lesson-loader.ts";
+import { displayLesson } from "./lesson-ui.ts";
 import {
   markLessonVisited,
   isLessonCompleted,
   getProgress,
-} from "./progress.js";
+  markLessonCompleted,
+} from "./progress.ts";
 
-let currentCategories = null;
+let currentCategories: any = null;
 
 /**
  * Initialize lesson navigation
@@ -34,7 +37,7 @@ export async function initLessonNavigation() {
  * Render the lesson list in the sidebar
  * @param {Object} categories - Categories object
  */
-function renderLessonList(categories) {
+function renderLessonList(categories: any) {
   const listContainer = document.getElementById("lesson-list");
   if (!listContainer) {
     console.error("Lesson list container not found");
@@ -44,7 +47,8 @@ function renderLessonList(categories) {
   let html = "";
 
   // Render each category
-  Object.values(categories).forEach((category) => {
+  const categoriesList: any[] = Object.values(categories || {});
+  categoriesList.forEach((category: any) => {
     html += `
       <div class="lesson-category" data-category="${category.name}">
         <div class="category-header">
@@ -72,7 +76,7 @@ function renderLessonList(categories) {
  * @param {Object} lesson - Lesson object
  * @returns {string} HTML string
  */
-function renderLessonItem(lesson) {
+function renderLessonItem(lesson: any) {
   const completed = isLessonCompleted(lesson.id);
   const icon = completed ? "✓" : "○";
 
@@ -96,25 +100,31 @@ function setupNavigationListeners() {
 
   // Category toggle
   listContainer.addEventListener("click", (e) => {
-    const header = e.target.closest(".category-header");
+    const target = e.target as HTMLElement | null;
+    const header = target?.closest(".category-header");
     if (header) {
       const category = header.closest(".lesson-category");
-      const list = category.querySelector(".lesson-list");
-      const icon = category.querySelector(".category-icon");
+      const list = category?.querySelector(".lesson-list") as
+        | HTMLElement
+        | null;
+      const icon = category?.querySelector(".category-icon");
 
-      if (list.style.display === "none") {
-        list.style.display = "block";
-        icon.textContent = "▼";
-      } else {
-        list.style.display = "none";
-        icon.textContent = "▶";
+      if (list) {
+        if (list.style.display === "none") {
+          list.style.display = "block";
+          if (icon) icon.textContent = "▼";
+        } else {
+          list.style.display = "none";
+          if (icon) icon.textContent = "▶";
+        }
       }
     }
   });
 
   // Lesson click
   listContainer.addEventListener("click", async (e) => {
-    const link = e.target.closest(".lesson-link");
+    const target = e.target as HTMLElement | null;
+    const link = target?.closest(".lesson-link");
     if (link) {
       e.preventDefault();
       const lessonId = link
@@ -131,20 +141,23 @@ function setupNavigationListeners() {
     searchInput.addEventListener("input", (e) => {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(async () => {
-        await handleSearch(e.target.value);
+        const input = e.target as HTMLInputElement | null;
+        await handleSearch(input?.value || "");
       }, 300);
     });
   }
 
   // Listen for navigation events
   window.addEventListener("navigateLesson", async (e) => {
-    const { direction } = e.detail;
+    const event = e as CustomEvent<{ direction: string }>;
+    const { direction } = event.detail;
     await navigateLesson(direction);
   });
 
   // Listen for complete lesson events
   window.addEventListener("completeLesson", async (e) => {
-    const { lessonId } = e.detail;
+    const event = e as CustomEvent<{ lessonId: string }>;
+    const { lessonId } = event.detail;
     await handleCompleteLesson(lessonId);
   });
 
@@ -205,9 +218,6 @@ async function navigateLesson(direction) {
   }
 
   try {
-    const { getNextLesson, getPreviousLesson } = await import(
-      "./lesson-loader.js"
-    );
     const lesson =
       direction === "next"
         ? await getNextLesson(currentLessonId)
@@ -273,7 +283,6 @@ async function handleSearch(query) {
  * @param {string} lessonId - Lesson ID
  */
 async function handleCompleteLesson(lessonId) {
-  const { markLessonCompleted } = await import("./progress.js");
   markLessonCompleted(lessonId);
 
   // Update UI
@@ -283,7 +292,6 @@ async function handleCompleteLesson(lessonId) {
   showCompletionMessage();
 
   // Suggest next lesson
-  const { getNextLesson } = await import("./lesson-loader.js");
   const nextLesson = await getNextLesson(lessonId);
 
   if (nextLesson) {
@@ -351,7 +359,8 @@ export async function loadLessonFromURL() {
   } else {
     // Load first lesson by default
     if (currentCategories) {
-      const firstCategory = Object.values(currentCategories)[0];
+      const categoriesList = Object.values(currentCategories || {}) as any[];
+      const firstCategory = categoriesList[0] as any;
       if (firstCategory && firstCategory.lessons.length > 0) {
         await loadLesson(firstCategory.lessons[0].id);
       }

@@ -8,7 +8,7 @@ import {
   decodeCode,
   compressCode,
   decompressCode,
-} from "./url-sharing.js";
+} from "./url-sharing.ts";
 
 describe("URL Sharing Utilities", () => {
   describe("encodeCode and decodeCode", () => {

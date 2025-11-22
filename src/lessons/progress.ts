@@ -33,12 +33,12 @@ export function getProgress() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      const progress = JSON.parse(stored);
+      const progress: any = JSON.parse(stored);
       // Convert date strings back to Date objects
       if (progress.lastAccessed) {
         progress.lastAccessed = new Date(progress.lastAccessed);
       }
-      Object.values(progress.lessons || {}).forEach((lesson) => {
+      Object.values(progress.lessons || {}).forEach((lesson: any) => {
         if (lesson.completedAt)
           lesson.completedAt = new Date(lesson.completedAt);
         if (lesson.lastVisited)
@@ -83,7 +83,7 @@ export function saveProgress(progress) {
  * @param {string} lessonId - Lesson ID
  */
 export function markLessonVisited(lessonId) {
-  const progress = getProgress();
+  const progress: any = getProgress();
 
   if (!progress.lessons[lessonId]) {
     progress.lessons[lessonId] = {
@@ -105,7 +105,7 @@ export function markLessonVisited(lessonId) {
  * @param {number} score - Optional score (0-100)
  */
 export function markLessonCompleted(lessonId, score = null) {
-  const progress = getProgress();
+  const progress: any = getProgress();
 
   if (!progress.lessons[lessonId]) {
     progress.lessons[lessonId] = {
@@ -196,9 +196,8 @@ export function getCompletionPercentage(totalLessons) {
   if (totalLessons === 0) return 0;
 
   const progress = getProgress();
-  const completed = Object.values(progress.lessons).filter(
-    (l) => l.completed,
-  ).length;
+  const lessons = Object.values(progress.lessons || {}) as any[];
+  const completed = lessons.filter((l) => l.completed).length;
 
   return Math.round((completed / totalLessons) * 100);
 }
@@ -209,7 +208,7 @@ export function getCompletionPercentage(totalLessons) {
  */
 export function getStatistics() {
   const progress = getProgress();
-  const lessons = Object.values(progress.lessons);
+  const lessons = Object.values(progress.lessons || {}) as any[];
 
   return {
     totalLessons: lessons.length,

@@ -3,10 +3,11 @@
  * Provides UI for user preferences and accessibility settings
  */
 
-import { getState, setValue, updateState } from "../core/state-manager.js";
-import { getEditor } from "../editor/monaco-setup.js";
+import { getState, setValue, updateState } from "../core/state-manager.ts";
+import { getEditor } from "../editor/monaco-setup.ts";
+import * as monaco from "monaco-editor";
 
-let modal = null;
+let modal: HTMLElement | null = null;
 
 /**
  * Show settings modal
@@ -261,33 +262,74 @@ function createModal() {
  */
 function populateSettings(state) {
   // Editor settings
-  document.getElementById("setting-font-size").value = state.fontSize || 14;
-  document.getElementById("font-size-value").textContent =
-    `${state.fontSize || 14}px`;
-  document.getElementById("setting-tab-size").value =
-    state.preferences?.tabSize || 2;
-  document.getElementById("setting-minimap").checked =
-    state.showMinimap !== false;
-  document.getElementById("setting-word-wrap").checked =
-    state.preferences?.wordWrap || false;
+  const fontSizeInput = document.getElementById(
+    "setting-font-size",
+  ) as HTMLInputElement | null;
+  if (fontSizeInput) {
+    fontSizeInput.value = String(state.fontSize || 14);
+  }
+  const fontSizeValue = document.getElementById("font-size-value");
+  if (fontSizeValue) {
+    fontSizeValue.textContent = `${state.fontSize || 14}px`;
+  }
+  const tabSizeSelect = document.getElementById(
+    "setting-tab-size",
+  ) as HTMLSelectElement | null;
+  if (tabSizeSelect) {
+    tabSizeSelect.value = String(state.preferences?.tabSize || 2);
+  }
+  const minimapInput = document.getElementById(
+    "setting-minimap",
+  ) as HTMLInputElement | null;
+  if (minimapInput) {
+    minimapInput.checked = state.showMinimap !== false;
+  }
+  const wordWrapInput = document.getElementById(
+    "setting-word-wrap",
+  ) as HTMLInputElement | null;
+  if (wordWrapInput) {
+    wordWrapInput.checked = state.preferences?.wordWrap || false;
+  }
 
   // Accessibility settings
-  document.getElementById("setting-high-contrast").checked =
-    state.highContrast || false;
-  document.getElementById("setting-color-blind-mode").value =
-    state.colorBlindMode || "none";
-  document.getElementById("setting-animations").checked =
-    state.enableAnimations !== false;
-  document.getElementById("setting-announce-output").checked =
-    state.announceOutput !== false;
-  document.getElementById("setting-announce-errors").checked =
-    state.announceErrors !== false;
+  const highContrastInput = document.getElementById(
+    "setting-high-contrast",
+  ) as HTMLInputElement | null;
+  if (highContrastInput) {
+    highContrastInput.checked = state.highContrast || false;
+  }
+  const colorBlindSelect = document.getElementById(
+    "setting-color-blind-mode",
+  ) as HTMLSelectElement | null;
+  if (colorBlindSelect) {
+    colorBlindSelect.value = state.colorBlindMode || "none";
+  }
+  const animationsInput = document.getElementById(
+    "setting-animations",
+  ) as HTMLInputElement | null;
+  if (animationsInput) {
+    animationsInput.checked = state.enableAnimations !== false;
+  }
+  const announceOutputInput = document.getElementById(
+    "setting-announce-output",
+  ) as HTMLInputElement | null;
+  if (announceOutputInput) {
+    announceOutputInput.checked = state.announceOutput !== false;
+  }
+  const announceErrorsInput = document.getElementById(
+    "setting-announce-errors",
+  ) as HTMLInputElement | null;
+  if (announceErrorsInput) {
+    announceErrorsInput.checked = state.announceErrors !== false;
+  }
 }
 
 /**
  * Setup event listeners for settings controls
  */
 function setupSettingsListeners() {
+  if (!modal) return;
+
   // Close button
   const closeButtons = modal.querySelectorAll(".modal-close, #settings-close");
   closeButtons.forEach((btn) => {
@@ -305,7 +347,7 @@ function setupSettingsListeners() {
   document.addEventListener("keydown", handleEscapeKey);
 
   // Tab switching
-  const tabs = modal.querySelectorAll(".settings-tab");
+  const tabs = modal.querySelectorAll<HTMLElement>(".settings-tab");
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       const tabName = tab.dataset.tab;
@@ -314,71 +356,98 @@ function setupSettingsListeners() {
   });
 
   // Font size
-  const fontSizeInput = document.getElementById("setting-font-size");
-  fontSizeInput.addEventListener("input", (e) => {
-    const size = parseInt(e.target.value);
-    document.getElementById("font-size-value").textContent = `${size}px`;
-    applyFontSize(size);
-  });
+  const fontSizeInput = document.getElementById(
+    "setting-font-size",
+  ) as HTMLInputElement | null;
+  if (fontSizeInput) {
+    fontSizeInput.addEventListener("input", (e) => {
+      const target = e.target as HTMLInputElement | null;
+      const size = parseInt(target?.value || "0", 10);
+      const fontValue = document.getElementById("font-size-value");
+      if (fontValue) {
+        fontValue.textContent = `${size}px`;
+      }
+      applyFontSize(size);
+    });
+  }
 
   // Tab size
-  document
-    .getElementById("setting-tab-size")
-    .addEventListener("change", (e) => {
-      const tabSize = parseInt(e.target.value);
-      applyTabSize(tabSize);
-    });
+  const tabSizeInput = document.getElementById(
+    "setting-tab-size",
+  ) as HTMLSelectElement | null;
+  tabSizeInput?.addEventListener("change", (e) => {
+    const target = e.target as HTMLSelectElement | null;
+    const tabSize = parseInt(target?.value || "0", 10);
+    applyTabSize(tabSize);
+  });
 
   // Minimap
-  document.getElementById("setting-minimap").addEventListener("change", (e) => {
-    applyMinimap(e.target.checked);
+  const minimapInput = document.getElementById(
+    "setting-minimap",
+  ) as HTMLInputElement | null;
+  minimapInput?.addEventListener("change", (e) => {
+    const target = e.target as HTMLInputElement | null;
+    applyMinimap(!!target?.checked);
   });
 
   // Word wrap
-  document
-    .getElementById("setting-word-wrap")
-    .addEventListener("change", (e) => {
-      applyWordWrap(e.target.checked);
-    });
+  const wordWrapInput = document.getElementById(
+    "setting-word-wrap",
+  ) as HTMLInputElement | null;
+  wordWrapInput?.addEventListener("change", (e) => {
+    const target = e.target as HTMLInputElement | null;
+    applyWordWrap(!!target?.checked);
+  });
 
   // High contrast
-  document
-    .getElementById("setting-high-contrast")
-    .addEventListener("change", (e) => {
-      applyHighContrast(e.target.checked);
-    });
+  const highContrastInput = document.getElementById(
+    "setting-high-contrast",
+  ) as HTMLInputElement | null;
+  highContrastInput?.addEventListener("change", (e) => {
+    const target = e.target as HTMLInputElement | null;
+    applyHighContrast(!!target?.checked);
+  });
 
   // Color blind mode
-  document
-    .getElementById("setting-color-blind-mode")
-    .addEventListener("change", (e) => {
-      applyColorBlindMode(e.target.value);
-    });
+  const colorBlindInput = document.getElementById(
+    "setting-color-blind-mode",
+  ) as HTMLSelectElement | null;
+  colorBlindInput?.addEventListener("change", (e) => {
+    const target = e.target as HTMLSelectElement | null;
+    applyColorBlindMode(target?.value || "none");
+  });
 
   // Animations
-  document
-    .getElementById("setting-animations")
-    .addEventListener("change", (e) => {
-      applyAnimations(e.target.checked);
-    });
+  const animationsInput = document.getElementById(
+    "setting-animations",
+  ) as HTMLInputElement | null;
+  animationsInput?.addEventListener("change", (e) => {
+    const target = e.target as HTMLInputElement | null;
+    applyAnimations(!!target?.checked);
+  });
 
   // Announce settings
-  document
-    .getElementById("setting-announce-output")
-    .addEventListener("change", (e) => {
-      setValue("announceOutput", e.target.checked);
-    });
+  const announceOutputInput = document.getElementById(
+    "setting-announce-output",
+  ) as HTMLInputElement | null;
+  announceOutputInput?.addEventListener("change", (e) => {
+    const target = e.target as HTMLInputElement | null;
+    setValue("announceOutput", !!target?.checked);
+  });
 
-  document
-    .getElementById("setting-announce-errors")
-    .addEventListener("change", (e) => {
-      setValue("announceErrors", e.target.checked);
-    });
+  const announceErrorsInput = document.getElementById(
+    "setting-announce-errors",
+  ) as HTMLInputElement | null;
+  announceErrorsInput?.addEventListener("change", (e) => {
+    const target = e.target as HTMLInputElement | null;
+    setValue("announceErrors", !!target?.checked);
+  });
 
   // Reset button
-  document
-    .getElementById("settings-reset")
-    .addEventListener("click", resetSettings);
+  const resetButton = document.getElementById(
+    "settings-reset",
+  ) as HTMLButtonElement | null;
+  resetButton?.addEventListener("click", resetSettings);
 }
 
 /**
@@ -395,7 +464,7 @@ function hideSettingsModal() {
 /**
  * Handle Escape key press
  */
-function handleEscapeKey(e) {
+function handleEscapeKey(e: KeyboardEvent) {
   if (e.key === "Escape") {
     hideSettingsModal();
   }
@@ -405,13 +474,14 @@ function handleEscapeKey(e) {
  * Switch settings tab
  */
 function switchTab(tabName) {
+  if (!modal) return;
   // Update tab buttons
-  modal.querySelectorAll(".settings-tab").forEach((tab) => {
+  modal.querySelectorAll<HTMLElement>(".settings-tab").forEach((tab) => {
     tab.classList.toggle("active", tab.dataset.tab === tabName);
   });
 
   // Update panels
-  modal.querySelectorAll(".settings-panel").forEach((panel) => {
+  modal.querySelectorAll<HTMLElement>(".settings-panel").forEach((panel) => {
     panel.classList.toggle("active", panel.dataset.panel === tabName);
   });
 }
@@ -484,7 +554,6 @@ function applyHighContrast(enabled) {
   // Optionally switch Monaco theme
   const editor = getEditor();
   if (editor) {
-    const monaco = window.monaco;
     const currentTheme = document.documentElement.getAttribute("data-theme");
     if (enabled) {
       monaco.editor.setTheme("hc-black");

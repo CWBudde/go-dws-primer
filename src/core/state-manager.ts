@@ -18,6 +18,11 @@ const DEFAULT_STATE = {
     insertSpaces: true,
     wordWrap: false,
   },
+  highContrast: false,
+  colorBlindMode: "none",
+  enableAnimations: true,
+  announceOutput: true,
+  announceErrors: true,
 };
 
 let state = { ...DEFAULT_STATE };
