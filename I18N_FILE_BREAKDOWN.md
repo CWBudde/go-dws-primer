@@ -145,9 +145,9 @@ function formatCategory(category) {
 
 ---
 
-### File: src/lessons/navigation.js (370 lines)
+### File: src/lessons/lesson-loader.js (lines 187-198)
 
-**Category display names (Lines 187-196):**
+**Category display names (Lines 187-198):**
 ```javascript
 function formatCategoryName(category) {
   const names = {

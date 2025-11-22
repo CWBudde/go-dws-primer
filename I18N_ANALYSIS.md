@@ -330,7 +330,7 @@ Most UI strings are:
 - Great developer experience
 
 **Implementation:**
-1. Create translation files in `/locales/{lang}/` structure
+1. Create translation files in `/public/locales/{lang}/` structure
 2. Add i18next to dependencies
 3. Create `src/core/i18n-setup.js` to initialize
 4. Extract strings from JavaScript into JSON/YAML
@@ -365,7 +365,7 @@ Most UI strings are:
 If implementing i18n, recommended structure:
 
 ```
-/locales/
+/public/locales/
   /en/
     common.json       (UI strings)
     lessons/
