@@ -140,7 +140,7 @@ PROPOSED IMPLEMENTATION APPROACH
    (or yarn add ... since project uses Yarn Berry)
 
 2. CREATE TRANSLATION FILE STRUCTURE
-   /locales/
+   /public/locales/
    ├── /en/
    │   ├── common.json       (UI strings from HTML/JS)
    │   ├── lessons/
@@ -163,7 +163,7 @@ PROPOSED IMPLEMENTATION APPROACH
    New: Load JSON and translate all fields
    
    Option A: Keep English in lesson files, translate separately
-   Option B: Extract translations to /locales/ structure
+   Option B: Extract translations to /public/locales/ structure
 
 5. ADD LANGUAGE SWITCHER
    Location: Settings modal (already has structure)
@@ -292,9 +292,9 @@ FILES REQUIRING MODIFICATION
 ================================================================================
 
 TO CREATE:
-- /locales/en/common.json          (UI strings)
-- /locales/en/lessons/            (lesson translations or metadata)
-- /locales/en/snippets.json       (snippet translations)
+- /public/locales/en/common.json          (UI strings)
+- /public/locales/en/lessons/            (lesson translations or metadata)
+- /public/locales/en/snippets.json       (snippet translations)
 - /src/core/i18n-setup.js         (i18n initialization)
 - /src/utils/i18n.js              (helper functions)
 
