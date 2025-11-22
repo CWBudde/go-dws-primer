@@ -140,7 +140,32 @@
 - [x] Ensure color-blind friendly palette
 - [x] Create keyboard shortcut reference
 
-**Deliverable**: Polished, accessible user interface
+### 4.4 Internationalization (i18n)
+- [ ] Choose and integrate i18n library (i18next recommended)
+- [ ] Create translation file structure (`/public/locales/{lang}/`)
+- [ ] Extract UI strings from HTML and JavaScript
+- [ ] Refactor hardcoded strings to use i18n
+- [ ] Create English base translations
+  - [ ] Common UI strings (`common.json` - ~100 strings)
+  - [ ] Lesson content (`lessons.json` - ~550 strings)
+  - [ ] Code snippets (`snippets.json` - ~60 strings)
+- [ ] Adapt lesson loading system for i18n
+- [ ] Implement language switcher in settings panel
+- [ ] Add language preference persistence (localStorage)
+- [ ] Test with second language (e.g., Spanish, French, or German)
+- [ ] Implement fallback system for missing translations
+- [ ] Add RTL (right-to-left) support for Arabic/Hebrew (optional)
+- [ ] Create translation contribution guidelines
+
+**Reference Documentation**:
+- See `I18N_ANALYSIS.md` for complete technical analysis
+- See `I18N_FILE_BREAKDOWN.md` for detailed string inventory
+- See `I18N_SUMMARY.txt` for implementation phases and effort estimates
+
+**Estimated Effort**: 6-9 days for full implementation
+**Total Translatable Content**: ~750 strings (550 lessons, 100 UI, 60 snippets, 30 HTML)
+
+**Deliverable**: Polished, accessible, multilingual user interface
 
 ---
 
