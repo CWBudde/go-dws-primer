@@ -113,7 +113,7 @@ function addCompilerStyles() {
  * Toggle sidebar visibility
  */
 export function toggleSidebar() {
-  const sidebar = document.querySelector(".sidebar");
+  const sidebar = document.querySelector(".sidebar") as HTMLElement | null;
   if (sidebar) {
     sidebar.style.display = sidebar.style.display === "none" ? "flex" : "none";
   }
@@ -123,7 +123,7 @@ export function toggleSidebar() {
  * Toggle lesson panel visibility
  */
 export function toggleLessonPanel() {
-  const panel = document.querySelector(".lesson-panel");
+  const panel = document.querySelector(".lesson-panel") as HTMLElement | null;
   if (panel) {
     panel.style.display = panel.style.display === "none" ? "block" : "none";
   }

@@ -3,7 +3,7 @@
  * Manages and displays reusable code snippets
  */
 
-import { setCode, getCode } from "../editor/monaco-setup.js";
+import { setCode, getCode } from "../editor/monaco-setup.ts";
 
 let snippetsData = null;
 let currentCategory = null;
@@ -75,10 +75,8 @@ function openSnippetsModal() {
   setTimeout(() => modal.classList.add("show"), 10);
 
   // Focus search input
-  const searchInput = modal.querySelector(".snippets-search");
-  if (searchInput) {
-    searchInput.focus();
-  }
+  const searchInput = modal.querySelector<HTMLInputElement>(".snippets-search");
+  searchInput?.focus();
 
   // Display first category by default
   if (snippetsData.categories.length > 0) {
@@ -116,31 +114,38 @@ function createSnippetsModal() {
   `;
 
   // Event listeners
-  modal
-    .querySelector(".btn-close")
-    .addEventListener("click", () => closeModal(modal));
-  modal
-    .querySelector(".modal-overlay")
-    .addEventListener("click", () => closeModal(modal));
+  const closeBtn = modal.querySelector(".btn-close");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => closeModal(modal));
+  }
+  const overlay = modal.querySelector(".modal-overlay");
+  if (overlay) {
+    overlay.addEventListener("click", () => closeModal(modal));
+  }
 
   // Search functionality
-  const searchInput = modal.querySelector(".snippets-search");
-  searchInput.addEventListener("input", (e) => {
-    searchQuery = e.target.value;
-    filterSnippets();
-  });
+  const searchInput = modal.querySelector<HTMLInputElement>(".snippets-search");
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      const target = e.target as HTMLInputElement | null;
+      searchQuery = target?.value || "";
+      filterSnippets();
+    });
+  }
 
   // Category buttons
-  modal.querySelectorAll(".category-btn").forEach((btn) => {
+  modal.querySelectorAll<HTMLElement>(".category-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const categoryId = e.target.getAttribute("data-category");
+      const target = e.target as HTMLElement | null;
+      const categoryId = target?.getAttribute("data-category");
+      if (!categoryId) return;
       displayCategory(categoryId);
 
       // Update active state
       modal
         .querySelectorAll(".category-btn")
         .forEach((b) => b.classList.remove("active"));
-      e.target.classList.add("active");
+      target.classList.add("active");
     });
   });
 
@@ -233,18 +238,20 @@ function renderSnippet(snippet) {
  */
 function attachSnippetEventListeners() {
   // Insert buttons
-  document.querySelectorAll(".snippet-card .btn-insert").forEach((btn) => {
+  document.querySelectorAll<HTMLElement>(".snippet-card .btn-insert").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const code = decodeHtml(e.target.getAttribute("data-code"));
+      const target = e.target as HTMLElement | null;
+      const code = decodeHtml(target?.getAttribute("data-code"));
       insertSnippet(code);
     });
   });
 
   // View buttons
-  document.querySelectorAll(".snippet-card .btn-view").forEach((btn) => {
+  document.querySelectorAll<HTMLElement>(".snippet-card .btn-view").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const code = decodeHtml(e.target.getAttribute("data-code"));
-      const title = decodeHtml(e.target.getAttribute("data-title"));
+      const target = e.target as HTMLElement | null;
+      const code = decodeHtml(target?.getAttribute("data-code"));
+      const title = decodeHtml(target?.getAttribute("data-title"));
       viewSnippet(code, title);
     });
   });
@@ -298,22 +305,19 @@ function viewSnippet(code, title) {
   setTimeout(() => preview.classList.add("show"), 10);
 
   // Event listeners
-  preview
-    .querySelector(".btn-close")
-    .addEventListener("click", () => closeModal(preview));
-  preview
-    .querySelector(".modal-overlay")
-    .addEventListener("click", () => closeModal(preview));
-  preview
-    .querySelector(".btn-cancel")
-    .addEventListener("click", () => closeModal(preview));
-  preview
-    .querySelector(".btn-insert-preview")
-    .addEventListener("click", (e) => {
-      const code = decodeHtml(e.target.getAttribute("data-code"));
-      insertSnippet(code);
-      closeModal(preview);
-    });
+  const closeBtn = preview.querySelector(".btn-close");
+  closeBtn?.addEventListener("click", () => closeModal(preview));
+  const overlay = preview.querySelector(".modal-overlay");
+  overlay?.addEventListener("click", () => closeModal(preview));
+  const cancelBtn = preview.querySelector(".btn-cancel");
+  cancelBtn?.addEventListener("click", () => closeModal(preview));
+  const insertBtn = preview.querySelector(".btn-insert-preview");
+  insertBtn?.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement | null;
+    const codeValue = decodeHtml(target?.getAttribute("data-code"));
+    insertSnippet(codeValue);
+    closeModal(preview);
+  });
 }
 
 /**

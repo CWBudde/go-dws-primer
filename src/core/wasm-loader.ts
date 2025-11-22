@@ -3,7 +3,7 @@
  * Handles loading and initializing the Go-compiled WASM module
  */
 
-import { dwsAPI } from "./dwscript-api.js";
+import { dwsAPI } from "./dwscript-api.ts";
 
 let wasmInstance = null;
 let wasmReady = false;
@@ -15,7 +15,7 @@ let dwsAPIInstance = null;
  * @returns {Promise<boolean>} True if loaded successfully
  */
 async function loadGoWASMRuntime() {
-  if (window.Go) {
+  if ((window as any).Go) {
     return true; // Already loaded
   }
 
@@ -31,7 +31,8 @@ async function loadGoWASMRuntime() {
       const script = document.createElement("script");
       script.src = "/wasm/wasm_exec.js";
       script.onload = () => {
-        if (window.Go) {
+        const goRuntime = (window as any).Go;
+        if (goRuntime) {
           resolve(true);
         } else {
           reject(new Error("wasm_exec.js loaded but Go is not defined"));
@@ -67,7 +68,7 @@ export async function initWASM(handlers = {}) {
     }
 
     // Create a new Go instance
-    const go = new window.Go();
+    const go = new (window as any).Go();
 
     // Fetch and instantiate the WASM module
     const response = await fetch("/wasm/dwscript.wasm");
@@ -88,7 +89,7 @@ export async function initWASM(handlers = {}) {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Verify global export exists
-    if (!window.DWScript) {
+    if (!(window as any).DWScript) {
       throw new Error("DWScript API not available after initialization");
     }
 
@@ -141,9 +142,9 @@ export async function executeDWScript(code, options = {}) {
     if (dwsAPIInstance && dwsAPIInstance.isReady()) {
       const result = await dwsAPIInstance.eval(code, options);
       return result;
-    } else if (typeof window.executeDWScript === "function") {
+    } else if (typeof (window as any).executeDWScript === "function") {
       // Direct call to WASM function
-      const result = await window.executeDWScript(code);
+      const result = await (window as any).executeDWScript(code);
       return result;
     } else {
       // Fallback: simulate execution for development

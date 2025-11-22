@@ -3,13 +3,23 @@
  * Provides basic code formatting and beautification
  */
 
+import * as monaco from "monaco-editor";
+
 /**
  * Format DWScript code
  * @param {string} code - The code to format
  * @param {Object} options - Formatting options
  * @returns {string} Formatted code
  */
-export function formatDWScript(code, options = {}) {
+export function formatDWScript(
+  code,
+  options: {
+    indentSize?: number;
+    useTabs?: boolean;
+    insertSpaces?: boolean;
+    maxLineLength?: number;
+  } = {},
+) {
   const {
     indentSize = 2,
     useTabs = false,

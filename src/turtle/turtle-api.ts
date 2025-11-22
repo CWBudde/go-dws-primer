@@ -3,19 +3,19 @@
  * DWScript bindings for turtle graphics functions
  */
 
-import { TurtleEngine } from "./turtle-engine.js";
-import { AnimationController } from "./animation.js";
-import { exportAsPNG, exportAsSVG, drawGrid } from "./canvas-renderer.js";
+import { TurtleEngine } from "./turtle-engine.ts";
+import { AnimationController } from "./animation.ts";
+import { exportAsPNG, exportAsSVG, drawGrid } from "./canvas-renderer.ts";
 
-let turtleEngine = null;
-let animationController = null;
+let turtleEngine: TurtleEngine | null = null;
+let animationController: AnimationController | null = null;
 let gridVisible = false;
 
 /**
  * Initialize turtle graphics system
  * @param {HTMLCanvasElement} canvas
  */
-export function initTurtle(canvas) {
+export function initTurtle(canvas: HTMLCanvasElement) {
   turtleEngine = new TurtleEngine(canvas);
   animationController = new AnimationController(turtleEngine);
   return turtleEngine;
@@ -23,17 +23,17 @@ export function initTurtle(canvas) {
 
 /**
  * Get the turtle engine instance
- * @returns {TurtleEngine}
+ * @returns {TurtleEngine|null}
  */
-export function getTurtle() {
+export function getTurtle(): TurtleEngine | null {
   return turtleEngine;
 }
 
 /**
  * Get the animation controller
- * @returns {AnimationController}
+ * @returns {AnimationController|null}
  */
-export function getAnimationController() {
+export function getAnimationController(): AnimationController | null {
   return animationController;
 }
 
@@ -291,6 +291,6 @@ export function randomColor() {
 
 // Also expose helper functions globally if needed
 if (typeof window !== "undefined") {
-  window.RGBToHex = rgbToHex;
-  window.RandomColor = randomColor;
+  (window as any).RGBToHex = rgbToHex;
+  (window as any).RandomColor = randomColor;
 }

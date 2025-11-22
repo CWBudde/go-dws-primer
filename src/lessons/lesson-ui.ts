@@ -4,15 +4,15 @@
  */
 
 import { marked } from "marked";
-import { setCode, getCode } from "../editor/monaco-setup.js";
-import { executeCode } from "../core/executor.js";
-import { markExerciseCompleted, getLessonProgress } from "./progress.js";
+import { setCode, getCode } from "../editor/monaco-setup.ts";
+import { executeCode } from "../core/executor.ts";
+import { markExerciseCompleted, getLessonProgress } from "./progress.ts";
 import {
   compareOutput,
   formatOutputComparison,
   runExerciseTests,
   formatTestResults,
-} from "./exercise-validator.js";
+} from "./exercise-validator.ts";
 
 let currentLesson = null;
 
@@ -264,9 +264,10 @@ function buildLessonHTML(lesson) {
  */
 function attachLessonEventListeners(lesson) {
   const panel = document.querySelector(".lesson-content");
+  if (!panel) return;
 
   // Try it buttons
-  panel.querySelectorAll(".btn-try").forEach((btn) => {
+  panel.querySelectorAll<HTMLElement>(".btn-try").forEach((btn) => {
     btn.addEventListener("click", () => {
       const code = btn.getAttribute("data-code");
       if (code) {
@@ -280,10 +281,13 @@ function attachLessonEventListeners(lesson) {
   });
 
   // Show output buttons
-  panel.querySelectorAll(".btn-show-output").forEach((btn) => {
+  panel.querySelectorAll<HTMLElement>(".btn-show-output").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const block = e.target.closest(".example-block");
-      const output = block.querySelector(".expected-output");
+      const target = e.target as HTMLElement | null;
+      const block = target?.closest(".example-block");
+      const output = block?.querySelector(".expected-output") as
+        | HTMLElement
+        | null;
       if (output) {
         output.style.display =
           output.style.display === "none" ? "block" : "none";
@@ -294,7 +298,7 @@ function attachLessonEventListeners(lesson) {
   });
 
   // Start exercise buttons
-  panel.querySelectorAll(".btn-start-exercise").forEach((btn) => {
+  panel.querySelectorAll<HTMLElement>(".btn-start-exercise").forEach((btn) => {
     btn.addEventListener("click", () => {
       const code = btn.getAttribute("data-code");
       setCode(decodeHtml(code));
@@ -305,10 +309,11 @@ function attachLessonEventListeners(lesson) {
   });
 
   // Show solution buttons
-  panel.querySelectorAll(".btn-show-solution").forEach((btn) => {
+  panel.querySelectorAll<HTMLElement>(".btn-show-solution").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const block = e.target.closest(".exercise-block");
-      const solution = block.querySelector(".solution");
+      const target = e.target as HTMLElement | null;
+      const block = target?.closest(".exercise-block");
+      const solution = block?.querySelector(".solution") as HTMLElement | null;
       if (solution) {
         solution.style.display =
           solution.style.display === "none" ? "block" : "none";
@@ -319,24 +324,31 @@ function attachLessonEventListeners(lesson) {
   });
 
   // Hints buttons
-  panel.querySelectorAll(".btn-hints").forEach((btn) => {
+  panel.querySelectorAll<HTMLElement>(".btn-hints").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const hintsList = e.target.nextElementSibling;
+      const target = e.target as HTMLElement | null;
+      const hintsList = target?.nextElementSibling as HTMLElement | null;
+      if (!hintsList) return;
       hintsList.style.display =
         hintsList.style.display === "none" ? "block" : "none";
       if (hintsList.style.display !== "none") {
         // Show first hint
-        hintsList.querySelector(".hint").style.display = "block";
+        const firstHint = hintsList.querySelector<HTMLElement>(".hint");
+        if (firstHint) {
+          firstHint.style.display = "block";
+        }
       }
     });
   });
 
   // Next hint buttons
-  panel.querySelectorAll(".btn-next-hint").forEach((btn) => {
+  panel.querySelectorAll<HTMLElement>(".btn-next-hint").forEach((btn) => {
     let currentHint = 0;
     btn.addEventListener("click", (e) => {
-      const hintsList = e.target.closest(".hints-list");
-      const hints = hintsList.querySelectorAll(".hint");
+      const target = e.target as HTMLElement | null;
+      const hintsList = target?.closest(".hints-list");
+      if (!hintsList) return;
+      const hints = hintsList.querySelectorAll<HTMLElement>(".hint");
 
       if (currentHint < hints.length - 1) {
         currentHint++;
@@ -350,15 +362,23 @@ function attachLessonEventListeners(lesson) {
   });
 
   // Check output buttons
-  panel.querySelectorAll(".btn-check-output").forEach((btn) => {
+  panel.querySelectorAll<HTMLButtonElement>(".btn-check-output").forEach((btn) => {
     btn.addEventListener("click", async (e) => {
-      const exerciseBlock = e.target.closest(".exercise-block");
-      const exerciseIndex = exerciseBlock.getAttribute("data-exercise-index");
-      const expectedOutput = exerciseBlock.getAttribute("data-expected-output");
+      const target = e.target as HTMLElement | null;
+      const exerciseBlock = target?.closest(".exercise-block");
+      if (!exerciseBlock) return;
+      const exerciseIndexAttr =
+        exerciseBlock.getAttribute("data-exercise-index");
+      const exerciseIndex = exerciseIndexAttr
+        ? parseInt(exerciseIndexAttr, 10)
+        : 0;
+      const expectedOutput =
+        exerciseBlock.getAttribute("data-expected-output") || "";
       const testsJson = exerciseBlock.getAttribute("data-tests");
       const validationContainer = exerciseBlock.querySelector(
         ".validation-results",
-      );
+      ) as HTMLElement | null;
+      if (!validationContainer) return;
 
       // Get current code from editor
       const code = getCode();
@@ -397,7 +417,7 @@ function attachLessonEventListeners(lesson) {
           validationContainer.innerHTML = formatTestResults(testResults);
 
           if (testResults.success) {
-            markExerciseCompleted(lesson.id, parseInt(exerciseIndex));
+            markExerciseCompleted(lesson.id, exerciseIndex);
             updateExerciseStatus(exerciseBlock, exerciseIndex, true);
           }
         } else if (expectedOutput) {
@@ -409,7 +429,7 @@ function attachLessonEventListeners(lesson) {
           validationContainer.innerHTML = formatOutputComparison(comparison);
 
           if (comparison.success) {
-            markExerciseCompleted(lesson.id, parseInt(exerciseIndex));
+            markExerciseCompleted(lesson.id, exerciseIndex);
             updateExerciseStatus(exerciseBlock, exerciseIndex, true);
           }
         }
@@ -486,11 +506,12 @@ function updateProgressIndicators(lesson, progress) {
   if (!progress) return;
 
   const panel = document.querySelector(".lesson-content");
+  if (!panel) return;
 
   // Update exercise completion status
   progress.exercisesCompleted?.forEach((completed, index) => {
     if (completed) {
-      const status = panel.querySelector(
+      const status = panel.querySelector<HTMLElement>(
         `.exercise-status[data-exercise="${index}"] .status-icon`,
       );
       if (status) {
@@ -517,7 +538,7 @@ function updateProgressIndicators(lesson, progress) {
 function updateExerciseStatus(exerciseBlock, exerciseIndex, completed) {
   const status = exerciseBlock.querySelector(
     `.exercise-status[data-exercise="${exerciseIndex}"] .status-icon`,
-  );
+  ) as HTMLElement | null;
   if (status) {
     status.textContent = completed ? "✓" : "○";
     status.style.color = completed ? "var(--success)" : "inherit";

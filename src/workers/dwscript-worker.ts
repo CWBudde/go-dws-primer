@@ -87,12 +87,12 @@ async function initializeWASM(config) {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Verify DWScript is available
-    if (!self.DWScript) {
+    if (!(self as any).DWScript) {
       throw new Error("DWScript API not available after initialization");
     }
 
     // Create DWScript instance with callbacks
-    dwsAPI = new self.DWScript();
+    dwsAPI = new (self as any).DWScript();
 
     await dwsAPI.init({
       onOutput: (text) => {
@@ -371,3 +371,7 @@ self.onerror = function (message, source, lineno, colno, error) {
     },
   });
 };
+/// <reference lib="webworker" />
+
+// Go runtime is injected by wasm_exec.js
+declare const Go: any;

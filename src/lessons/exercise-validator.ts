@@ -25,7 +25,7 @@ function normalizeOutput(output) {
  * @param {Object} options - Comparison options
  * @returns {Object} Comparison result
  */
-export function compareOutput(actual, expected, options = {}) {
+export function compareOutput(actual, expected, options: any = {}) {
   const {
     caseSensitive = false,
     ignoreWhitespace = true,

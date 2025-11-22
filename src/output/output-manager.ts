@@ -6,7 +6,7 @@
 import {
   parseCompilerMessage,
   highlightErrorInEditor,
-} from "../core/executor.js";
+} from "../core/executor.ts";
 
 let currentTab = "console";
 

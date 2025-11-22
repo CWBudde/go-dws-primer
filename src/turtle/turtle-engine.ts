@@ -4,9 +4,26 @@
  */
 
 export class TurtleEngine {
-  constructor(canvas) {
+  canvas: HTMLCanvasElement;
+  ctx: CanvasRenderingContext2D;
+  x: number;
+  y: number;
+  heading: number;
+  penDown: boolean;
+  penColor: string;
+  penWidth: number;
+  fillColor: string;
+  visible: boolean;
+  speed: number;
+  commandQueue: any[];
+  isAnimating: boolean;
+  animationId: number | null;
+  backgroundColor: string;
+  history: any[];
+
+  constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    this.ctx = canvas.getContext("2d");
+    this.ctx = (canvas.getContext("2d") as CanvasRenderingContext2D)!;
 
     // Turtle state
     this.x = canvas.width / 2;

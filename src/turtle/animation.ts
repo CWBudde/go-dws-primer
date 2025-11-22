@@ -4,7 +4,16 @@
  */
 
 export class AnimationController {
-  constructor(turtleEngine) {
+  turtle: any;
+  commands: { command: (...args: any[]) => void; args: any[] }[];
+  currentIndex: number;
+  isPlaying: boolean;
+  isPaused: boolean;
+  animationId: number | null;
+  onComplete: (() => void) | null;
+  onStep: ((index: number, total: number) => void) | null;
+
+  constructor(turtleEngine: any) {
     this.turtle = turtleEngine;
     this.commands = [];
     this.currentIndex = 0;
@@ -50,7 +59,7 @@ export class AnimationController {
   pause() {
     this.isPaused = true;
     if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
+      clearTimeout(this.animationId);
       this.animationId = null;
     }
   }
@@ -72,7 +81,7 @@ export class AnimationController {
     this.isPaused = false;
     this.currentIndex = 0;
     if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
+      clearTimeout(this.animationId);
       this.animationId = null;
     }
   }
@@ -119,7 +128,7 @@ export class AnimationController {
       } else {
         // Map speed 1-10 to delay 500ms-10ms
         delay = 510 - speed * 50;
-        this.animationId = setTimeout(() => {
+        this.animationId = window.setTimeout(() => {
           this.turtle.redraw();
           this.animate();
         }, delay);
@@ -175,6 +184,9 @@ export class AnimationController {
  * Command recorder for tracking drawing operations
  */
 export class CommandRecorder {
+  recording: boolean;
+  commands: any[];
+
   constructor() {
     this.recording = false;
     this.commands = [];

@@ -13,6 +13,18 @@
  * DWScript API wrapper class
  */
 export class DWScriptAPI {
+  instance: any;
+  initialized: boolean;
+  programs: Map<string, any>;
+  executionTimeout: number;
+  performanceMetrics: {
+    totalExecutions: number;
+    totalCompilations: number;
+    totalExecutionTime: number;
+    averageExecutionTime: number;
+    errorCount: number;
+  };
+
   constructor() {
     this.instance = null;
     this.initialized = false;
@@ -35,12 +47,13 @@ export class DWScriptAPI {
    * @param {Function} handlers.onInput - Called when input is requested
    * @returns {Promise<Object>} Version info
    */
-  async init(handlers = {}) {
-    if (!window.DWScript) {
+  async init(handlers: any = {}) {
+    const DWScriptCtor = (window as any).DWScript;
+    if (!DWScriptCtor) {
       throw new Error("DWScript WASM module not loaded");
     }
 
-    this.instance = new window.DWScript();
+    this.instance = new DWScriptCtor();
 
     await this.instance.init({
       onOutput: handlers.onOutput || console.log,
@@ -61,7 +74,7 @@ export class DWScriptAPI {
    * @param {string} cacheKey - Optional cache key for program
    * @returns {Object} Normalized result
    */
-  compile(source, cacheKey = null) {
+  compile(source: string, cacheKey: string | null = null) {
     this.assertInitialized();
 
     try {
@@ -90,7 +103,7 @@ export class DWScriptAPI {
    * @param {number} options.timeout - Timeout in milliseconds (optional)
    * @returns {Promise<Object>} Normalized result
    */
-  async eval(source, options = {}) {
+  async eval(source: string, options: any = {}) {
     this.assertInitialized();
 
     const timeout = options.timeout || this.executionTimeout;
@@ -128,7 +141,7 @@ export class DWScriptAPI {
    * @param {number|string} programRef - Program ID or cache key
    * @returns {Object} Normalized result
    */
-  run(programRef) {
+  run(programRef: number | string) {
     this.assertInitialized();
 
     try {

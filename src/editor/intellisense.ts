@@ -3,6 +3,8 @@
  * Provides auto-completion, hover documentation, and signature help
  */
 
+import * as monaco from "monaco-editor";
+
 /**
  * Built-in DWScript functions and procedures with documentation
  */
