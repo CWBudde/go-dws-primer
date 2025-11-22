@@ -33,7 +33,7 @@ export async function initWorker() {
   workerInitPromise = new Promise((resolve, reject) => {
     try {
       // Create worker
-      worker = new Worker(new URL("./dwscript-worker.js", import.meta.url), {
+      worker = new Worker(new URL("./dwscript-worker.ts", import.meta.url), {
         type: "module",
       });
 
@@ -82,7 +82,10 @@ export async function initWorker() {
  * @param {Object} options - Execution options
  * @returns {Promise<Object>} Execution result
  */
-export async function executeInWorker(code, options = {}) {
+export async function executeInWorker(
+  code: string,
+  options: { onOutput?: (text: string) => void; onError?: (error: any) => void; timeout?: number } = {},
+) {
   if (!isWorkerReady) {
     await initWorker();
   }
@@ -313,6 +316,6 @@ export function getWorkerConfig() {
  * Update worker configuration
  * @param {Object} config - Configuration updates
  */
-export function updateWorkerConfig(config) {
+export function updateWorkerConfig(config: Record<string, unknown>) {
   Object.assign(WORKER_CONFIG, config);
 }

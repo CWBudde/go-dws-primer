@@ -10,31 +10,31 @@ import {
   getCode,
   setupKeyboardShortcuts,
   formatCode,
-} from "./editor/monaco-setup.js";
-import { initWASM, getWASMError } from "./core/wasm-loader.js";
-import { initState, toggleTheme, getValue } from "./core/state-manager.js";
-import { executeCode, stopExecution } from "./core/executor.js";
+} from "./editor/monaco-setup.ts";
+import { initWASM, getWASMError } from "./core/wasm-loader.ts";
+import { initState, toggleTheme, getValue } from "./core/state-manager.ts";
+import { executeCode, stopExecution } from "./core/executor.ts";
 import {
   initOutputPanels,
   appendConsoleOutput,
   appendCompilerOutput,
-} from "./output/output-manager.js";
-import { setupUI } from "./ui/layout.js";
+} from "./output/output-manager.ts";
+import { setupUI } from "./ui/layout.ts";
 import {
   initTurtle,
   installTurtleAPI,
   exportCanvasPNG,
   clearTurtle,
   setTurtleSpeed,
-} from "./turtle/turtle-api.js";
+} from "./turtle/turtle-api.ts";
 import {
   initLessonNavigation,
   loadLessonFromURL,
-} from "./lessons/navigation.js";
-import { shareCode, loadFromURL } from "./utils/url-sharing.js";
-import { showSettingsModal, initSettings } from "./ui/settings-modal.js";
-import { initAccessibility, enhanceARIA } from "./utils/accessibility.js";
-import { initSnippetsPanel } from "./ui/snippets-panel.js";
+} from "./lessons/navigation.ts";
+import { shareCode, loadFromURL } from "./utils/url-sharing.ts";
+import { showSettingsModal, initSettings } from "./ui/settings-modal.ts";
+import { initAccessibility, enhanceARIA } from "./utils/accessibility.ts";
+import { initSnippetsPanel } from "./ui/snippets-panel.ts";
 
 /**
  * Initialize the application
@@ -57,7 +57,7 @@ async function init() {
 
     // Initialize Turtle Graphics
     const canvas = document.getElementById("turtle-canvas");
-    if (canvas) {
+    if (canvas instanceof HTMLCanvasElement) {
       initTurtle(canvas);
       installTurtleAPI();
       console.log("Turtle Graphics initialized");
@@ -241,10 +241,15 @@ function setupEventListeners() {
       if (result.success) {
         updateStatus("✓ " + result.message);
         // Show a temporary success message
-        const originalIcon = shareBtn.querySelector(".icon").textContent;
-        shareBtn.querySelector(".icon").textContent = "✓";
+        const iconElement = shareBtn.querySelector(".icon");
+        const originalIcon = iconElement?.textContent || "";
+        if (iconElement) {
+          iconElement.textContent = "✓";
+        }
         setTimeout(() => {
-          shareBtn.querySelector(".icon").textContent = originalIcon;
+          if (iconElement) {
+            iconElement.textContent = originalIcon;
+          }
         }, 2000);
       } else {
         updateStatus("✗ Failed to share code");
@@ -259,10 +264,11 @@ function setupEventListeners() {
       // Remove active class from all
       navButtons.forEach((b) => b.classList.remove("active"));
       // Add to clicked
-      e.target.classList.add("active");
+      const target = e.target as HTMLElement | null;
+      target?.classList.add("active");
 
       // TODO: Implement view switching
-      console.log("Navigate to:", e.target.textContent);
+      console.log("Navigate to:", target?.textContent);
     });
   });
 
@@ -287,7 +293,9 @@ function setupEventListeners() {
   const speedControl = document.getElementById("turtle-speed");
   if (speedControl) {
     speedControl.addEventListener("input", (e) => {
-      const speed = parseInt(e.target.value);
+      const target = e.target as HTMLInputElement | null;
+      if (!target) return;
+      const speed = parseInt(target.value, 10);
       setTurtleSpeed(speed);
     });
   }

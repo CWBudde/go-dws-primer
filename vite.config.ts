@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
@@ -58,6 +58,7 @@ export default defineConfig({
         'node_modules/',
         'dist/',
         '**/*.config.js',
+        '**/*.config.ts',
         '**/wasm/**'
       ]
     }

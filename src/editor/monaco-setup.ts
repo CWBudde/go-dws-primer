@@ -1,8 +1,8 @@
 import * as monaco from "monaco-editor";
-import { dwscriptLanguage } from "./dwscript-lang.js";
-import { registerSnippets } from "./snippets.js";
-import { registerIntelliSense } from "./intellisense.js";
-import { registerFormatter, registerOnTypeFormatter } from "./formatter.js";
+import { dwscriptLanguage } from "./dwscript-lang.ts";
+import { registerSnippets } from "./snippets.ts";
+import { registerIntelliSense } from "./intellisense.ts";
+import { registerFormatter, registerOnTypeFormatter } from "./formatter.ts";
 
 let editor = null;
 
@@ -17,7 +17,10 @@ export function initMonacoEditor(container, options = {}) {
   monaco.languages.register({ id: "dwscript" });
 
   // Set language configuration
-  monaco.languages.setMonarchTokensProvider("dwscript", dwscriptLanguage);
+  monaco.languages.setMonarchTokensProvider(
+    "dwscript",
+    dwscriptLanguage as monaco.languages.IMonarchLanguage,
+  );
 
   // Set language configuration for auto-closing brackets, etc.
   monaco.languages.setLanguageConfiguration("dwscript", {
@@ -63,7 +66,7 @@ export function initMonacoEditor(container, options = {}) {
   registerOnTypeFormatter(monaco.languages);
 
   // Default editor options
-  const defaultOptions = {
+  const defaultOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
     value: getDefaultCode(),
     language: "dwscript",
     theme: getTheme(),
@@ -92,13 +95,15 @@ export function initMonacoEditor(container, options = {}) {
 
   // Listen for theme changes
   document.addEventListener("themechange", (e) => {
-    const theme = e.detail.theme === "dark" ? "vs-dark" : "vs";
+    const event = e as CustomEvent<{ theme: string }>;
+    const theme = event.detail.theme === "dark" ? "vs-dark" : "vs";
     monaco.editor.setTheme(theme);
   });
 
   // Listen for error highlighting requests
   window.addEventListener("highlightError", (e) => {
-    const { line, column } = e.detail;
+    const event = e as CustomEvent<{ line: number; column?: number }>;
+    const { line, column } = event.detail;
     highlightLine(line, column);
   });
 

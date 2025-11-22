@@ -65,7 +65,10 @@ export function decodeCode(encoded) {
  * @param {string} options.title - Optional title
  * @returns {string} Shareable URL
  */
-export function createShareURL(code, options = {}) {
+export function createShareURL(
+  code: string,
+  options: { lessonId?: string; title?: string } = {},
+) {
   const url = new URL(window.location.href);
   url.searchParams.delete("code"); // Remove existing code param
 
@@ -140,7 +143,10 @@ export async function copyToClipboard(text) {
  * @param {Object} options - Share options
  * @returns {Promise<Object>} Result with url and success status
  */
-export async function shareCode(code, options = {}) {
+export async function shareCode(
+  code: string,
+  options: { lessonId?: string; title?: string } = {},
+) {
   const url = createShareURL(code, options);
   const success = await copyToClipboard(url);
 

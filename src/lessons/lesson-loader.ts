@@ -3,8 +3,8 @@
  * Handles loading and managing lesson content
  */
 
-let lessonsCache = null;
-let lessonIndex = null;
+let lessonsCache: any[] | null = null;
+let lessonIndex: Map<string, number> | null = null;
 
 /**
  * Load all lessons from the content directory
@@ -28,10 +28,13 @@ export async function loadAllLessons() {
       return lessonsCache;
     }
 
-    const index = await response.json();
+    const index: any = await response.json();
+    const lessonPaths: string[] = Array.isArray(index?.lessons)
+      ? index.lessons
+      : [];
 
     // Load each lesson file
-    const lessonPromises = index.lessons.map(async (lessonPath) => {
+    const lessonPromises = lessonPaths.map(async (lessonPath) => {
       try {
         const lessonResponse = await fetch(lessonPath);
         if (lessonResponse.ok) {
@@ -103,7 +106,7 @@ export async function getCategories() {
   });
 
   // Sort lessons within each category
-  Object.values(categories).forEach((cat) => {
+  Object.values(categories).forEach((cat: any) => {
     cat.lessons.sort((a, b) => (a.order || 0) - (b.order || 0));
   });
 

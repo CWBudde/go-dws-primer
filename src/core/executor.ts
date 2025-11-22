@@ -3,25 +3,25 @@
  * Handles running DWScript code and managing execution state
  */
 
-import { executeDWScript, isWASMReady, getDWScriptAPI } from "./wasm-loader.js";
+import { executeDWScript, isWASMReady, getDWScriptAPI } from "./wasm-loader.ts";
 import {
   clearOutput,
   appendConsoleOutput,
   appendCompilerOutput,
-} from "../output/output-manager.js";
-import { clearTurtle } from "../turtle/turtle-api.js";
+} from "../output/output-manager.ts";
+import { clearTurtle } from "../turtle/turtle-api.ts";
 import {
   executeInWorker,
   stopWorkerExecution,
   isWorkerInitialized,
   initWorker,
-} from "../workers/worker-manager.js";
+} from "../workers/worker-manager.ts";
 import {
   announceOutput,
   announceError,
   announceStatus,
-} from "../utils/accessibility.js";
-import { addErrorMarkers, clearErrorMarkers } from "../editor/monaco-setup.js";
+} from "../utils/accessibility.ts";
+import { addErrorMarkers, clearErrorMarkers } from "../editor/monaco-setup.ts";
 
 let isExecuting = false;
 let executionStartTime = 0;
@@ -61,7 +61,10 @@ let executionMetrics = {
  * @param {Object} options - Execution options
  * @returns {Promise<Object>} Execution result
  */
-export async function executeCode(code, options = {}) {
+export async function executeCode(
+  code: string,
+  options: { useWorker?: boolean; timeout?: number } = {},
+) {
   if (isExecuting) {
     console.warn("Code is already executing");
     return { success: false, message: "Already executing" };
@@ -291,8 +294,10 @@ export function isCodeExecuting() {
  * @param {boolean} executing
  */
 function updateExecutionUI(executing) {
-  const runBtn = document.getElementById("btn-run");
-  const stopBtn = document.getElementById("btn-stop");
+  const runBtn = document.getElementById("btn-run") as HTMLButtonElement | null;
+  const stopBtn = document.getElementById(
+    "btn-stop",
+  ) as HTMLButtonElement | null;
 
   if (runBtn) {
     runBtn.disabled = executing;
@@ -540,17 +545,20 @@ export function getMemoryUsage() {
   };
 
   // Try to get JavaScript heap information (Chrome only)
-  if (performance.memory) {
-    memoryInfo.jsHeapSize = performance.memory.usedJSHeapSize;
-    memoryInfo.jsHeapLimit = performance.memory.jsHeapSizeLimit;
+  const perfMemory = (performance as Performance & { memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
+  if (perfMemory) {
+    memoryInfo.jsHeapSize = perfMemory.usedJSHeapSize;
+    memoryInfo.jsHeapLimit = perfMemory.jsHeapSizeLimit;
     memoryInfo.available = true;
   }
 
   // Try to get WASM memory information
   try {
-    if (window.DWScript && window.Go && window.Go._inst) {
+    const goRuntime = (window as any).Go;
+    const dwRuntime = (window as any).DWScript;
+    if (dwRuntime && goRuntime && goRuntime._inst) {
       // Access Go WASM instance memory
-      const wasmMemory = window.Go._inst.exports.mem;
+      const wasmMemory = goRuntime._inst.exports.mem;
       if (wasmMemory && wasmMemory.buffer) {
         memoryInfo.wasmMemory = wasmMemory.buffer.byteLength;
         memoryInfo.wasmMemoryPages = wasmMemory.buffer.byteLength / 65536; // WASM page size

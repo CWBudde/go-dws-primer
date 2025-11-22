@@ -3,7 +3,7 @@
  * Screen reader announcements and ARIA live regions
  */
 
-import { getValue } from "../core/state-manager.js";
+import { getValue } from "../core/state-manager.ts";
 
 let liveRegion = null;
 
