@@ -1,10 +1,7 @@
 /**
- * DWScript Primer - Main Entry Point
- * Initializes the application and sets up event handlers
+ * DWScript Primer - Bootstrap
+ * Initializes the application and sets up event handlers for the DOM-rendered UI
  */
-
-import "../styles/main.css";
-import "../styles/snippets.css";
 import {
   initMonacoEditor,
   getCode,
@@ -15,9 +12,9 @@ import { initWASM, getWASMError } from "./core/wasm-loader.ts";
 import { initState, toggleTheme, getValue } from "./core/state-manager.ts";
 import { executeCode, stopExecution } from "./core/executor.ts";
 import {
-  initOutputPanels,
   appendConsoleOutput,
   appendCompilerOutput,
+  switchTab,
 } from "./output/output-manager.ts";
 import { setupUI } from "./ui/layout.ts";
 import {
@@ -36,10 +33,15 @@ import { showSettingsModal, initSettings } from "./ui/settings-modal.ts";
 import { initAccessibility, enhanceARIA } from "./utils/accessibility.ts";
 import { initSnippetsPanel } from "./ui/snippets-panel.ts";
 
+let initialized = false;
+
 /**
- * Initialize the application
+ * Initialize the application. Safe to call multiple times; subsequent calls are ignored.
  */
-async function init() {
+export async function initApp() {
+  if (initialized) return;
+  initialized = true;
+
   console.log("Initializing DWScript Primer...");
 
   // Show loading overlay
@@ -51,9 +53,6 @@ async function init() {
 
     // Initialize accessibility features
     initAccessibility();
-
-    // Initialize output panels
-    initOutputPanels();
 
     // Initialize Turtle Graphics
     const canvas = document.getElementById("turtle-canvas");
@@ -70,7 +69,7 @@ async function init() {
     // Initialize Monaco Editor
     const editorContainer = document.getElementById("editor-container");
     if (editorContainer) {
-      const editor = initMonacoEditor(editorContainer);
+      const editor = await initMonacoEditor(editorContainer);
       setupKeyboardShortcuts();
       console.log("Monaco Editor initialized");
 
@@ -92,6 +91,7 @@ async function init() {
 
     // Enhance ARIA labels
     enhanceARIA();
+    switchTab("console");
 
     // Load WASM runtime (async, non-blocking)
     console.log("Loading DWScript WASM runtime...");
@@ -142,9 +142,6 @@ async function init() {
       }
     }
 
-    // Setup event listeners
-    setupEventListeners();
-
     // Check for shared code in URL
     const sharedCode = loadFromURL();
     if (sharedCode && sharedCode.code) {
@@ -177,134 +174,7 @@ async function init() {
   }
 }
 
-/**
- * Setup event listeners for UI interactions
- */
-function setupEventListeners() {
-  // Run button
-  const runBtn = document.getElementById("btn-run");
-  if (runBtn) {
-    runBtn.addEventListener("click", handleRun);
-  }
-
-  // Stop button
-  const stopBtn = document.getElementById("btn-stop");
-  if (stopBtn) {
-    stopBtn.addEventListener("click", handleStop);
-  }
-
-  // Clear button
-  const clearBtn = document.getElementById("btn-clear");
-  if (clearBtn) {
-    clearBtn.addEventListener("click", handleClear);
-  }
-
-  // Format button
-  const formatBtn = document.getElementById("btn-format");
-  if (formatBtn) {
-    formatBtn.addEventListener("click", () => {
-      formatCode();
-      updateStatus("Code formatted");
-    });
-  }
-
-  // Theme toggle
-  const themeBtn = document.getElementById("btn-theme");
-  if (themeBtn) {
-    themeBtn.addEventListener("click", () => {
-      toggleTheme();
-    });
-  }
-
-  // Settings button
-  const settingsBtn = document.getElementById("btn-settings");
-  if (settingsBtn) {
-    settingsBtn.addEventListener("click", () => {
-      showSettingsModal();
-    });
-  }
-
-  // Share button
-  const shareBtn = document.getElementById("btn-share");
-  if (shareBtn) {
-    shareBtn.addEventListener("click", async () => {
-      const code = getCode();
-      const currentLesson = getValue("currentLesson");
-
-      const result = await shareCode(code, {
-        lessonId: currentLesson,
-        title:
-          document.querySelector(".lesson-content h2")?.textContent ||
-          "DWScript Code",
-      });
-
-      if (result.success) {
-        updateStatus("✓ " + result.message);
-        // Show a temporary success message
-        const iconElement = shareBtn.querySelector(".icon");
-        const originalIcon = iconElement?.textContent || "";
-        if (iconElement) {
-          iconElement.textContent = "✓";
-        }
-        setTimeout(() => {
-          if (iconElement) {
-            iconElement.textContent = originalIcon;
-          }
-        }, 2000);
-      } else {
-        updateStatus("✗ Failed to share code");
-      }
-    });
-  }
-
-  // Navigation buttons
-  const navButtons = document.querySelectorAll(".nav-btn");
-  navButtons.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      // Remove active class from all
-      navButtons.forEach((b) => b.classList.remove("active"));
-      // Add to clicked
-      const target = e.target as HTMLElement | null;
-      target?.classList.add("active");
-
-      // TODO: Implement view switching
-      console.log("Navigate to:", target?.textContent);
-    });
-  });
-
-  // Canvas controls
-  const clearCanvas = document.getElementById("btn-clear-canvas");
-  if (clearCanvas) {
-    clearCanvas.addEventListener("click", () => {
-      clearTurtle();
-      updateStatus("Canvas cleared");
-    });
-  }
-
-  const exportCanvas = document.getElementById("btn-export-canvas");
-  if (exportCanvas) {
-    exportCanvas.addEventListener("click", () => {
-      exportCanvasPNG();
-      updateStatus("Canvas exported");
-    });
-  }
-
-  // Turtle speed control
-  const speedControl = document.getElementById("turtle-speed");
-  if (speedControl) {
-    speedControl.addEventListener("input", (e) => {
-      const target = e.target as HTMLInputElement | null;
-      if (!target) return;
-      const speed = parseInt(target.value, 10);
-      setTurtleSpeed(speed);
-    });
-  }
-}
-
-/**
- * Handle Run button click
- */
-async function handleRun() {
+export async function runCode() {
   const code = getCode();
   if (!code.trim()) {
     updateStatus("No code to execute");
@@ -315,17 +185,11 @@ async function handleRun() {
   await executeCode(code);
 }
 
-/**
- * Handle Stop button click
- */
-function handleStop() {
+export function stopCode() {
   stopExecution();
 }
 
-/**
- * Handle Clear button click
- */
-function handleClear() {
+export function clearOutputs() {
   const consoleOutput = document.querySelector(
     "#output-console .output-content",
   );
@@ -339,11 +203,50 @@ function handleClear() {
   updateStatus("Output cleared");
 }
 
+export function formatEditor() {
+  formatCode();
+  updateStatus("Code formatted");
+}
+
+export function toggleThemeMode() {
+  toggleTheme();
+}
+
+export function openSettings() {
+  showSettingsModal();
+}
+
+export async function shareCurrentCode() {
+  const code = getCode();
+  const currentLesson = getValue("currentLesson");
+
+  return shareCode(code, {
+    lessonId: currentLesson,
+    title:
+      document.querySelector(".lesson-content h2")?.textContent ||
+      "DWScript Code",
+  });
+}
+
+export function clearCanvas() {
+  clearTurtle();
+  updateStatus("Canvas cleared");
+}
+
+export function exportCanvasImage() {
+  exportCanvasPNG();
+  updateStatus("Canvas exported");
+}
+
+export function updateTurtleSpeed(speed: number) {
+  setTurtleSpeed(speed);
+}
+
 /**
  * Update status bar message
  * @param {string} message
  */
-function updateStatus(message) {
+export function updateStatus(message) {
   const statusEl = document.getElementById("status-message");
   if (statusEl) {
     statusEl.textContent = message;
@@ -360,11 +263,4 @@ function updateCursorPosition(line, column) {
   if (cursorPos) {
     cursorPos.textContent = `Ln ${line}, Col ${column}`;
   }
-}
-
-// Start the application when DOM is ready
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
-} else {
-  init();
 }

@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
@@ -9,6 +10,7 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     sourcemap: true,
+    chunkSizeWarningLimit: 3500,
     rollupOptions: {
       input: {
         main: './index.html'
@@ -33,6 +35,7 @@ export default defineConfig({
     include: ['monaco-editor']
   },
   plugins: [
+    react(),
     viteStaticCopy({
       targets: [
         {

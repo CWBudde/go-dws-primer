@@ -11,7 +11,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.node.json"
   },
@@ -27,16 +27,21 @@
   "author": "Christian-W. Budde",
   "license": "MIT",
   "dependencies": {
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
     "marked": "^11.0.0",
-    "monaco-editor": "^0.45.0"
+    "monaco-editor": "^0.45.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/node": "^20.10.0",
-    "@vitejs/plugin-basic-ssl": "^1.0.2",
-    "@vitest/ui": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^8.18.2",
     "@typescript-eslint/parser": "^8.18.2",
+    "@vitejs/plugin-basic-ssl": "^1.0.2",
+    "@vitejs/plugin-react": "^5.1.1",
+    "@vitest/ui": "^1.0.0",
     "autoprefixer": "10.4.20",
     "eslint": "^9.39.1",
     "jsdom": "^23.0.0",
