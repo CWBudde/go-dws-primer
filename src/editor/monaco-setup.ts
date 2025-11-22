@@ -1,18 +1,34 @@
-import * as monaco from "monaco-editor";
+import type * as Monaco from "monaco-editor";
 import { dwscriptLanguage } from "./dwscript-lang.ts";
 import { registerSnippets } from "./snippets.ts";
 import { registerIntelliSense } from "./intellisense.ts";
 import { registerFormatter, registerOnTypeFormatter } from "./formatter.ts";
 
-let editor = null;
+type MonacoAPI = typeof import("monaco-editor");
+
+let monacoApi: MonacoAPI | null = null;
+let monacoLoadPromise: Promise<MonacoAPI> | null = null;
+let editor: Monaco.editor.IStandaloneCodeEditor | null = null;
+
+async function loadMonaco(): Promise<MonacoAPI> {
+  if (monacoApi) return monacoApi;
+  if (!monacoLoadPromise) {
+    monacoLoadPromise = import("monaco-editor").then((api) => {
+      monacoApi = api;
+      return api;
+    });
+  }
+  return monacoLoadPromise;
+}
 
 /**
  * Initialize Monaco Editor
  * @param {HTMLElement} container - The container element for the editor
  * @param {Object} options - Additional Monaco editor options
- * @returns {monaco.editor.IStandaloneCodeEditor} The editor instance
+ * @returns {Promise<monaco.editor.IStandaloneCodeEditor>} The editor instance
  */
-export function initMonacoEditor(container, options = {}) {
+export async function initMonacoEditor(container, options = {}) {
+  const monaco = await loadMonaco();
   // Register DWScript language
   monaco.languages.register({ id: "dwscript" });
 
@@ -176,7 +192,8 @@ export function formatCode() {
  * @param {Array} errors - Array of error objects with line, column, and message
  */
 export function addErrorMarkers(errors) {
-  if (!editor) return;
+  if (!editor || !monacoApi) return;
+  const monaco = monacoApi;
 
   const model = editor.getModel();
   const markers = errors.map((error) => ({
@@ -195,7 +212,8 @@ export function addErrorMarkers(errors) {
  * Clear all error markers
  */
 export function clearErrorMarkers() {
-  if (!editor) return;
+  if (!editor || !monacoApi) return;
+  const monaco = monacoApi;
   const model = editor.getModel();
   monaco.editor.setModelMarkers(model, "dwscript", []);
 }
@@ -206,7 +224,8 @@ export function clearErrorMarkers() {
  * @param {number} column - Column number (optional)
  */
 export function highlightLine(line, column = 1) {
-  if (!editor) return;
+  if (!editor || !monacoApi) return;
+  const monaco = monacoApi;
 
   // Move cursor to the line
   editor.setPosition({ lineNumber: line, column: column });
@@ -252,7 +271,8 @@ export function highlightLine(line, column = 1) {
  * Setup keyboard shortcuts
  */
 export function setupKeyboardShortcuts() {
-  if (!editor) return;
+  if (!editor || !monacoApi) return;
+  const monaco = monacoApi;
 
   // Ctrl+Enter / Cmd+Enter to run code
   editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {

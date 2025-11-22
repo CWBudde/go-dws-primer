@@ -7,12 +7,15 @@ import {
   getCategories,
   searchLessons,
   getLessonById,
+  getNextLesson,
+  getPreviousLesson,
 } from "./lesson-loader.ts";
 import { displayLesson } from "./lesson-ui.ts";
 import {
   markLessonVisited,
   isLessonCompleted,
   getProgress,
+  markLessonCompleted,
 } from "./progress.ts";
 
 let currentCategories: any = null;
@@ -215,9 +218,6 @@ async function navigateLesson(direction) {
   }
 
   try {
-    const { getNextLesson, getPreviousLesson } = await import(
-      "./lesson-loader.ts"
-    );
     const lesson =
       direction === "next"
         ? await getNextLesson(currentLessonId)
@@ -283,7 +283,6 @@ async function handleSearch(query) {
  * @param {string} lessonId - Lesson ID
  */
 async function handleCompleteLesson(lessonId) {
-  const { markLessonCompleted } = await import("./progress.ts");
   markLessonCompleted(lessonId);
 
   // Update UI
@@ -293,7 +292,6 @@ async function handleCompleteLesson(lessonId) {
   showCompletionMessage();
 
   // Suggest next lesson
-  const { getNextLesson } = await import("./lesson-loader.ts");
   const nextLesson = await getNextLesson(lessonId);
 
   if (nextLesson) {
